@@ -78,3 +78,17 @@ func MysqlConfigValidator(m *MysqlConfig) {
 		SetMaxIdleConn(m.MaxIdleConn).
 		SetMaxLifeTimeMinutesConn(m.MaxLifeTimeMinutesConn)
 }
+
+func GetMysqlConfigSample() *MysqlConfig {
+	m := NewMysqlConfig()
+	m.SetEnabled(true)
+	m.SetDatabase("u_db")
+	m.SetHost("127.0.0.1")
+	m.SetPort(3306)
+	m.SetUsername("u@root")
+	m.SetPassword("pwd")
+	m.SetMaxIdleConn(2)
+	m.SetMaxOpenConn(10)
+	m.SetMaxLifeTimeMinutesConn(10)
+	return m
+}

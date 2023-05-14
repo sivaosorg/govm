@@ -77,3 +77,17 @@ func PostgresConfigValidator(p *PostgresConfig) {
 		SetMaxOpenConn(p.MaxOpenConn).
 		SetMaxIdleConn(p.MaxIdleConn)
 }
+
+func GetPostgresConfigSample() *PostgresConfig {
+	p := NewPostgresConfig()
+	p.SetEnabled(true)
+	p.SetDatabase("u_db")
+	p.SetHost("127.0.0.1")
+	p.SetPort(5432)
+	p.SetUsername("u@root")
+	p.SetPassword("pwd")
+	p.SetSslMode("disable")
+	p.SetMaxOpenConn(5)
+	p.SetMaxIdleConn(3)
+	return p
+}

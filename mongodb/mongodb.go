@@ -70,3 +70,17 @@ func MongodbConfigValidator(m *MongodbConfig) {
 	m.SetTimeoutSecondsConn(m.TimeoutSecondsConn).
 		SetPort(m.Port)
 }
+
+func GetMongodbConfigSample() *MongodbConfig {
+	m := NewMongodbConfig()
+	m.SetEnabled(true)
+	m.SetHost("127.0.0.1")
+	m.SetPort(27017)
+	m.SetDatabase("u_db")
+	m.SetUsername("u@root")
+	m.SetPassword("pwd")
+	m.SetAllowConnSync(true)
+	m.SetTimeoutSecondsConn(30)
+	m.SetUrlConn("mongodb://127.0.0.1:27017/u_db")
+	return m
+}
