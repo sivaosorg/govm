@@ -71,3 +71,10 @@ func (m *MysqlConfig) SetMaxLifeTimeMinutesConn(values int) *MysqlConfig {
 func (m *MysqlConfig) Json() string {
 	return utils.ToJson(m)
 }
+
+func MysqlConfigValidator(m *MysqlConfig) {
+	m.SetPort(m.Port).
+		SetMaxOpenConn(m.MaxOpenConn).
+		SetMaxIdleConn(m.MaxIdleConn).
+		SetMaxLifeTimeMinutesConn(m.MaxLifeTimeMinutesConn)
+}

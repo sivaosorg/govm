@@ -71,3 +71,9 @@ func (p *PostgresConfig) SetMaxIdleConn(value int) *PostgresConfig {
 func (p *PostgresConfig) Json() string {
 	return utils.ToJson(p)
 }
+
+func PostgresConfigValidator(p *PostgresConfig) {
+	p.SetPort(p.Port).
+		SetMaxOpenConn(p.MaxOpenConn).
+		SetMaxIdleConn(p.MaxIdleConn)
+}
