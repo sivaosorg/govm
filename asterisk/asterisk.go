@@ -82,6 +82,10 @@ func (t *TelephonyConfig) Json() string {
 	return utils.ToJson(t)
 }
 
+func AsteriskConfigValidator(a *AsteriskConfig) {
+	a.SetPort(a.Port)
+}
+
 func GetAsteriskConfigSample() *AsteriskConfig {
 	a := NewAsteriskConfig()
 	t := NewTelephonyConfig()
