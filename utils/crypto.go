@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 )
 
 func Base64Encode(v interface{}) string {
@@ -43,4 +44,26 @@ func Base64EncodeHmac256(message, secret []byte) string {
 // Generate sign key base on HMAC256 algorithm, after that base64 encode
 func Base64EncodeHmac256With(message, secret string) string {
 	return Base64EncodeHmac256([]byte(message), []byte(secret))
+}
+
+// We are going to sign a message with our secret key to create a HMAC (Keyed-Hash Message Authentication Code) hash and give it to client.
+// The secret is shared between both client and server applications.
+// If you give a different message or hash as opposed to original ones, the communication will be treated as tampered.
+func SighHmac256(message, secret []byte) string {
+	h := hmac.New(sha256.New, secret)
+	h.Write(message)
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// We are going to sign a message with our secret key to create a HMAC (Keyed-Hash Message Authentication Code) hash and give it to client.
+// The secret is shared between both client and server applications.
+// If you give a different message or hash as opposed to original ones, the communication will be treated as tampered.
+func VerifySignHmac256(message, secret []byte, signHash string) (bool, error) {
+	sig, err := hex.DecodeString(signHash)
+	if err != nil {
+		return false, err
+	}
+	h := hmac.New(sha256.New, secret)
+	h.Write(message)
+	return hmac.Equal(sig, h.Sum(nil)), nil
 }
