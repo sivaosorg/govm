@@ -21,7 +21,7 @@ func Base64EncodeByte(v []byte) string {
 }
 
 func Base64Decode(encoded string) string {
-	if IsEmptyAbsolute(encoded) {
+	if IsEmpty(encoded) {
 		return encoded
 	}
 	d, err := base64.StdEncoding.DecodeString(encoded)

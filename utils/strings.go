@@ -9,8 +9,13 @@ func TrimSpaces(s string) string {
 	return strings.Join(strings.Fields(s), " ")
 }
 
-func IsSpace(str string) bool {
-	for _, c := range str {
+func TrimAllSpaces(s string) string {
+	s = strings.ReplaceAll(s, " ", "")
+	return ReplaceAllSpecialCharacters(s)
+}
+
+func IsSpace(s string) bool {
+	for _, c := range s {
 		if !unicode.IsSpace(c) {
 			return false
 		}
@@ -18,10 +23,15 @@ func IsSpace(str string) bool {
 	return true
 }
 
-func IsEmptyAbsolute(str string) bool {
-	return len(str) == 0 ||
-		str == "" ||
-		strings.TrimSpace(str) == ""
+func IsEmpty(s string) bool {
+	return len(s) == 0 ||
+		s == "" ||
+		strings.TrimSpace(s) == "" ||
+		len(strings.TrimSpace(s)) == 0
+}
+
+func IsNotEmpty(s string) bool {
+	return !IsEmpty(s)
 }
 
 func IsLetter(s string) bool {
@@ -33,15 +43,21 @@ func IsLetter(s string) bool {
 	return true
 }
 
-func RemovePrefix(str string, prefix ...string) string {
-	if IsEmptyAbsolute(str) {
-		return str
+func RemovePrefix(s string, prefix ...string) string {
+	if IsEmpty(s) {
+		return s
 	}
 	if len(prefix) == 0 {
-		return str
+		return s
 	}
 	for _, v := range prefix {
-		str = strings.TrimPrefix(str, v)
+		s = strings.TrimPrefix(s, v)
 	}
-	return str
+	return s
+}
+
+func ReplaceAllSpecialCharacters(s string) string {
+	s = strings.ReplaceAll(s, "\n", "")
+	s = strings.ReplaceAll(s, "\t", "")
+	return s
 }
