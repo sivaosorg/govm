@@ -52,8 +52,10 @@ func (l *Logger) NewInstance() *logrus.Logger {
 
 func (l *Logger) JsonFormatter() *logrus.JSONFormatter {
 	return &logrus.JSONFormatter{
-		DisableTimestamp: false,
-		TimestampFormat:  timex.DateTimeFormYearMonthDayHourMinuteSecond,
+		DisableTimestamp:  false,
+		PrettyPrint:       false,
+		DisableHTMLEscape: false,
+		TimestampFormat:   timex.DateTimeFormYearMonthDayHourMinuteSecond,
 		FieldMap: logrus.FieldMap{
 			logrus.FieldKeyTime:  "@timestamp",
 			logrus.FieldKeyLevel: "@level",
@@ -64,10 +66,12 @@ func (l *Logger) JsonFormatter() *logrus.JSONFormatter {
 
 func (l *Logger) TextFormatter() *logrus.TextFormatter {
 	return &logrus.TextFormatter{
-		DisableColors:   false,
-		ForceColors:     true,
-		FullTimestamp:   true,
-		TimestampFormat: timex.DateTimeFormYearMonthDayHourMinuteSecond,
+		DisableColors:    false,
+		ForceColors:      true,
+		FullTimestamp:    true,
+		QuoteEmptyFields: true,
+		DisableQuote:     true,
+		TimestampFormat:  timex.DateTimeFormYearMonthDayHourMinuteSecond,
 		FieldMap: logrus.FieldMap{
 			logrus.FieldKeyTime:  "@timestamp",
 			logrus.FieldKeyLevel: "@level",
