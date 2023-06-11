@@ -5,8 +5,11 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
 	"github.com/sivaosorg/govm/timex"
@@ -47,6 +50,22 @@ func (l *Logger) NewInstance() *logrus.Logger {
 	if l.AllowSnapshot {
 		logger.SetFormatter(l.JsonFormatter())
 	}
+	// Define color attributes for console logger
+	successColor := color.FgGreen
+	infoColor := color.FgHiBlue
+	warnColor := color.FgYellow
+	errorColor := color.FgHiRed
+	// Create new color objects with defined color attributes
+	success := color.New(successColor)
+	info := color.New(infoColor)
+	warn := color.New(warnColor)
+	err := color.New(errorColor)
+	logger.AddHook(&TextFormatterHook{
+		success: success,
+		info:    info,
+		warn:    warn,
+		err:     err,
+	})
 	return logger
 }
 
@@ -201,14 +220,45 @@ func LoggerValidator(l *Logger) {
 		SetFilename(l.Filename)
 }
 
+func (l *Logger) Callers() (filename, function string, line int) {
+	_, file, line, _ := runtime.Caller(2)
+	filename = filepath.Base(file)
+	return filename, function, line
+}
+
+func (l *Logger) CallerString() string {
+	filename, _, line := l.Callers()
+	return fmt.Sprintf("%s:%d", filename, line)
+}
+
+func (h *TextFormatterHook) Fire(entry *logrus.Entry) error {
+	switch entry.Level {
+	case logrus.InfoLevel:
+		entry.Message = h.info.Sprint(entry.Message)
+	case logrus.WarnLevel:
+		entry.Message = h.warn.Sprint(entry.Message)
+	case logrus.ErrorLevel, logrus.FatalLevel, logrus.PanicLevel:
+		entry.Message = h.err.Sprint(entry.Message)
+	case logrus.DebugLevel, logrus.TraceLevel:
+		entry.Message = h.success.Sprint(entry.Message)
+	}
+	return nil
+}
+
+func (h *TextFormatterHook) Levels() []logrus.Level {
+	return logrus.AllLevels
+}
+
 func (l *Logger) Info(message string, params ...interface{}) {
 	if !l.IsEnabled {
 		return
 	}
 	var fields logrus.Fields
+	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -222,6 +272,7 @@ func (l *Logger) Info(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -241,9 +292,11 @@ func (l *Logger) Error(message string, err error, params ...interface{}) {
 		return
 	}
 	var fields logrus.Fields
+	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+2)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		if err != nil {
 			fields[LoggerErrorField] = err.Error()
 		}
@@ -260,6 +313,7 @@ func (l *Logger) Error(message string, err error, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 2)
 		fields[LoggerMessageField] = message
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		if err != nil {
 			fields[LoggerErrorField] = err.Error()
 		}
@@ -282,9 +336,11 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 		return
 	}
 	var fields logrus.Fields
+	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -298,6 +354,7 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -317,10 +374,12 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		return
 	}
 	var fields logrus.Fields
+	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+2)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
 		fields[LoggerSuccessField] = true
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -335,6 +394,7 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		fields = make(logrus.Fields, 2)
 		fields[LoggerMessageField] = message
 		fields[LoggerSuccessField] = true
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break

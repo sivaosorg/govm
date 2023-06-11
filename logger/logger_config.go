@@ -4,6 +4,9 @@ const (
 	LoggerMessageField = "message"
 	LoggerErrorField   = "error"
 	LoggerSuccessField = "success"
+	LoggerFileField    = "@file"
+	LoggerLineField    = "@line"
+	LoggerCallerField  = "@caller"
 )
 
 const (

@@ -1,6 +1,10 @@
 package logger
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/fatih/color"
+
+	"github.com/sirupsen/logrus"
+)
 
 // Logger opens or creates the log file on first Write.  If the file exists and
 // is less than MaxSize megabytes, lumberjack will open and append to that file.
@@ -63,4 +67,11 @@ type Logger struct {
 	// deleted.)
 	MaxBackups int    `json:"max_backups" yaml:"max-backups"`
 	Formatter  string `json:"formatter" yaml:"formatter"`
+}
+
+type TextFormatterHook struct {
+	success *color.Color
+	info    *color.Color
+	warn    *color.Color
+	err     *color.Color
 }
