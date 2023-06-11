@@ -73,5 +73,6 @@ type TextFormatterHook struct {
 	success *color.Color
 	info    *color.Color
 	warn    *color.Color
+	debug   *color.Color
 	err     *color.Color
 }

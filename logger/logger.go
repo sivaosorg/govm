@@ -16,15 +16,24 @@ import (
 	"github.com/sivaosorg/govm/utils"
 )
 
+var logger *Logger
+
 func NewLogger() *Logger {
+	if logger != nil {
+		return logger
+	}
 	l := &Logger{}
 	l.SetEnabled(true)
 	l.SetFormatter(LoggerTextFormatter)
 	l.SetInstance(l.NewInstance())
+	logger = l
 	return l
 }
 
 func NewLoggerWith(filename string, maxSize, maxBackups, maxAge int) *Logger {
+	if logger != nil {
+		return logger
+	}
 	l := &Logger{}
 	l.SetEnabled(true)
 	l.SetAllowSnapshot(true)
@@ -34,12 +43,13 @@ func NewLoggerWith(filename string, maxSize, maxBackups, maxAge int) *Logger {
 	l.SetMaxBackups(maxBackups)
 	l.SetMaxSize(maxSize)
 	l.SetInstance(l.NewInstance())
+	logger = l
 	return l
 }
 
 func (l *Logger) NewInstance() *logrus.Logger {
 	logger := logrus.New()
-	logger.SetLevel(logrus.InfoLevel)
+	logger.SetLevel(logrus.DebugLevel)
 	logger.SetOutput(io.MultiWriter(l.Config(), os.Stdout))
 	if strings.EqualFold(LoggerJsonFormatter, l.Formatter) {
 		logger.SetFormatter(l.JsonFormatter())
@@ -50,23 +60,28 @@ func (l *Logger) NewInstance() *logrus.Logger {
 	if l.AllowSnapshot {
 		logger.SetFormatter(l.JsonFormatter())
 	}
-	// Define color attributes for console logger
-	successColor := color.FgGreen
-	infoColor := color.FgHiBlue
-	warnColor := color.FgYellow
-	errorColor := color.FgHiRed
-	// Create new color objects with defined color attributes
-	success := color.New(successColor)
-	info := color.New(infoColor)
-	warn := color.New(warnColor)
-	err := color.New(errorColor)
-	logger.AddHook(&TextFormatterHook{
-		success: success,
-		info:    info,
-		warn:    warn,
-		err:     err,
-	})
+	logger.AddHook(l.TextHook())
 	return logger
+}
+
+func (l *Logger) TextHook() *TextFormatterHook {
+	successHex := color.FgGreen
+	infoHex := color.FgHiBlue
+	warnHex := color.FgYellow
+	errorHex := color.FgHiRed
+	debugHex := color.FgCyan
+	successColor := color.New(successHex)
+	infoColor := color.New(infoHex)
+	warnColor := color.New(warnHex)
+	errorColor := color.New(errorHex)
+	debugColor := color.New(debugHex)
+	return &TextFormatterHook{
+		success: successColor,
+		info:    infoColor,
+		warn:    warnColor,
+		err:     errorColor,
+		debug:   debugColor,
+	}
 }
 
 func (l *Logger) JsonFormatter() *logrus.JSONFormatter {
@@ -128,7 +143,12 @@ func (l *Logger) ApplyConfig() *Logger {
 	if l.AllowSnapshot {
 		l.instance.SetFormatter(l.JsonFormatter())
 	}
+	l.ResetLogger()
 	return l
+}
+
+func (l *Logger) ResetLogger() {
+	logger = nil
 }
 
 func (l *Logger) SetInstance(value *logrus.Logger) *Logger {
@@ -240,7 +260,7 @@ func (h *TextFormatterHook) Fire(entry *logrus.Entry) error {
 	case logrus.ErrorLevel, logrus.FatalLevel, logrus.PanicLevel:
 		entry.Message = h.err.Sprint(entry.Message)
 	case logrus.DebugLevel, logrus.TraceLevel:
-		entry.Message = h.success.Sprint(entry.Message)
+		entry.Message = h.debug.Sprint(entry.Message)
 	}
 	return nil
 }
@@ -369,6 +389,44 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	l.instance.WithFields(fields).Warn()
 }
 
+func (l *Logger) Debug(message string, params ...interface{}) {
+	if !l.IsEnabled {
+		return
+	}
+	var fields logrus.Fields
+	filename, _, line := l.Callers()
+	if strings.Contains(message, "%") {
+		fields = make(logrus.Fields, (len(params)/2)+1)
+		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		for i := 0; i < len(params); i += 2 {
+			if i+1 >= len(params) {
+				break
+			}
+			key, ok := params[i].(string)
+			if !ok {
+				continue
+			}
+			fields[key] = params[i+1]
+		}
+	} else {
+		fields = make(logrus.Fields, 1)
+		fields[LoggerMessageField] = message
+		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		for i := 0; i < len(params); i += 2 {
+			if i+1 >= len(params) {
+				break
+			}
+			key, ok := params[i].(string)
+			if !ok {
+				continue
+			}
+			fields[key] = params[i+1]
+		}
+	}
+	l.instance.WithFields(fields).Debug()
+}
+
 func (l *Logger) Success(message string, params ...interface{}) {
 	if !l.IsEnabled {
 		return
@@ -407,4 +465,24 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		}
 	}
 	l.instance.WithFields(fields).Info()
+}
+
+func Infof(message string, params ...interface{}) {
+	NewLogger().Info(message, params...)
+}
+
+func Errorf(message string, err error, params ...interface{}) {
+	NewLogger().Error(message, err, params...)
+}
+
+func Warnf(message string, params ...interface{}) {
+	NewLogger().Warn(message, params...)
+}
+
+func Successf(message string, params ...interface{}) {
+	NewLogger().Success(message, params...)
+}
+
+func Debugf(message string, params ...interface{}) {
+	NewLogger().Debug(message, params...)
 }
