@@ -61,5 +61,6 @@ type Logger struct {
 	// MaxBackups is the maximum number of old log files to retain.  The default
 	// is to retain all old log files (though MaxAge may still cause them to get
 	// deleted.)
-	MaxBackups int `json:"max_backups" yaml:"max-backups"`
+	MaxBackups int    `json:"max_backups" yaml:"max-backups"`
+	Formatter  string `json:"formatter" yaml:"formatter"`
 }
