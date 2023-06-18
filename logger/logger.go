@@ -278,6 +278,17 @@ func (l *Logger) Info(message string, params ...interface{}) {
 	if !l.IsEnabled {
 		return
 	}
+	if len(params) > 0 {
+		var _p []interface{}
+		for _, v := range params {
+			if utils.IsPrimitiveType(v) {
+				_p = append(_p, v)
+			} else {
+				_p = append(_p, utils.ToJson(v))
+			}
+		}
+		params = _p
+	}
 	var fields logrus.Fields
 	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
@@ -319,6 +330,17 @@ func (l *Logger) Info(message string, params ...interface{}) {
 func (l *Logger) Error(message string, err error, params ...interface{}) {
 	if !l.IsEnabled {
 		return
+	}
+	if len(params) > 0 {
+		var _p []interface{}
+		for _, v := range params {
+			if utils.IsPrimitiveType(v) {
+				_p = append(_p, v)
+			} else {
+				_p = append(_p, utils.ToJson(v))
+			}
+		}
+		params = _p
 	}
 	var fields logrus.Fields
 	filename, _, line := l.Callers()
@@ -368,6 +390,17 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	if !l.IsEnabled {
 		return
 	}
+	if len(params) > 0 {
+		var _p []interface{}
+		for _, v := range params {
+			if utils.IsPrimitiveType(v) {
+				_p = append(_p, v)
+			} else {
+				_p = append(_p, utils.ToJson(v))
+			}
+		}
+		params = _p
+	}
 	var fields logrus.Fields
 	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
@@ -410,6 +443,17 @@ func (l *Logger) Debug(message string, params ...interface{}) {
 	if !l.IsEnabled {
 		return
 	}
+	if len(params) > 0 {
+		var _p []interface{}
+		for _, v := range params {
+			if utils.IsPrimitiveType(v) {
+				_p = append(_p, v)
+			} else {
+				_p = append(_p, utils.ToJson(v))
+			}
+		}
+		params = _p
+	}
 	var fields logrus.Fields
 	filename, _, line := l.Callers()
 	if strings.Contains(message, "%") {
@@ -451,6 +495,17 @@ func (l *Logger) Debug(message string, params ...interface{}) {
 func (l *Logger) Success(message string, params ...interface{}) {
 	if !l.IsEnabled {
 		return
+	}
+	if len(params) > 0 {
+		var _p []interface{}
+		for _, v := range params {
+			if utils.IsPrimitiveType(v) {
+				_p = append(_p, v)
+			} else {
+				_p = append(_p, utils.ToJson(v))
+			}
+		}
+		params = _p
 	}
 	var fields logrus.Fields
 	filename, _, line := l.Callers()
