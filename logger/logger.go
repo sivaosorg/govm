@@ -225,6 +225,11 @@ func (l *Logger) SetFormatter(value string) *Logger {
 	return l
 }
 
+func (l *Logger) SetAllowCaller(value bool) *Logger {
+	l.AllowCaller = value
+	return l
+}
+
 func (l *Logger) Json() string {
 	return utils.ToJson(l)
 }
@@ -278,7 +283,9 @@ func (l *Logger) Info(message string, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -292,7 +299,9 @@ func (l *Logger) Info(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -316,7 +325,9 @@ func (l *Logger) Error(message string, err error, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+2)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		if err != nil {
 			fields[LoggerErrorField] = err.Error()
 		}
@@ -333,7 +344,9 @@ func (l *Logger) Error(message string, err error, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 2)
 		fields[LoggerMessageField] = message
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		if err != nil {
 			fields[LoggerErrorField] = err.Error()
 		}
@@ -360,7 +373,9 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -374,7 +389,9 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -398,7 +415,9 @@ func (l *Logger) Debug(message string, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -412,7 +431,9 @@ func (l *Logger) Debug(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -437,7 +458,9 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		fields = make(logrus.Fields, (len(params)/2)+2)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
 		fields[LoggerSuccessField] = true
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break
@@ -452,7 +475,9 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		fields = make(logrus.Fields, 2)
 		fields[LoggerMessageField] = message
 		fields[LoggerSuccessField] = true
-		fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		if l.AllowCaller {
+			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
+		}
 		for i := 0; i < len(params); i += 2 {
 			if i+1 >= len(params) {
 				break

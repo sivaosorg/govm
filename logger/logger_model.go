@@ -49,6 +49,8 @@ type Logger struct {
 	// Compress determines if the rotated log files should be compressed
 	// using gzip. The default is not to perform compression.
 	Compress bool `json:"compress" yaml:"compress"`
+	// Allow show caller detail, just like this: @caller=logger.go:487
+	AllowCaller bool `json:"allow_caller" yaml:"allow-caller"`
 	// Filename is the file to write logs to.  Backup log files will be retained
 	// in the same directory.  It uses <process_name>-lumberjack.log in
 	// os.TempDir() if empty.
