@@ -45,6 +45,87 @@ func SetTimezone(at time.Time, timezone string) time.Time {
 	return t
 }
 
+// AddSeconds
+func AddSeconds(at time.Time, numberOfSeconds int) time.Time {
+	if numberOfSeconds == 0 {
+		return at
+	}
+	return at.Add(time.Second * time.Duration(numberOfSeconds))
+}
+
+// AddMinutes
+func AddMinutes(at time.Time, numberOfMinutes int) time.Time {
+	if numberOfMinutes == 0 {
+		return at
+	}
+	return at.Add(time.Minute * time.Duration(numberOfMinutes))
+}
+
+// AddHours
+func AddHours(at time.Time, numberOfHours int) time.Time {
+	if numberOfHours == 0 {
+		return at
+	}
+	return at.Add(time.Hour * time.Duration(numberOfHours))
+}
+
+// AddDays
+func AddDays(at time.Time, numberOfDays int) time.Time {
+	if numberOfDays == 0 {
+		return at
+	}
+	return at.Add(time.Hour * 24 * time.Duration(numberOfDays))
+}
+
+func HoursSince(t time.Time) float64 {
+	duration := time.Since(t)
+	hours := duration.Hours()
+	return hours
+}
+
+func MinutesSince(t time.Time) float64 {
+	duration := time.Since(t)
+	minutes := duration.Minutes()
+	return minutes
+}
+
+func SecondsSince(t time.Time) float64 {
+	duration := time.Since(t)
+	seconds := duration.Seconds()
+	return seconds
+}
+
+func OnTime(t time.Time) bool {
+	targetTime := time.Now()
+	tolerance := time.Minute
+	diff := t.Sub(targetTime)
+	return diff >= -tolerance && diff <= tolerance
+}
+
+func isLeapYear(year int) bool {
+	return year%4 == 0 && (year%100 != 0 || year%400 == 0)
+}
+
+func isLeap(t time.Time) bool {
+	return isLeapYear(t.Year())
+}
+
+func ListWeekdays(start time.Time, end time.Time) []time.Time {
+	var weekdays []time.Time
+	for current := start; current.Before(end) || current.Equal(end); current = current.AddDate(0, 0, 1) {
+		d := current.Weekday()
+		if d != time.Sunday && d != time.Saturday {
+			y := current.Year()
+			if isLeapYear(y) && current.Month() == time.February && current.Day() == 29 {
+				weekdays = append(weekdays, current)
+			} else if !isLeapYear(y) && current.Day() <= time.Date(y, time.December, 31, 0, 0, 0, 0, time.UTC).Day() {
+				weekdays = append(weekdays, current)
+			}
+		}
+	}
+	return weekdays
+}
+
 // New initialize Now based on configuration
 func (config *Config) With(t time.Time) *Timex {
 	return &Timex{Time: t, Config: config}
