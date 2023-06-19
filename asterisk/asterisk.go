@@ -74,6 +74,11 @@ func (a *AsteriskConfig) SetTelephony(value TelephonyConfig) *AsteriskConfig {
 	return a
 }
 
+func (a *AsteriskConfig) SetDebugMode(value bool) *AsteriskConfig {
+	a.DebugMode = value
+	return a
+}
+
 func (a *AsteriskConfig) Json() string {
 	return utils.ToJson(a)
 }

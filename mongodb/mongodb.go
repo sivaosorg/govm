@@ -62,6 +62,11 @@ func (m *MongodbConfig) SetAllowConnSync(value bool) *MongodbConfig {
 	return m
 }
 
+func (m *MongodbConfig) SetDebugMode(value bool) *MongodbConfig {
+	m.DebugMode = value
+	return m
+}
+
 func (m *MongodbConfig) Json() string {
 	return utils.ToJson(m)
 }

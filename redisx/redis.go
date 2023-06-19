@@ -27,6 +27,11 @@ func (r *RedisConfig) SetDatabase(value string) *RedisConfig {
 	return r
 }
 
+func (r *RedisConfig) SetDebugMode(value bool) *RedisConfig {
+	r.DebugMode = value
+	return r
+}
+
 func (r *RedisConfig) Json() string {
 	return utils.ToJson(r)
 }

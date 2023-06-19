@@ -2,6 +2,7 @@ package mongodb
 
 type MongodbConfig struct {
 	IsEnabled          bool   `json:"enabled" yaml:"enabled"`
+	DebugMode          bool   `json:"debug_mode" yaml:"debug-mode"`
 	UrlConn            string `json:"url_conn" yaml:"url-conn"`
 	Host               string `json:"host" binding:"required" yaml:"host"`
 	Port               int    `json:"port" binding:"required" yaml:"port"`

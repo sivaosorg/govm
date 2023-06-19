@@ -27,6 +27,11 @@ func (d *Dbx) SetDatabase(value string) *Dbx {
 	return d
 }
 
+func (d *Dbx) SetDebugMode(value bool) *Dbx {
+	d.DebugMode = value
+	return d
+}
+
 func (d *Dbx) Json() string {
 	return utils.ToJson(d)
 }

@@ -68,6 +68,11 @@ func (p *PostgresConfig) SetMaxIdleConn(value int) *PostgresConfig {
 	return p
 }
 
+func (p *PostgresConfig) SetDebugMode(value bool) *PostgresConfig {
+	p.DebugMode = value
+	return p
+}
+
 func (p *PostgresConfig) Json() string {
 	return utils.ToJson(p)
 }
