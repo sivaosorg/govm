@@ -32,6 +32,16 @@ func (d *Dbx) SetDebugMode(value bool) *Dbx {
 	return d
 }
 
+func (d *Dbx) SetNewInstance(value bool) *Dbx {
+	d.IsNewInstance = value
+	return d
+}
+
+func (d *Dbx) SetPid(value int) *Dbx {
+	d.Pid = value
+	return d
+}
+
 func (d *Dbx) Json() string {
 	return utils.ToJson(d)
 }
