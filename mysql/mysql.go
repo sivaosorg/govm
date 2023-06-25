@@ -17,6 +17,9 @@ func (m *MysqlConfig) SetEnabled(value bool) *MysqlConfig {
 }
 
 func (m *MysqlConfig) SetDatabase(value string) *MysqlConfig {
+	if utils.IsEmpty(value) {
+		log.Panic("Invalid database")
+	}
 	m.Database = utils.TrimSpaces(value)
 	return m
 }
@@ -68,12 +71,18 @@ func (m *MysqlConfig) SetMaxLifeTimeMinutesConn(values int) *MysqlConfig {
 	return m
 }
 
+func (m *MysqlConfig) SetDebugMode(value bool) *MysqlConfig {
+	m.DebugMode = value
+	return m
+}
+
 func (m *MysqlConfig) Json() string {
 	return utils.ToJson(m)
 }
 
 func MysqlConfigValidator(m *MysqlConfig) {
 	m.SetPort(m.Port).
+		SetDatabase(m.Database).
 		SetMaxOpenConn(m.MaxOpenConn).
 		SetMaxIdleConn(m.MaxIdleConn).
 		SetMaxLifeTimeMinutesConn(m.MaxLifeTimeMinutesConn)
