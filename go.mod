@@ -12,4 +12,5 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	golang.org/x/sys v0.6.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0
 )
