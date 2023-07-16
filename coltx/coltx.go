@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"reflect"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -357,4 +358,12 @@ func Difference[T comparable](slice1, slice2 []T) []T {
 		}
 	}
 	return result
+}
+
+func JoinMapKeys[V any](m map[string]V, separator string) string {
+	joined_keys := []string{}
+	for key := range m {
+		joined_keys = append(joined_keys, key)
+	}
+	return strings.Join(joined_keys, separator)
 }

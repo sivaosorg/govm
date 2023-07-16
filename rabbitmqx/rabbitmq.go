@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/sivaosorg/govm/coltx"
 	"github.com/sivaosorg/govm/utils"
 )
 
@@ -97,4 +98,8 @@ func GetRabbitMqConfigSample() *RabbitMqConfig {
 		SetHost("127.0.0.1").
 		SetUrlConn("amqp://guest:guest@localhost:5672/")
 	return r
+}
+
+func RabbitMqExchangesString() string {
+	return coltx.JoinMapKeys(Exchanges, ",")
 }
