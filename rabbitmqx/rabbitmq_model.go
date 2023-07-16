@@ -24,8 +24,9 @@ type RabbitMqQueueConfig struct {
 }
 
 type RabbitMqMessageConfig struct {
-	Exchange RabbitMqExchangeConfig `json:"exchange,omitempty" yaml:"exchange"`
-	Queue    RabbitMqQueueConfig    `json:"queue,omitempty" yaml:"queue"`
+	IsEnabled bool                   `json:"enabled" yaml:"enabled"`
+	Exchange  RabbitMqExchangeConfig `json:"exchange,omitempty" yaml:"exchange"`
+	Queue     RabbitMqQueueConfig    `json:"queue,omitempty" yaml:"queue"`
 }
 
 type clusters map[string]RabbitMqMessageConfig

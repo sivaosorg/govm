@@ -13,6 +13,21 @@ func NewRabbitMqConfig() *RabbitMqConfig {
 	return r
 }
 
+func NewRabbitMqExchangeConfig() *RabbitMqExchangeConfig {
+	r := &RabbitMqExchangeConfig{}
+	return r
+}
+
+func NewRabbitMqQueueConfig() *RabbitMqQueueConfig {
+	r := &RabbitMqQueueConfig{}
+	return r
+}
+
+func NewRabbitMqMessageConfig() *RabbitMqMessageConfig {
+	r := &RabbitMqMessageConfig{}
+	return r
+}
+
 func (r *RabbitMqConfig) SetEnabled(value bool) *RabbitMqConfig {
 	r.IsEnabled = value
 	return r
@@ -67,6 +82,18 @@ func (r *RabbitMqConfig) SetHost(value string) *RabbitMqConfig {
 	return r
 }
 
+func (r *RabbitMqConfig) SetMessage(value RabbitMqMessageConfig) *RabbitMqConfig {
+	r.Message = value
+	return r
+}
+
+func (r *RabbitMqConfig) SetClusters(values map[string]RabbitMqMessageConfig) *RabbitMqConfig {
+	if len(values) > 0 {
+		r.Clusters = values
+	}
+	return r
+}
+
 func (r *RabbitMqConfig) Json() string {
 	return utils.ToJson(r)
 }
@@ -89,6 +116,14 @@ func RabbitMqConfigValidator(r *RabbitMqConfig) {
 		SetPassword(r.Password)
 }
 
+func RabbitMqExchangeConfigValidator(r *RabbitMqExchangeConfig) {
+	r.SetName(r.Name).SetKind(r.Kind)
+}
+
+func RabbitMqQueueConfigValidator(r *RabbitMqQueueConfig) {
+	r.SetName(r.Name)
+}
+
 func GetRabbitMqConfigSample() *RabbitMqConfig {
 	r := NewRabbitMqConfig().
 		SetEnabled(true).
@@ -96,10 +131,84 @@ func GetRabbitMqConfigSample() *RabbitMqConfig {
 		SetUsername("guest").
 		SetPassword("guest").
 		SetHost("127.0.0.1").
-		SetUrlConn("amqp://guest:guest@localhost:5672/")
+		SetUrlConn("amqp://guest:guest@localhost:5672/").
+		SetMessage(*GetRabbitMqMessageConfigSample())
+	return r
+}
+
+func GetRabbitMqExchangeConfigSample() *RabbitMqExchangeConfig {
+	r := NewRabbitMqExchangeConfig().
+		SetName("guest_exchange").
+		SetKind(ExchangeFanout).
+		SetDurable(true)
+	return r
+}
+
+func GetRabbitMqQueueConfigSample() *RabbitMqQueueConfig {
+	r := NewRabbitMqQueueConfig().
+		SetName("guest_queue").
+		SetDurable(true)
+	return r
+}
+
+func GetRabbitMqMessageConfigSample() *RabbitMqMessageConfig {
+	r := NewRabbitMqMessageConfig().
+		SetEnabled(true).
+		SetExchange(*GetRabbitMqExchangeConfigSample()).
+		SetQueue(*GetRabbitMqQueueConfigSample())
 	return r
 }
 
 func RabbitMqExchangesString() string {
 	return coltx.JoinMapKeys(Exchanges, ",")
+}
+
+func (r *RabbitMqExchangeConfig) SetName(value string) *RabbitMqExchangeConfig {
+	if utils.IsEmpty(value) {
+		log.Panic("Name exchange is required")
+	}
+	r.Name = value
+	return r
+}
+
+func (r *RabbitMqExchangeConfig) SetKind(value string) *RabbitMqExchangeConfig {
+	_, ok := Exchanges[value]
+	if !ok {
+		log.Panicf("Invalid exchange kind, RabbitMQ only supported exchange kind: %v", RabbitMqExchangesString())
+	}
+	r.Kind = value
+	return r
+}
+
+func (r *RabbitMqExchangeConfig) SetDurable(value bool) *RabbitMqExchangeConfig {
+	r.Durable = value
+	return r
+}
+
+func (r *RabbitMqQueueConfig) SetName(value string) *RabbitMqQueueConfig {
+	if utils.IsEmpty(value) {
+		log.Panic("Name queue is required")
+	}
+	r.Name = value
+	return r
+}
+
+func (r *RabbitMqQueueConfig) SetDurable(value bool) *RabbitMqQueueConfig {
+	r.Durable = value
+	return r
+}
+
+func (r *RabbitMqMessageConfig) SetEnabled(value bool) *RabbitMqMessageConfig {
+	r.IsEnabled = value
+	return r
+}
+
+func (r *RabbitMqMessageConfig) SetExchange(value RabbitMqExchangeConfig) *RabbitMqMessageConfig {
+	r.Exchange = value
+	return r
+}
+
+func (r *RabbitMqMessageConfig) SetQueue(value RabbitMqQueueConfig) *RabbitMqMessageConfig {
+	r.Queue = value
+	return r
 }
