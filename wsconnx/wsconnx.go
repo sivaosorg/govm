@@ -163,7 +163,7 @@ func (w *WsConnSubscription) SetEvents(values []string) *WsConnSubscription {
 }
 
 func (w *WsConnSubscription) AppendEvents(values ...string) *WsConnSubscription {
-	w.SetEvents(values)
+	w.Events = append(w.Events, values...)
 	return w
 }
 
@@ -173,7 +173,7 @@ func (w *WsConnSubscription) SetData(value []map[string]interface{}) *WsConnSubs
 }
 
 func (w *WsConnSubscription) AppendData(values ...map[string]interface{}) *WsConnSubscription {
-	w.SetData(values)
+	w.Data = append(w.Data, values...)
 	return w
 }
 

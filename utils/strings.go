@@ -6,10 +6,16 @@ import (
 )
 
 func TrimSpaces(s string) string {
+	if IsEmpty(s) {
+		return s
+	}
 	return strings.Join(strings.Fields(s), " ")
 }
 
 func TrimAllSpaces(s string) string {
+	if IsEmpty(s) {
+		return s
+	}
 	s = strings.ReplaceAll(s, " ", "")
 	return ReplaceAllSpecialCharacters(s)
 }
