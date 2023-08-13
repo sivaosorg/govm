@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type RetryContext func(int, *http.Response, error) bool
+type RetryContext func(attempt int, response *http.Response, err error) bool
+type ProgressCallback func(attempt int, percentage float64, remain time.Duration)
 
 type CurlxContext struct {
 	BaseURL                string         `json:"base_url" binding:"required" yaml:"base-url"`          // Set base-url, just like the host
