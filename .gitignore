@@ -36,3 +36,5 @@ main.go
 # Logs
 logs/
 logs
+keys/
+keys

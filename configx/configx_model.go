@@ -1,8 +1,28 @@
 package configx
 
+import (
+	"github.com/sivaosorg/govm/asterisk"
+	"github.com/sivaosorg/govm/mongodb"
+	"github.com/sivaosorg/govm/mysql"
+	"github.com/sivaosorg/govm/postgres"
+	"github.com/sivaosorg/govm/rabbitmqx"
+	"github.com/sivaosorg/govm/redisx"
+)
+
 type FieldCommentConfig map[string]string
+
+type TypeConfig string
 
 type CommentedConfig struct {
 	Data     interface{}        `json:"data" binding:"required" yaml:"-"`
 	Comments FieldCommentConfig `json:"comments" yaml:"-"`
+}
+
+type KeysConfig struct {
+	Asterisk asterisk.AsteriskConfig  `json:"asterisk,omitempty" yaml:"asterisk"`
+	Mongodb  mongodb.MongodbConfig    `json:"mongodb,omitempty" yaml:"mongodb"`
+	MySql    mysql.MysqlConfig        `json:"mysql,omitempty" yaml:"mysql"`
+	Postgres postgres.PostgresConfig  `json:"postgres,omitempty" yaml:"postgres"`
+	RabbitMq rabbitmqx.RabbitMqConfig `json:"rabbitmq,omitempty" yaml:"rabbitmq"`
+	Redis    redisx.RedisConfig       `json:"redis,omitempty" yaml:"redis"`
 }

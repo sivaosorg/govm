@@ -4,13 +4,23 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/sivaosorg/govm/asterisk"
+	"github.com/sivaosorg/govm/logger"
+	"github.com/sivaosorg/govm/mongodb"
+	"github.com/sivaosorg/govm/mysql"
+	"github.com/sivaosorg/govm/postgres"
+	"github.com/sivaosorg/govm/rabbitmqx"
+	"github.com/sivaosorg/govm/redisx"
+	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
 	"gopkg.in/yaml.v2"
 )
 
-func NewCommentedConfig() *CommentedConfig {
+func NewKeyCmtConfig() *CommentedConfig {
 	c := &CommentedConfig{}
 	return c
 }
@@ -27,6 +37,118 @@ func (c *CommentedConfig) SetComment(value FieldCommentConfig) *CommentedConfig 
 
 func (c *CommentedConfig) Json() string {
 	return utils.ToJson(c)
+}
+
+func NewKeysConfig() *KeysConfig {
+	k := &KeysConfig{}
+	return k
+}
+
+func (k *KeysConfig) SetAsterisk(value asterisk.AsteriskConfig) *KeysConfig {
+	k.Asterisk = value
+	return k
+}
+
+func (k *KeysConfig) SetAsteriskCursor(value *asterisk.AsteriskConfig) *KeysConfig {
+	k.Asterisk = *value
+	return k
+}
+
+func (k *KeysConfig) SetMongodb(value mongodb.MongodbConfig) *KeysConfig {
+	k.Mongodb = value
+	return k
+}
+
+func (k *KeysConfig) SetMongodbCursor(value *mongodb.MongodbConfig) *KeysConfig {
+	k.Mongodb = *value
+	return k
+}
+
+func (k *KeysConfig) SetMySql(value mysql.MysqlConfig) *KeysConfig {
+	k.MySql = value
+	return k
+}
+
+func (k *KeysConfig) SetMySqlCursor(value *mysql.MysqlConfig) *KeysConfig {
+	k.MySql = *value
+	return k
+}
+
+func (k *KeysConfig) SetPostgres(value postgres.PostgresConfig) *KeysConfig {
+	k.Postgres = value
+	return k
+}
+
+func (k *KeysConfig) SetPostgresCursor(value *postgres.PostgresConfig) *KeysConfig {
+	k.Postgres = *value
+	return k
+}
+
+func (k *KeysConfig) SetRabbitMq(value rabbitmqx.RabbitMqConfig) *KeysConfig {
+	k.RabbitMq = value
+	return k
+}
+
+func (k *KeysConfig) SetRabbitMqCursor(value *rabbitmqx.RabbitMqConfig) *KeysConfig {
+	k.RabbitMq = *value
+	return k
+}
+
+func (k *KeysConfig) SetRedis(value redisx.RedisConfig) *KeysConfig {
+	k.Redis = value
+	return k
+}
+
+func (k *KeysConfig) SetRedisCursor(value *redisx.RedisConfig) *KeysConfig {
+	k.Redis = *value
+	return k
+}
+
+func (k *KeysConfig) Json() string {
+	return utils.ToJson(k)
+}
+
+func GetKeysDefaultConfig() *KeysConfig {
+	k := NewKeysConfig()
+	k.SetAsterisk(*asterisk.GetAsteriskConfigSample().SetEnabled(false))
+	k.SetMongodb(*mongodb.GetMongodbConfigSample().SetEnabled(false))
+	k.SetMySql(*mysql.GetMysqlConfigSample().SetEnabled(false))
+	k.SetPostgres(*postgres.GetPostgresConfigSample().SetEnabled(false))
+	k.SetRabbitMq(*rabbitmqx.GetRabbitMqConfigSample().SetEnabled(false))
+	k.SetRedis(*redisx.GetRedisConfigSample().SetEnabled(false))
+	return k
+}
+
+func (KeysConfig) WriteDefaultConfig() {
+	_, err := os.OpenFile(FilenameDefaultConf, os.O_CREATE|os.O_RDWR, 0777)
+	if err != nil {
+		logger.Errorf("WriteDefaultConfig(), an error occurred while creating new filename: %s", err, FilenameDefaultConf)
+		return
+	}
+	m := NewKeyCmtConfig()
+	m.SetData(GetKeysDefaultConfig())
+	m.SetComment(map[string]string{
+		"asterisk": fmt.Sprintf("################################\n%s\n%s\n################################", "Asterisk Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"mongodb":  fmt.Sprintf("################################\n%s\n%s\n################################", "Mongodb Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"mysql":    fmt.Sprintf("################################\n%s\n%s\n################################", "MySQL Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"postgres": fmt.Sprintf("################################\n%s\n%s\n################################", "Postgres Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"rabbitmq": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"redis":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+	})
+	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
+	if err != nil {
+		logger.Errorf("WriteDefaultConfig(), an error occurred while writing keys default configs", err)
+	}
+	logger.Infof("View file keys default config: %s", FilenameDefaultConf)
+}
+
+func (KeysConfig) ReadDefaultConfig() {
+	keys, err := ReadConfig[KeysConfig](filepath.Join(".", FilenameDefaultConf))
+	if err != nil {
+		logger.Errorf("ReadDefaultConfig(), an error occurred while reading keys default configs: %s", err, FilenameDefaultConf)
+		return
+	}
+	logger.Infof("%+v", keys)
 }
 
 func ReadConfig[T any](path string) (*T, error) {
