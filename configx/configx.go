@@ -3,6 +3,7 @@ package configx
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -42,6 +43,17 @@ func (c *CommentedConfig) Json() string {
 func NewKeysConfig() *KeysConfig {
 	k := &KeysConfig{}
 	return k
+}
+
+func NewMultiTenantKeysConfig() *MultiTenancyKeysConfig {
+	m := &MultiTenancyKeysConfig{}
+	m.SetUsableDefault(false)
+	return m
+}
+
+func NewClusterMultiTenancyKeysConfig() *ClusterMultiTenancyKeysConfig {
+	c := &ClusterMultiTenancyKeysConfig{}
+	return c
 }
 
 func (k *KeysConfig) SetAsterisk(value asterisk.AsteriskConfig) *KeysConfig {
@@ -108,6 +120,47 @@ func (k *KeysConfig) Json() string {
 	return utils.ToJson(k)
 }
 
+func (m *MultiTenancyKeysConfig) SetKey(value string) *MultiTenancyKeysConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Invalid key: %+v", value)
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenancyKeysConfig) SetConfig(value KeysConfig) *MultiTenancyKeysConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenancyKeysConfig) SetConfigCursor(value *KeysConfig) *MultiTenancyKeysConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenancyKeysConfig) SetUsableDefault(value bool) *MultiTenancyKeysConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenancyKeysConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func (c *ClusterMultiTenancyKeysConfig) SetClusters(values []MultiTenancyKeysConfig) *ClusterMultiTenancyKeysConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenancyKeysConfig) AppendClusters(values ...MultiTenancyKeysConfig) *ClusterMultiTenancyKeysConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenancyKeysConfig) Json() string {
+	return utils.ToJson(c)
+}
+
 func GetKeysDefaultConfig() *KeysConfig {
 	k := NewKeysConfig()
 	k.SetAsterisk(*asterisk.GetAsteriskConfigSample().SetEnabled(false))
@@ -142,10 +195,75 @@ func (KeysConfig) WriteDefaultConfig() {
 	logger.Infof("View file keys default config: %s", FilenameDefaultConf)
 }
 
+func (MultiTenancyKeysConfig) WriteDefaultConfig() {
+	_, err := os.OpenFile(FilenameDefaultMultiTenantConf, os.O_CREATE|os.O_RDWR, 0777)
+	if err != nil {
+		logger.Errorf("WriteDefaultConfig(), an error occurred while creating new filename: %s", err, FilenameDefaultMultiTenantConf)
+		return
+	}
+	m := NewKeyCmtConfig()
+	mt := NewMultiTenantKeysConfig()
+	mt.SetKey("tenant_1")
+	mt.SetConfig(*GetKeysDefaultConfig())
+	m.SetData(mt)
+	err = CreateConfigWithComments[MultiTenancyKeysConfig](filepath.Join(".", FilenameDefaultMultiTenantConf), *m)
+	if err != nil {
+		logger.Errorf("WriteDefaultConfig(), an error occurred while writing keys default multi-tenant configs", err)
+	}
+	logger.Infof("View file keys default multi-tenant config: %s", FilenameDefaultMultiTenantConf)
+}
+
+func (ClusterMultiTenancyKeysConfig) WriteDefaultConfig() {
+	_, err := os.OpenFile(FilenameDefaultClusterMultiTenantConf, os.O_CREATE|os.O_RDWR, 0777)
+	if err != nil {
+		logger.Errorf("WriteDefaultConfig(), an error occurred while creating new filename: %s", err, FilenameDefaultClusterMultiTenantConf)
+		return
+	}
+	m := NewKeyCmtConfig()
+	c := NewClusterMultiTenancyKeysConfig()
+	c.AppendClusters(
+		*NewMultiTenantKeysConfig().
+			SetKey("tenant_1").
+			SetConfig(*GetKeysDefaultConfig()),
+		*NewMultiTenantKeysConfig().
+			SetKey("tenant_2").
+			SetConfig(*GetKeysDefaultConfig()),
+		*NewMultiTenantKeysConfig().
+			SetKey("tenant_3").
+			SetConfig(*GetKeysDefaultConfig()),
+		*NewMultiTenantKeysConfig().
+			SetKey("tenant_4").
+			SetConfig(*GetKeysDefaultConfig()))
+	m.SetData(c)
+	err = CreateConfigWithComments[ClusterMultiTenancyKeysConfig](filepath.Join(".", FilenameDefaultClusterMultiTenantConf), *m)
+	if err != nil {
+		logger.Errorf("WriteDefaultConfig(), an error occurred while writing keys default cluster multi-tenant configs", err)
+	}
+	logger.Infof("View file keys default cluster multi-tenant config: %s", FilenameDefaultClusterMultiTenantConf)
+}
+
 func (KeysConfig) ReadDefaultConfig() {
 	keys, err := ReadConfig[KeysConfig](filepath.Join(".", FilenameDefaultConf))
 	if err != nil {
 		logger.Errorf("ReadDefaultConfig(), an error occurred while reading keys default configs: %s", err, FilenameDefaultConf)
+		return
+	}
+	logger.Infof("%+v", keys)
+}
+
+func (MultiTenancyKeysConfig) ReadDefaultConfig() {
+	keys, err := ReadConfig[MultiTenancyKeysConfig](filepath.Join(".", FilenameDefaultMultiTenantConf))
+	if err != nil {
+		logger.Errorf("ReadDefaultConfig(), an error occurred while reading keys default multi-tenant configs: %s", err, FilenameDefaultMultiTenantConf)
+		return
+	}
+	logger.Infof("%+v", keys)
+}
+
+func (ClusterMultiTenancyKeysConfig) ReadDefaultConfig() {
+	keys, err := ReadConfig[ClusterMultiTenancyKeysConfig](filepath.Join(".", FilenameDefaultClusterMultiTenantConf))
+	if err != nil {
+		logger.Errorf("ReadDefaultConfig(), an error occurred while reading keys default cluster multi-tenant configs: %s", err, FilenameDefaultClusterMultiTenantConf)
 		return
 	}
 	logger.Infof("%+v", keys)
@@ -222,4 +340,22 @@ func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {
 
 func insertStringAt(slice []string, index int, value string) []string {
 	return append(slice[:index], append([]string{value}, slice[index:]...)...)
+}
+
+func (c *ClusterMultiTenancyKeysConfig) FindClusterBy(key string) (MultiTenancyKeysConfig, error) {
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantKeysConfig(), fmt.Errorf("No multi-tenant cluster")
+	}
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantKeysConfig(), fmt.Errorf("Invalid key")
+	}
+	if len(c.Clusters) == 1 {
+		return c.Clusters[0], nil
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantKeysConfig(), fmt.Errorf("The multi-tenant cluster not found")
 }

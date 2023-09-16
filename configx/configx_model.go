@@ -26,3 +26,13 @@ type KeysConfig struct {
 	RabbitMq rabbitmqx.RabbitMqConfig `json:"rabbitmq,omitempty" yaml:"rabbitmq"`
 	Redis    redisx.RedisConfig       `json:"redis,omitempty" yaml:"redis"`
 }
+
+type MultiTenancyKeysConfig struct {
+	Key             string     `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool       `json:"usable_default" yaml:"usable_default"`
+	Config          KeysConfig `json:"config" yaml:"config"`
+}
+
+type ClusterMultiTenancyKeysConfig struct {
+	Clusters []MultiTenancyKeysConfig `json:"clusters,omitempty" yaml:"clusters"`
+}

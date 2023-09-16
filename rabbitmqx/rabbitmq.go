@@ -3,6 +3,7 @@ package rabbitmqx
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/sivaosorg/govm/coltx"
 	"github.com/sivaosorg/govm/utils"
@@ -132,7 +133,11 @@ func GetRabbitMqConfigSample() *RabbitMqConfig {
 		SetPassword("guest").
 		SetHost("127.0.0.1").
 		SetUrlConn("amqp://guest:guest@localhost:5672/").
-		SetMessage(*GetRabbitMqMessageConfigSample())
+		SetMessage(*GetRabbitMqMessageConfigSample()).
+		SetClusters(map[string]RabbitMqMessageConfig{
+			"rabbit_mq_1": *GetRabbitMqMessageConfigSample(),
+			"rabbit_mq_2": *GetRabbitMqMessageConfigSample(),
+		})
 	return r
 }
 
@@ -211,4 +216,19 @@ func (r *RabbitMqMessageConfig) SetExchange(value RabbitMqExchangeConfig) *Rabbi
 func (r *RabbitMqMessageConfig) SetQueue(value RabbitMqQueueConfig) *RabbitMqMessageConfig {
 	r.Queue = value
 	return r
+}
+
+func (r *RabbitMqConfig) FindClusterBy(key string) (RabbitMqMessageConfig, error) {
+	if len(r.Clusters) == 0 {
+		return *NewRabbitMqMessageConfig(), fmt.Errorf("No rabbit.mq cluster")
+	}
+	if utils.IsEmpty(key) {
+		return *NewRabbitMqMessageConfig(), fmt.Errorf("Invalid key")
+	}
+	for k, v := range r.Clusters {
+		if strings.EqualFold(k, key) {
+			return v, nil
+		}
+	}
+	return *NewRabbitMqMessageConfig(), fmt.Errorf("The rabbit.mq cluster not found")
 }

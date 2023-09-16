@@ -27,5 +27,7 @@ var (
 )
 
 const (
-	FilenameDefaultConf string = "./keys/default_conf.yaml"
+	FilenameDefaultConf                   string = "./keys/default_conf.yaml"
+	FilenameDefaultMultiTenantConf        string = "./keys/default_multi_tenant_conf.yaml"
+	FilenameDefaultClusterMultiTenantConf string = "./keys/default_cluster_multi_tenant_conf.yaml"
 )
