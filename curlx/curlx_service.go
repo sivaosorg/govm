@@ -150,12 +150,15 @@ func (s *curlxServiceImpl) Fetch() error {
 	}
 	// adding attachment
 	if utils.IsNotEmpty(s.request.Attachment) {
+		if utils.IsEmpty(s.request.AttachFileField) {
+			s.request.SetAttachFileField(FieldNameFileForm)
+		}
 		file, err := os.Open(s.request.Attachment)
 		if err != nil {
 			return err
 		}
 		defer file.Close()
-		part, err := writer.CreateFormFile("file", s.request.Attachment)
+		part, err := writer.CreateFormFile(s.request.AttachFileField, s.request.Attachment)
 		if err != nil {
 			return err
 		}
@@ -241,12 +244,15 @@ func (s *curlxServiceImpl) FetchWithProgress(callback ProgressCallback) error {
 	}
 	// adding attachment
 	if utils.IsNotEmpty(s.request.Attachment) {
+		if utils.IsEmpty(s.request.AttachFileField) {
+			s.request.SetAttachFileField(FieldNameFileForm)
+		}
 		file, err := os.Open(s.request.Attachment)
 		if err != nil {
 			return err
 		}
 		defer file.Close()
-		part, err := writer.CreateFormFile("file", s.request.Attachment)
+		part, err := writer.CreateFormFile(s.request.AttachFileField, s.request.Attachment)
 		if err != nil {
 			return err
 		}

@@ -10,3 +10,7 @@ const (
 	PATCH   Method = "PATCH"
 	OPTIONS Method = "OPTIONS"
 )
+
+const (
+	FieldNameFileForm = "file"
+)

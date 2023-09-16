@@ -18,14 +18,15 @@ type CurlxContext struct {
 }
 
 type CurlxRequest struct {
-	DebugMode     bool              `json:"debug_mode" yaml:"debug-mode"`
-	Method        Method            `json:"method" binding:"required" yaml:"method"`
-	Endpoint      string            `json:"endpoint" yaml:"endpoint"`
-	Attachment    string            `json:"attachment,omitempty" yaml:"attachment"`
-	RequestBody   interface{}       `json:"request_body" yaml:"request-body"`
-	ResponseBody  interface{}       `json:"response_body,omitempty" yaml:"response-body"`
-	ResponseError interface{}       `json:"response_error,omitempty" yaml:"response-error"`
-	QueryParams   map[string]string `json:"query_params" yaml:"query-params"`
-	Headers       map[string]string `json:"headers" yaml:"headers"`
-	Cookies       []*http.Cookie    `json:"cookies,omitempty"`
+	DebugMode       bool              `json:"debug_mode" yaml:"debug-mode"`
+	Method          Method            `json:"method" binding:"required" yaml:"method"`
+	Endpoint        string            `json:"endpoint" yaml:"endpoint"`
+	Attachment      string            `json:"attachment,omitempty" yaml:"attachment"`
+	AttachFileField string            `json:"attach_file_field" binding:"required" yaml:"attach_file_field"`
+	RequestBody     interface{}       `json:"request_body" yaml:"request-body"`
+	ResponseBody    interface{}       `json:"response_body,omitempty" yaml:"response-body"`
+	ResponseError   interface{}       `json:"response_error,omitempty" yaml:"response-error"`
+	QueryParams     map[string]string `json:"query_params" yaml:"query-params"`
+	Headers         map[string]string `json:"headers" yaml:"headers"`
+	Cookies         []*http.Cookie    `json:"cookies,omitempty"`
 }

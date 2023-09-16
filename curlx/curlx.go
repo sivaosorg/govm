@@ -28,6 +28,7 @@ func NewCurlxRequest() *CurlxRequest {
 	c.SetResponseBody(new(interface{}))
 	c.SetResponseError(new(interface{}))
 	c.SetCookies(make([]*http.Cookie, 0))
+	c.SetAttachFileField(FieldNameFileForm)
 	return c
 }
 
@@ -139,6 +140,16 @@ func (c *CurlxRequest) AppendQueryParamWith(key string, value interface{}) *Curl
 	return c
 }
 
+func (c *CurlxRequest) SetQueryParamsWith(value map[string]interface{}) *CurlxRequest {
+	if len(value) == 0 {
+		return c
+	}
+	for k, v := range value {
+		c.AppendQueryParamWith(k, v)
+	}
+	return c
+}
+
 func (c *CurlxRequest) SetHeaders(value map[string]string) *CurlxRequest {
 	c.Headers = value
 	return c
@@ -189,6 +200,14 @@ func (c *CurlxRequest) SetDebugMode(value bool) *CurlxRequest {
 
 func (c *CurlxRequest) SetResponseError(value interface{}) *CurlxRequest {
 	c.ResponseError = value
+	return c
+}
+
+func (c *CurlxRequest) SetAttachFileField(value string) *CurlxRequest {
+	if utils.IsEmpty(value) {
+		log.Panicf("Invalid attach_file_field: %v", value)
+	}
+	c.AttachFileField = value
 	return c
 }
 

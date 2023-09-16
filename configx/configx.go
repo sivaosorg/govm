@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/sivaosorg/govm/asterisk"
+	"github.com/sivaosorg/govm/bot/telegram"
 	"github.com/sivaosorg/govm/logger"
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
@@ -169,6 +170,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetPostgres(*postgres.GetPostgresConfigSample().SetEnabled(false))
 	k.SetRabbitMq(*rabbitmqx.GetRabbitMqConfigSample().SetEnabled(false))
 	k.SetRedis(*redisx.GetRedisConfigSample().SetEnabled(false))
+	k.SetTelegram(*telegram.GetTelegramConfigSample().SetEnabled(false))
 	return k
 }
 
@@ -187,6 +189,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"postgres": fmt.Sprintf("################################\n%s\n%s\n################################", "Postgres Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"rabbitmq": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"redis":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"telegram": fmt.Sprintf("################################\n%s\n%s\n################################", "Telegram Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -358,4 +361,14 @@ func (c *ClusterMultiTenancyKeysConfig) FindClusterBy(key string) (MultiTenancyK
 		}
 	}
 	return *NewMultiTenantKeysConfig(), fmt.Errorf("The multi-tenant cluster not found")
+}
+
+func (k *KeysConfig) SetTelegram(value telegram.TelegramConfig) *KeysConfig {
+	k.Telegram = value
+	return k
+}
+
+func (k *KeysConfig) SetTelegramCursor(value *telegram.TelegramConfig) *KeysConfig {
+	k.Telegram = *value
+	return k
 }
