@@ -129,94 +129,7 @@ func (s *curlxServiceImpl) getUrlCompleted() string {
 }
 
 func (s *curlxServiceImpl) Fetch() error {
-	CurlxContextValidator(&s.context)
-	CurlxRequestValidator(&s.request)
-	url := fmt.Sprintf("%s%s", s.context.BaseURL, s.request.Endpoint)
-	if s.request.DebugMode {
-		message := fmt.Sprintf("[CURL]. Request %v sending...", s.getUrlCompleted())
-		logger.Debugf(message)
-	}
-	_buffer := new(bytes.Buffer)
-	writer := multipart.NewWriter(_buffer)
-	// adding headers
-	if len(s.request.Headers) > 0 {
-		for key, value := range s.request.Headers {
-			writer.WriteField(key, value)
-			if s.request.DebugMode {
-				message := fmt.Sprintf("[CURL]. Request %v added header key [%v = %v]", s.getUrlCompleted(), key, value)
-				logger.Debugf(message)
-			}
-		}
-	}
-	// adding attachment
-	if utils.IsNotEmpty(s.request.Attachment) {
-		if utils.IsEmpty(s.request.AttachFileField) {
-			s.request.SetAttachFileField(FieldNameFileForm)
-		}
-		file, err := os.Open(s.request.Attachment)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-		part, err := writer.CreateFormFile(s.request.AttachFileField, s.request.Attachment)
-		if err != nil {
-			return err
-		}
-		_, err = io.Copy(part, file)
-		if err != nil {
-			return err
-		}
-		if s.request.DebugMode {
-			v := fmt.Sprintf("[CURL]. Request %v added attachment filename:: %v", s.getUrlCompleted(), file.Name())
-			logger.Debugf(v)
-		}
-	}
-	writer.Close()
-	// adding header content-type
-	_request, err := http.NewRequest(string(s.request.Method), url, _buffer)
-	if err != nil {
-		return err
-	}
-	if utils.IsNotEmpty(s.request.Attachment) {
-		_request.Header.Set("Content-Type", writer.FormDataContentType())
-	}
-	// adding cookies
-	if len(s.request.Cookies) > 0 {
-		for _, v := range s.request.Cookies {
-			_request.AddCookie(v)
-			if s.request.DebugMode {
-				message := fmt.Sprintf("[CURL]. Request %v added cookie key [%v = %v]", s.getUrlCompleted(), v.Name, v.Value)
-				logger.Debugf(message)
-			}
-		}
-	}
-	// adding query params
-	if len(s.request.QueryParams) > 0 {
-		queries := _request.URL.Query()
-		for key, value := range s.request.QueryParams {
-			queries.Add(key, value)
-			if s.request.DebugMode {
-				message := fmt.Sprintf("[CURL]. Request %v added query params key [%v = %v]", url, key, value)
-				logger.Debugf(message)
-			}
-		}
-		_request.URL.RawQuery = queries.Encode()
-	}
-	var _err error
-	for attempt := 0; attempt <= s.context.MaxRetries; attempt++ {
-		if attempt > 0 {
-			time.Sleep(0 * time.Second)
-		}
-		_err = nil
-		_response, err := s.doRequest(_request, &_err)
-		if s.retry(attempt, _response, err) {
-			continue
-		}
-		if err == nil {
-			return nil
-		}
-	}
-	return _err
+	return s.FetchWithProgress(s.ProgressCallbackFunc())
 }
 
 func (s *curlxServiceImpl) FetchWithProgress(callback ProgressCallback) error {
@@ -266,6 +179,13 @@ func (s *curlxServiceImpl) FetchWithProgress(callback ProgressCallback) error {
 		}
 	}
 	writer.Close()
+	// if _, ok := MethodWithRequestBody[s.request.Method]; ok {
+	// 	_bytes, err := utils.Marshal(s.request.RequestBody)
+	// 	if err != nil {
+	// 		logger.Errorf("[CURL]. Marshal request body got error: %v", err, err.Error())
+	// 	}
+	// 	_buffer = bytes.NewBuffer(_bytes)
+	// }
 	// adding header content-type
 	_request, err := http.NewRequest(string(s.request.Method), url, _buffer)
 	if err != nil {
@@ -274,6 +194,11 @@ func (s *curlxServiceImpl) FetchWithProgress(callback ProgressCallback) error {
 	if utils.IsNotEmpty(s.request.Attachment) {
 		_request.Header.Set("Content-Type", writer.FormDataContentType())
 	}
+	// if len(s.request.Headers) > 0 {
+	// 	for key, value := range s.request.Headers {
+	// 		_request.Header.Set(key, value)
+	// 	}
+	// }
 	// adding cookies
 	if len(s.request.Cookies) > 0 {
 		for _, v := range s.request.Cookies {

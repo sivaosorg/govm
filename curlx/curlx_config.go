@@ -14,3 +14,13 @@ const (
 const (
 	FieldNameFileForm = "file"
 )
+
+var (
+	MethodWithRequestBody map[Method]bool = map[Method]bool{
+		POST:    true,
+		PUT:     true,
+		PATCH:   true,
+		DELETE:  true,
+		OPTIONS: true,
+	}
+)
