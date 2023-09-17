@@ -2,13 +2,16 @@ package slack
 
 import (
 	"fmt"
+	"net/http"
+	"sync"
+	"time"
 
 	"github.com/sivaosorg/govm/builder"
-	"github.com/sivaosorg/govm/curlx"
+	"github.com/sivaosorg/govm/restify"
 )
 
 type SlackService interface {
-	SendMessage(message builder.MapBuilder) (interface{}, error)
+	SendMessage(message builder.MapBuilder) (builder.MapBuilder, error)
 }
 
 type slackServiceImpl struct {
@@ -31,36 +34,66 @@ func NewSlackServiceWith(config SlackConfig, option SlackOptionConfig) SlackServ
 	return s
 }
 
-func (s *slackServiceImpl) SendMessage(message builder.MapBuilder) (interface{}, error) {
+func (s *slackServiceImpl) SendMessage(message builder.MapBuilder) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Slack Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Slack Bot service unavailable")
 	}
 	SlackConfigValidator(&s.config)
+	clusters := []builder.MapBuilder{}
 	var _err error
-	var _response interface{}
+	var _response builder.MapBuilder
+	var wg sync.WaitGroup
+	wg.Add(len(s.config.ChannelId))
 	for _, channelId := range s.config.ChannelId {
-		_response, _err = s.sendText(channelId, message)
+		if message.ContainsKey(SecretKeyField) {
+			message.UpdateValue(SecretKeyField, channelId)
+		} else {
+			message.AddKeyValue(SecretKeyField, channelId)
+		}
+		clone, _ := builder.NewMapBuilder().DeserializeJSONWith(message.Build())
+		clusters = append(clusters, *clone)
 	}
+	for _, v := range clusters {
+		go func(msg builder.MapBuilder) {
+			defer wg.Done()
+			_response, _err = s.sendText(msg)
+		}(v)
+	}
+	wg.Wait()
 	return _response, _err
 }
 
-func (s *slackServiceImpl) sendText(channelID string, message builder.MapBuilder) (interface{}, error) {
+func (s *slackServiceImpl) sendText(message builder.MapBuilder) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Slack Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Slack Bot service unavailable")
 	}
-	url := fmt.Sprintf("%s", Host)
-	context := curlx.NewCurlxContext().
-		SetBaseURL(url).
-		SetMaxRetries(2)
-	request := curlx.NewCurlxRequest().
-		SetMethod(curlx.POST).
-		SetEndpoint("/chat.postMessage").
-		SetDebugMode(s.config.DebugMode).
-		AppendHeader("Content-Type", "application/json;charset=utf-8").
-		AppendHeader("Authorization", fmt.Sprintf("Bearer %s", s.config.Token))
-	message.AddKeyValue("channel", channelID)
-	request.SetRequestBody(message.Build())
-	curl := curlx.NewCurlxService(*context, *request)
-	err := curl.FetchWithProgress(nil)
-	return request.ResponseBody, err
+	url := fmt.Sprintf("%s/chat.postMessage", Host)
+	client := restify.New()
+	result := &map[string]interface{}{}
+	client.SetRetryCount(2).
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *restify.Response, err error) bool {
+				response, _ := builder.NewMapBuilder().DeserializeJSONWith(string(r.Body()))
+				_, ok := response.GetValue("error")
+				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired) || ok
+			},
+		).
+		SetDebug(s.config.DebugMode).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json;charset=utf-8",
+		}).SetAuthToken(s.config.Token)
+
+	_, err := client.R().
+		SetResult(&result).
+		SetBody(message.Build()).
+		ForceContentType("application/json").
+		Post(url)
+	response, _ := builder.NewMapBuilder().DeserializeJSONWith(result)
+	return *response, err
 }
