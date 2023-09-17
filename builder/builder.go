@@ -166,6 +166,10 @@ func (m *MapBuilder) DeserializeJSON(jsonString string) (*MapBuilder, error) {
 	return m, nil
 }
 
+func (m *MapBuilder) DeserializeJSONWith(value interface{}) (*MapBuilder, error) {
+	return m.DeserializeJSON(utils.ToJson(value))
+}
+
 func (m *MapBuilder) IsNumericValue(key string) bool {
 	if utils.IsEmpty(key) {
 		return false
