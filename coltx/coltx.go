@@ -367,3 +367,19 @@ func JoinMapKeys[V any](m map[string]V, separator string) string {
 	}
 	return strings.Join(joined_keys, separator)
 }
+
+func DeepMergeMap(target, source map[string]interface{}) {
+	for key, sourceValue := range source {
+		if targetValue, exists := target[key]; exists {
+			if sourceMap, sourceIsMap := sourceValue.(map[string]interface{}); sourceIsMap {
+				if targetMap, targetIsMap := targetValue.(map[string]interface{}); targetIsMap {
+					DeepMergeMap(targetMap, sourceMap)
+				}
+			} else {
+				target[key] = sourceValue
+			}
+		} else {
+			target[key] = sourceValue
+		}
+	}
+}
