@@ -2,6 +2,7 @@ package configx
 
 import (
 	"github.com/sivaosorg/govm/asterisk"
+	"github.com/sivaosorg/govm/bot/slack"
 	"github.com/sivaosorg/govm/bot/telegram"
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
@@ -27,6 +28,7 @@ type KeysConfig struct {
 	RabbitMq rabbitmqx.RabbitMqConfig `json:"rabbitmq,omitempty" yaml:"rabbitmq"`
 	Redis    redisx.RedisConfig       `json:"redis,omitempty" yaml:"redis"`
 	Telegram telegram.TelegramConfig  `json:"telegram,omitempty" yaml:"telegram"`
+	Slack    slack.SlackConfig        `json:"slack,omitempty" yaml:"slack"`
 }
 
 type MultiTenancyKeysConfig struct {

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/sivaosorg/govm/asterisk"
+	"github.com/sivaosorg/govm/bot/slack"
 	"github.com/sivaosorg/govm/bot/telegram"
 	"github.com/sivaosorg/govm/logger"
 	"github.com/sivaosorg/govm/mongodb"
@@ -171,6 +172,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetRabbitMq(*rabbitmqx.GetRabbitMqConfigSample().SetEnabled(false))
 	k.SetRedis(*redisx.GetRedisConfigSample().SetEnabled(false))
 	k.SetTelegram(*telegram.GetTelegramConfigSample().SetEnabled(false))
+	k.SetSlack(*slack.GetSlackConfigSample().SetEnabled(false))
 	return k
 }
 
@@ -190,6 +192,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"rabbitmq": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"redis":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"telegram": fmt.Sprintf("################################\n%s\n%s\n################################", "Telegram Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"slack":    fmt.Sprintf("################################\n%s\n%s\n################################", "Slack Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -370,5 +373,15 @@ func (k *KeysConfig) SetTelegram(value telegram.TelegramConfig) *KeysConfig {
 
 func (k *KeysConfig) SetTelegramCursor(value *telegram.TelegramConfig) *KeysConfig {
 	k.Telegram = *value
+	return k
+}
+
+func (k *KeysConfig) SetSlack(value slack.SlackConfig) *KeysConfig {
+	k.Slack = value
+	return k
+}
+
+func (k *KeysConfig) SetSlackCursor(value *slack.SlackConfig) *KeysConfig {
+	k.Slack = *value
 	return k
 }
