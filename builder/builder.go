@@ -19,7 +19,7 @@ func (m *MapBuilder) SetResult(value map[string]interface{}) *MapBuilder {
 	return m
 }
 
-func (m *MapBuilder) AddKeyValue(key string, value interface{}) *MapBuilder {
+func (m *MapBuilder) Add(key string, value interface{}) *MapBuilder {
 	if utils.IsEmpty(key) {
 		log.Panicf("Invalid key")
 	}
@@ -35,17 +35,17 @@ func (m *MapBuilder) Size() int {
 	return len(m.Result)
 }
 
-func (m *MapBuilder) RemoveKey(key string) *MapBuilder {
+func (m *MapBuilder) Remove(key string) *MapBuilder {
 	delete(m.Result, key)
 	return m
 }
 
-func (m *MapBuilder) ContainsKey(key string) bool {
+func (m *MapBuilder) Contains(key string) bool {
 	_, ok := m.Result[key]
 	return ok
 }
 
-func (m *MapBuilder) MergeWith(value map[string]interface{}) *MapBuilder {
+func (m *MapBuilder) Merge(value map[string]interface{}) *MapBuilder {
 	if len(value) == 0 {
 		return m
 	}
@@ -59,12 +59,12 @@ func (m *MapBuilder) Json() string {
 	return utils.ToJson(m.Result)
 }
 
-func (m *MapBuilder) GetValue(key string) (interface{}, bool) {
+func (m *MapBuilder) Get(key string) (interface{}, bool) {
 	v, ok := m.Result[key]
 	return v, ok
 }
 
-func (m *MapBuilder) GetKeys() []string {
+func (m *MapBuilder) Keys() []string {
 	if len(m.Result) == 0 {
 		return []string{}
 	}
@@ -81,7 +81,7 @@ func (m *MapBuilder) Reset() *MapBuilder {
 	return m
 }
 
-func (m *MapBuilder) UpdateValue(key string, value interface{}) *MapBuilder {
+func (m *MapBuilder) Update(key string, value interface{}) *MapBuilder {
 	if utils.IsEmpty(key) {
 		return m
 	}
@@ -91,7 +91,7 @@ func (m *MapBuilder) UpdateValue(key string, value interface{}) *MapBuilder {
 	return m
 }
 
-func (m *MapBuilder) DeepMergeWith(values map[string]interface{}) *MapBuilder {
+func (m *MapBuilder) DeepMerge(values map[string]interface{}) *MapBuilder {
 	coltx.DeepMergeMap(m.Result, values)
 	return m
 }
@@ -103,7 +103,7 @@ func (m *MapBuilder) Filter(callback func(key string, value interface{}) bool) *
 			filtered[key] = value
 		}
 	}
-	m.Result = filtered
+	m.SetResult(filtered)
 	return m
 }
 
@@ -158,7 +158,7 @@ func (m *MapBuilder) ToKeyValuePairs() []KeyValuePair {
 	return pairs
 }
 
-func (m *MapBuilder) DeserializeJSON(jsonString string) (*MapBuilder, error) {
+func (m *MapBuilder) DeserializeJson(jsonString string) (*MapBuilder, error) {
 	err := utils.UnmarshalFromString(jsonString, &m.Result)
 	if err != nil {
 		return m, err
@@ -166,8 +166,8 @@ func (m *MapBuilder) DeserializeJSON(jsonString string) (*MapBuilder, error) {
 	return m, nil
 }
 
-func (m *MapBuilder) DeserializeJSONWith(value interface{}) (*MapBuilder, error) {
-	return m.DeserializeJSON(utils.ToJson(value))
+func (m *MapBuilder) DeserializeJsonI(value interface{}) (*MapBuilder, error) {
+	return m.DeserializeJson(utils.ToJson(value))
 }
 
 func (m *MapBuilder) IsNumericValue(key string) bool {

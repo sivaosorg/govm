@@ -45,12 +45,12 @@ func (s *slackServiceImpl) SendMessage(message builder.MapBuilder) (builder.MapB
 	var wg sync.WaitGroup
 	wg.Add(len(s.config.ChannelId))
 	for _, channelId := range s.config.ChannelId {
-		if message.ContainsKey(SecretKeyField) {
-			message.UpdateValue(SecretKeyField, channelId)
+		if message.Contains(SecretKeyField) {
+			message.Update(SecretKeyField, channelId)
 		} else {
-			message.AddKeyValue(SecretKeyField, channelId)
+			message.Add(SecretKeyField, channelId)
 		}
-		clone, _ := builder.NewMapBuilder().DeserializeJSONWith(message.Build())
+		clone, _ := builder.NewMapBuilder().DeserializeJsonI(message.Build())
 		clusters = append(clusters, *clone)
 	}
 	for _, v := range clusters {
@@ -79,8 +79,8 @@ func (s *slackServiceImpl) sendText(message builder.MapBuilder) (builder.MapBuil
 			// RetryConditionFunc type is for retry condition function
 			// input: non-nil Response OR request execution error
 			func(r *restify.Response, err error) bool {
-				response, _ := builder.NewMapBuilder().DeserializeJSONWith(string(r.Body()))
-				_, ok := response.GetValue("error")
+				response, _ := builder.NewMapBuilder().DeserializeJsonI(string(r.Body()))
+				_, ok := response.Get("error")
 				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired) || ok
 			},
 		).
@@ -94,6 +94,6 @@ func (s *slackServiceImpl) sendText(message builder.MapBuilder) (builder.MapBuil
 		SetBody(message.Build()).
 		ForceContentType("application/json").
 		Post(url)
-	response, _ := builder.NewMapBuilder().DeserializeJSONWith(result)
+	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
 	return *response, err
 }

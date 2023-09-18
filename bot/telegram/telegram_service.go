@@ -5,15 +5,17 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/sivaosorg/govm/curlx"
-	"github.com/sivaosorg/govm/entity"
+	"github.com/sivaosorg/govm/builder"
+	"github.com/sivaosorg/govm/restify"
 )
 
 type TelegramService interface {
-	SendMessage(message interface{}) (interface{}, error)
-	SendFile(filename string, message ...string) (interface{}, error)
-	SendFiles(attachment map[string]string) (interface{}, error)
+	SendMessage(message interface{}) (builder.MapBuilder, error)
+	SendMessageWith(message builder.MapBuilder) (builder.MapBuilder, error)
+	SendFile(filename string, message ...string) (builder.MapBuilder, error)
+	SendFiles(attachment map[string]string) (builder.MapBuilder, error)
 }
 
 type telegramServiceImpl struct {
@@ -29,13 +31,13 @@ func NewTelegramService(config TelegramConfig, option TelegramOptionConfig) Tele
 	return s
 }
 
-func (s *telegramServiceImpl) SendMessage(message interface{}) (interface{}, error) {
+func (s *telegramServiceImpl) SendMessage(message interface{}) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Telegram Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
 	}
 	TelegramConfigValidator(&s.config)
 	var _err error
-	var _response interface{}
+	var _response builder.MapBuilder
 	var wg sync.WaitGroup
 	for _, chatId := range s.config.ChatID {
 		wg.Add(1)
@@ -48,13 +50,17 @@ func (s *telegramServiceImpl) SendMessage(message interface{}) (interface{}, err
 	return _response, _err
 }
 
-func (s *telegramServiceImpl) SendFile(filename string, message ...string) (interface{}, error) {
+func (s *telegramServiceImpl) SendMessageWith(message builder.MapBuilder) (builder.MapBuilder, error) {
+	return s.SendMessage(message.Build())
+}
+
+func (s *telegramServiceImpl) SendFile(filename string, message ...string) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Telegram Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
 	}
 	TelegramConfigValidator(&s.config)
 	var _err error
-	var _response interface{}
+	var _response builder.MapBuilder
 	var wg sync.WaitGroup
 	for _, chatId := range s.config.ChatID {
 		wg.Add(1)
@@ -67,16 +73,16 @@ func (s *telegramServiceImpl) SendFile(filename string, message ...string) (inte
 	return _response, _err
 }
 
-func (s *telegramServiceImpl) SendFiles(attachment map[string]string) (interface{}, error) {
+func (s *telegramServiceImpl) SendFiles(attachment map[string]string) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Telegram Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
 	}
 	if len(attachment) == 0 {
-		return nil, fmt.Errorf("No attachment attached")
+		return *builder.NewMapBuilder(), fmt.Errorf("No attachment attached")
 	}
 	TelegramConfigValidator(&s.config)
 	var _err error
-	var _response interface{}
+	var _response builder.MapBuilder
 	var wg sync.WaitGroup
 	for k, v := range attachment {
 		wg.Add(1)
@@ -89,66 +95,82 @@ func (s *telegramServiceImpl) SendFiles(attachment map[string]string) (interface
 	return _response, _err
 }
 
-func (s *telegramServiceImpl) sendText(id int64, message interface{}) (interface{}, error) {
+func (s *telegramServiceImpl) sendText(chatId int64, message interface{}) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Telegram Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
 	}
 	url := fmt.Sprintf("%s/bot%s/sendMessage", Host, s.config.Token)
-	context := curlx.NewCurlxContext().
-		SetBaseURL(url).
-		AppendRetryContext(
-			func(attempt int, response *http.Response, err error) bool {
-				return (response != nil && entity.IsStatusCodeFailure(response.StatusCode)) ||
-					response == nil || err != nil || response.StatusCode == 200
+	client := restify.New()
+	result := &map[string]interface{}{}
+	client.
+		SetRetryCount(2).
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *restify.Response, err error) bool {
+				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired)
 			},
 		).
-		SetMaxRetries(2)
-	request := curlx.NewCurlxRequest().
-		SetMethod(curlx.POST).
-		SetEndpoint("").
-		SetDebugMode(s.config.DebugMode).
-		AppendHeader("Content-Type", "application/json")
+		SetDebug(s.config.DebugMode).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		})
+
 	payload := map[string]interface{}{
-		"chat_id":    id,
+		"chat_id":    chatId,
 		"text":       message,
 		"parse_mode": s.option.Type,
 	}
-	request.SetQueryParamsWith(payload)
-	curl := curlx.NewCurlxService(*context, *request)
-	err := curl.FetchWithProgress(nil)
-	return request.ResponseError, err
+	_, err := client.R().
+		SetResult(&result).
+		SetBody(payload).
+		ForceContentType("application/json").
+		Post(url)
+	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
+	return *response, err
 }
 
-func (s *telegramServiceImpl) sendFile(id int64, filename string, message ...string) (interface{}, error) {
+func (s *telegramServiceImpl) sendFile(chatId int64, filename string, message ...string) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
-		return nil, fmt.Errorf("Telegram Bot service unavailable")
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
 	}
 	url := fmt.Sprintf("%s/bot%s/sendDocument", Host, s.config.Token)
-	context := curlx.NewCurlxContext().
-		SetBaseURL(url).
-		AppendRetryContext(
-			func(attempt int, response *http.Response, err error) bool {
-				return (response != nil && entity.IsStatusCodeFailure(response.StatusCode)) ||
-					response == nil || err != nil || response.StatusCode == 200
+	client := restify.New()
+	result := &map[string]interface{}{}
+	client.
+		SetRetryCount(2).
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *restify.Response, err error) bool {
+				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired)
 			},
 		).
-		SetMaxRetries(2)
-	request := curlx.NewCurlxRequest().
-		SetMethod(curlx.POST).
-		SetEndpoint("").
-		SetDebugMode(s.config.DebugMode).
-		SetAttachFileField("document").
-		SetAttachment(filename).
-		AppendHeader("Content-Type", "application/json")
-	payload := map[string]interface{}{
-		"chat_id":    id,
-		"parse_mode": s.option.Type,
+		SetDebug(s.config.DebugMode).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		})
+	payload := map[string]string{
+		"chat_id":    fmt.Sprintf("%v", chatId),
+		"parse_mode": string(s.option.Type),
 	}
 	if len(message) > 0 {
 		payload["caption"] = strings.Join(message, ",")
 	}
-	request.SetQueryParamsWith(payload)
-	curl := curlx.NewCurlxService(*context, *request)
-	err := curl.FetchWithProgress(nil)
-	return request.ResponseError, err
+	_, err := client.R().
+		SetResult(&result).
+		SetQueryParams(payload).
+		SetFile("document", filename).
+		ForceContentType("application/json").
+		Post(url)
+	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
+	return *response, err
 }
