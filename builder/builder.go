@@ -1,8 +1,12 @@
 package builder
 
 import (
+	"fmt"
 	"log"
+	"reflect"
 	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/sivaosorg/govm/coltx"
 	"github.com/sivaosorg/govm/utils"
@@ -219,4 +223,229 @@ func (m *MapBuilder) MinNumericValue() (float64, bool) {
 		}
 	}
 	return min, found
+}
+
+func (m *MapBuilder) AsInt32(key string) (int32, bool) {
+	value, ok := m.Result[key]
+	if !ok {
+		return 0, false
+	}
+	switch v := value.(type) {
+	case int:
+		return int32(v), true
+	case int32:
+		return v, true
+	default:
+		return 0, false
+	}
+}
+
+func (m *MapBuilder) AsInt64(key string) (int64, bool) {
+	value, ok := m.Result[key]
+	if !ok {
+		return 0, false
+	}
+	switch v := value.(type) {
+	case int:
+		return int64(v), true
+	case int32:
+		return int64(v), true
+	case int64:
+		return v, true
+	default:
+		return 0, false
+	}
+}
+
+func (m *MapBuilder) AsFloat32(key string) (float32, bool) {
+	value, ok := m.Result[key]
+	if !ok {
+		return 0, false
+	}
+	switch v := value.(type) {
+	case float32:
+		return v, true
+	case float64:
+		return float32(v), true
+	default:
+		return 0, false
+	}
+}
+
+func (m *MapBuilder) AsFloat64(key string) (float64, bool) {
+	value, ok := m.Result[key]
+	if !ok {
+		return 0, false
+	}
+	switch v := value.(type) {
+	case float32:
+		return float64(v), true
+	case float64:
+		return v, true
+	default:
+		return 0, false
+	}
+}
+
+func (m *MapBuilder) AsString(key string) (string, bool) {
+	value, ok := m.Result[key]
+	if !ok {
+		return "", false
+	}
+	v, ok := value.(string)
+	return v, ok
+}
+
+func (m *MapBuilder) AsBool(key string) (bool, error) {
+	value, ok := m.Result[key]
+	if !ok {
+		return false, fmt.Errorf("key '%s' not found", key)
+	}
+	v, ok := value.(bool)
+	if !ok {
+		return false, fmt.Errorf("key '%s' is not a boolean", key)
+	}
+	return v, nil
+}
+
+func (m *MapBuilder) IsArray(key string) bool {
+	value, ok := m.Result[key]
+	if !ok {
+		return false
+	}
+	_, is := value.([]interface{})
+	return is
+}
+
+func (m *MapBuilder) IsObject(key string) bool {
+	value, ok := m.Result[key]
+	if !ok {
+		return false
+	}
+	_, is := value.(map[string]interface{})
+	return is
+}
+
+// asGGet retrieves a value from the map by specifying a JSON-like path.
+// Returns the value and a boolean indicating whether the value exists.
+// Example
+// level: person.name
+// level: person.age
+func (m *MapBuilder) asGGet(level string) (interface{}, bool) {
+	segments := strings.Split(level, ".")
+	current := m.Result
+	for _, segment := range segments {
+		v, ok := current[segment]
+		if !ok {
+			return nil, false
+		}
+		if c, ok := asMap(v); !ok {
+			return nil, false
+		} else {
+			current = c.Build()
+		}
+	}
+	return current, true
+}
+
+func (m *MapBuilder) asGString(level string) (string, error) {
+	value, ok := m.asGGet(level)
+	if !ok {
+		return "", fmt.Errorf("level: %v not found", level)
+	}
+	if v, ok := value.(string); ok {
+		return v, nil
+	}
+	return "", fmt.Errorf("level '%s' is not a string", level)
+}
+
+func (m *MapBuilder) asGInt(level string) (int, error) {
+	value, ok := m.asGGet(level)
+	if !ok {
+		return 0, fmt.Errorf("level '%s' not found", level)
+	}
+	switch v := value.(type) {
+	case int:
+		return v, nil
+	case int64:
+		return int(v), nil
+	case float64:
+		return int(v), nil
+	case string:
+		intVal, err := strconv.Atoi(v)
+		if err != nil {
+			return 0, fmt.Errorf("level '%s' is not a valid integer", level)
+		}
+		return intVal, nil
+	}
+	return 0, fmt.Errorf("level '%s' is not an integer", level)
+}
+
+func (m *MapBuilder) asGFloat(level string) (float64, error) {
+	value, ok := m.asGGet(level)
+	if !ok {
+		return 0.0, fmt.Errorf("level '%s' not found", level)
+	}
+	switch v := value.(type) {
+	case float64:
+		return v, nil
+	case int:
+		return float64(v), nil
+	case int64:
+		return float64(v), nil
+	case string:
+		floatVal, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return 0.0, fmt.Errorf("level '%s' is not a valid float", level)
+		}
+		return floatVal, nil
+	}
+	return 0.0, fmt.Errorf("level '%s' is not a float", level)
+}
+
+func (m *MapBuilder) asGBool(level string) (bool, error) {
+	value, ok := m.asGGet(level)
+	if !ok {
+		return false, fmt.Errorf("level '%s' not found", level)
+	}
+	if v, ok := value.(bool); ok {
+		return v, nil
+	}
+	return false, fmt.Errorf("level '%s' is not a boolean", level)
+}
+
+// asMap recursively converts an interface{} to a MapBuilder if it's a map or struct.
+// Returns the MapBuilder representation or nil if not a map or struct.
+func asMap(value interface{}) (*MapBuilder, bool) {
+	if value == nil {
+		return nil, false
+	}
+	v := reflect.ValueOf(value)
+	if v.Kind() == reflect.Map && v.Type().Key().Kind() == reflect.String {
+		mb := NewMapBuilder()
+		mb.Result = value.(map[string]interface{})
+		return mb, true
+	}
+	if v.Kind() == reflect.Struct {
+		// It's a struct, convert it to a MapBuilder
+		mb := NewMapBuilder()
+		_type := v.Type()
+		for i := 0; i < v.NumField(); i++ {
+			fName := _type.Field(i).Name
+			fValue := v.Field(i).Interface()
+			// Recursively convert fieldValue to MapBuilder
+			fields, _ := asMap(fValue)
+			// Merge the field MapBuilder into the parent MapBuilder
+			if fields != nil && !fields.IsEmpty() {
+				mb.Merge(map[string]interface{}{fName: fields.Build()})
+			} else {
+				mb.Merge(map[string]interface{}{fName: fValue})
+			}
+		}
+		if mb.IsEmpty() {
+			return nil, false
+		}
+		return mb, true
+	}
+	return nil, false
 }
