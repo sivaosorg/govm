@@ -4,25 +4,25 @@ import "unsafe"
 
 type Type int
 
-// ResultContext represents a json value that is returned from Get().
-type ResultContext struct {
+// BJsonContext represents a json value that is returned from Get().
+type BJsonContext struct {
 	Type    Type    `json:"-"`
-	Raw     string  `json:"-"`
+	Raw     string  `json:"raw"`
 	Strings string  `json:"-"`
 	Numeric float64 `json:"-"`
-	Index   int     `json:"-"`
+	Index   int     `json:"index"`
 	Indexes []int   `json:"-"`
 }
 
-type AomContext struct {
-	ArrayResult       []ResultContext          `json:"-"`
-	ArrayInterface    []interface{}            `json:"-"`
-	OptionalMap       map[string]ResultContext `json:"-"`
-	OptionalInterface map[string]interface{}   `json:"-"`
-	valueX            byte                     `json:"-"`
+type aomContext struct {
+	ArrayResult       []BJsonContext          `json:"-"`
+	ArrayInterface    []interface{}           `json:"-"`
+	OptionalMap       map[string]BJsonContext `json:"-"`
+	OptionalInterface map[string]interface{}  `json:"-"`
+	valueX            byte                    `json:"-"`
 }
 
-type PathContext struct {
+type pathContext struct {
 	Part  string `json:"-"`
 	Path  string `json:"-"`
 	Pipe  string `json:"-"`
@@ -31,7 +31,7 @@ type PathContext struct {
 	More  bool   `json:"-"`
 }
 
-type DeepContext struct {
+type deepContext struct {
 	Part    string `json:"-"`
 	Path    string `json:"-"`
 	Pipe    string `json:"-"`
@@ -49,23 +49,23 @@ type DeepContext struct {
 	} `json:"-"`
 }
 
-type ParseContext struct {
-	json  string        `json:"-"`
-	value ResultContext `json:"-"`
-	pipe  string        `json:"-"`
-	piped bool          `json:"-"`
-	calc  bool          `json:"-"`
-	lines bool          `json:"-"`
+type parseContext struct {
+	json  string       `json:"-"`
+	value BJsonContext `json:"-"`
+	pipe  string       `json:"-"`
+	piped bool         `json:"-"`
+	calc  bool         `json:"-"`
+	lines bool         `json:"-"`
 }
 
-// StringHeader instead of reflect.StringHeader
-type StringHeader struct {
+// stringHeader instead of reflect.stringHeader
+type stringHeader struct {
 	data   unsafe.Pointer `json:"-"`
 	length int            `json:"-"`
 }
 
-// SliceHeader instead of reflect.SliceHeader
-type SliceHeader struct {
+// sliceHeader instead of reflect.sliceHeader
+type sliceHeader struct {
 	data     unsafe.Pointer `json:"-"`
 	length   int            `json:"-"`
 	capacity int            `json:"-"`
