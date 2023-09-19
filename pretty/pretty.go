@@ -446,7 +446,7 @@ func init() {
 // Color will colorize the json. The style parma is used for customizing
 // the colors. Passing nil to the style param will use the default
 // TerminalStyle.
-func Color(src []byte, style *Style) []byte {
+func Color(source []byte, style *Style) []byte {
 	if style == nil {
 		style = TerminalStyle
 	}
@@ -460,54 +460,54 @@ func Color(src []byte, style *Style) []byte {
 		kind byte
 		key  bool
 	}
-	var dst []byte
+	var destinationByte []byte
 	var stack []innerStack
-	for i := 0; i < len(src); i++ {
-		if src[i] == '"' {
+	for i := 0; i < len(source); i++ {
+		if source[i] == '"' {
 			key := len(stack) > 0 && stack[len(stack)-1].key
 			if key {
-				dst = append(dst, style.Key[0]...)
+				destinationByte = append(destinationByte, style.Key[0]...)
 			} else {
-				dst = append(dst, style.String[0]...)
+				destinationByte = append(destinationByte, style.String[0]...)
 			}
-			dst = appendStyle(dst, '"')
+			destinationByte = appendStyle(destinationByte, '"')
 			esc := false
 			useEsc := 0
-			for i = i + 1; i < len(src); i++ {
-				if src[i] == '\\' {
+			for i = i + 1; i < len(source); i++ {
+				if source[i] == '\\' {
 					if key {
-						dst = append(dst, style.Key[1]...)
+						destinationByte = append(destinationByte, style.Key[1]...)
 					} else {
-						dst = append(dst, style.String[1]...)
+						destinationByte = append(destinationByte, style.String[1]...)
 					}
-					dst = append(dst, style.Escape[0]...)
-					dst = appendStyle(dst, src[i])
+					destinationByte = append(destinationByte, style.Escape[0]...)
+					destinationByte = appendStyle(destinationByte, source[i])
 					esc = true
-					if i+1 < len(src) && src[i+1] == 'u' {
+					if i+1 < len(source) && source[i+1] == 'u' {
 						useEsc = 5
 					} else {
 						useEsc = 1
 					}
 				} else if esc {
-					dst = appendStyle(dst, src[i])
+					destinationByte = appendStyle(destinationByte, source[i])
 					if useEsc == 1 {
 						esc = false
-						dst = append(dst, style.Escape[1]...)
+						destinationByte = append(destinationByte, style.Escape[1]...)
 						if key {
-							dst = append(dst, style.Key[0]...)
+							destinationByte = append(destinationByte, style.Key[0]...)
 						} else {
-							dst = append(dst, style.String[0]...)
+							destinationByte = append(destinationByte, style.String[0]...)
 						}
 					} else {
 						useEsc--
 					}
 				} else {
-					dst = appendStyle(dst, src[i])
+					destinationByte = appendStyle(destinationByte, source[i])
 				}
-				if src[i] == '"' {
+				if source[i] == '"' {
 					j := i - 1
 					for ; ; j-- {
-						if src[j] != '\\' {
+						if source[j] != '\\' {
 							break
 						}
 					}
@@ -517,65 +517,65 @@ func Color(src []byte, style *Style) []byte {
 				}
 			}
 			if esc {
-				dst = append(dst, style.Escape[1]...)
+				destinationByte = append(destinationByte, style.Escape[1]...)
 			} else if key {
-				dst = append(dst, style.Key[1]...)
+				destinationByte = append(destinationByte, style.Key[1]...)
 			} else {
-				dst = append(dst, style.String[1]...)
+				destinationByte = append(destinationByte, style.String[1]...)
 			}
-		} else if src[i] == '{' || src[i] == '[' {
-			stack = append(stack, innerStack{src[i], src[i] == '{'})
-			dst = append(dst, style.Brackets[0]...)
-			dst = appendStyle(dst, src[i])
-			dst = append(dst, style.Brackets[1]...)
-		} else if (src[i] == '}' || src[i] == ']') && len(stack) > 0 {
+		} else if source[i] == '{' || source[i] == '[' {
+			stack = append(stack, innerStack{source[i], source[i] == '{'})
+			destinationByte = append(destinationByte, style.Brackets[0]...)
+			destinationByte = appendStyle(destinationByte, source[i])
+			destinationByte = append(destinationByte, style.Brackets[1]...)
+		} else if (source[i] == '}' || source[i] == ']') && len(stack) > 0 {
 			stack = stack[:len(stack)-1]
-			dst = append(dst, style.Brackets[0]...)
-			dst = appendStyle(dst, src[i])
-			dst = append(dst, style.Brackets[1]...)
-		} else if (src[i] == ':' || src[i] == ',') && len(stack) > 0 && stack[len(stack)-1].kind == '{' {
+			destinationByte = append(destinationByte, style.Brackets[0]...)
+			destinationByte = appendStyle(destinationByte, source[i])
+			destinationByte = append(destinationByte, style.Brackets[1]...)
+		} else if (source[i] == ':' || source[i] == ',') && len(stack) > 0 && stack[len(stack)-1].kind == '{' {
 			stack[len(stack)-1].key = !stack[len(stack)-1].key
-			dst = append(dst, style.Brackets[0]...)
-			dst = appendStyle(dst, src[i])
-			dst = append(dst, style.Brackets[1]...)
+			destinationByte = append(destinationByte, style.Brackets[0]...)
+			destinationByte = appendStyle(destinationByte, source[i])
+			destinationByte = append(destinationByte, style.Brackets[1]...)
 		} else {
 			var kind byte
-			if (src[i] >= '0' && src[i] <= '9') || src[i] == '-' || isNaNOrInf(src[i:]) {
+			if (source[i] >= '0' && source[i] <= '9') || source[i] == '-' || isNaNOrInf(source[i:]) {
 				kind = '0'
-				dst = append(dst, style.Number[0]...)
-			} else if src[i] == 't' {
+				destinationByte = append(destinationByte, style.Number[0]...)
+			} else if source[i] == 't' {
 				kind = 't'
-				dst = append(dst, style.True[0]...)
-			} else if src[i] == 'f' {
+				destinationByte = append(destinationByte, style.True[0]...)
+			} else if source[i] == 'f' {
 				kind = 'f'
-				dst = append(dst, style.False[0]...)
-			} else if src[i] == 'n' {
+				destinationByte = append(destinationByte, style.False[0]...)
+			} else if source[i] == 'n' {
 				kind = 'n'
-				dst = append(dst, style.Null[0]...)
+				destinationByte = append(destinationByte, style.Null[0]...)
 			} else {
-				dst = appendStyle(dst, src[i])
+				destinationByte = appendStyle(destinationByte, source[i])
 			}
 			if kind != 0 {
-				for ; i < len(src); i++ {
-					if src[i] <= ' ' || src[i] == ',' || src[i] == ':' || src[i] == ']' || src[i] == '}' {
+				for ; i < len(source); i++ {
+					if source[i] <= ' ' || source[i] == ',' || source[i] == ':' || source[i] == ']' || source[i] == '}' {
 						i--
 						break
 					}
-					dst = appendStyle(dst, src[i])
+					destinationByte = appendStyle(destinationByte, source[i])
 				}
 				if kind == '0' {
-					dst = append(dst, style.Number[1]...)
+					destinationByte = append(destinationByte, style.Number[1]...)
 				} else if kind == 't' {
-					dst = append(dst, style.True[1]...)
+					destinationByte = append(destinationByte, style.True[1]...)
 				} else if kind == 'f' {
-					dst = append(dst, style.False[1]...)
+					destinationByte = append(destinationByte, style.False[1]...)
 				} else if kind == 'n' {
-					dst = append(dst, style.Null[1]...)
+					destinationByte = append(destinationByte, style.Null[1]...)
 				}
 			}
 		}
 	}
-	return dst
+	return destinationByte
 }
 
 // Spec strips out comments and trailing commas and convert the input to a
@@ -585,63 +585,63 @@ func Color(src []byte, style *Style) []byte {
 // include all of the same line breaks at matching offsets. This is to ensure
 // the result can be later processed by a external parser and that that
 // parser will report messages or errors with the correct offsets.
-func Spec(src []byte) []byte {
-	return spec(src, nil)
+func Spec(source []byte) []byte {
+	return spec(source, nil)
 }
 
 // SpecInPlace is the same as Spec, but this method reuses the input json
 // buffer to avoid allocations. Do not use the original bytes slice upon return.
-func SpecInPlace(src []byte) []byte {
-	return spec(src, src)
+func SpecInPlace(source []byte) []byte {
+	return spec(source, source)
 }
 
-func spec(src, dst []byte) []byte {
-	dst = dst[:0]
-	for i := 0; i < len(src); i++ {
-		if src[i] == '/' {
-			if i < len(src)-1 {
-				if src[i+1] == '/' {
-					dst = append(dst, ' ', ' ')
+func spec(source, destination []byte) []byte {
+	destination = destination[:0]
+	for i := 0; i < len(source); i++ {
+		if source[i] == '/' {
+			if i < len(source)-1 {
+				if source[i+1] == '/' {
+					destination = append(destination, ' ', ' ')
 					i += 2
-					for ; i < len(src); i++ {
-						if src[i] == '\n' {
-							dst = append(dst, '\n')
+					for ; i < len(source); i++ {
+						if source[i] == '\n' {
+							destination = append(destination, '\n')
 							break
-						} else if src[i] == '\t' || src[i] == '\r' {
-							dst = append(dst, src[i])
+						} else if source[i] == '\t' || source[i] == '\r' {
+							destination = append(destination, source[i])
 						} else {
-							dst = append(dst, ' ')
+							destination = append(destination, ' ')
 						}
 					}
 					continue
 				}
-				if src[i+1] == '*' {
-					dst = append(dst, ' ', ' ')
+				if source[i+1] == '*' {
+					destination = append(destination, ' ', ' ')
 					i += 2
-					for ; i < len(src)-1; i++ {
-						if src[i] == '*' && src[i+1] == '/' {
-							dst = append(dst, ' ', ' ')
+					for ; i < len(source)-1; i++ {
+						if source[i] == '*' && source[i+1] == '/' {
+							destination = append(destination, ' ', ' ')
 							i++
 							break
-						} else if src[i] == '\n' || src[i] == '\t' ||
-							src[i] == '\r' {
-							dst = append(dst, src[i])
+						} else if source[i] == '\n' || source[i] == '\t' ||
+							source[i] == '\r' {
+							destination = append(destination, source[i])
 						} else {
-							dst = append(dst, ' ')
+							destination = append(destination, ' ')
 						}
 					}
 					continue
 				}
 			}
 		}
-		dst = append(dst, src[i])
-		if src[i] == '"' {
-			for i = i + 1; i < len(src); i++ {
-				dst = append(dst, src[i])
-				if src[i] == '"' {
+		destination = append(destination, source[i])
+		if source[i] == '"' {
+			for i = i + 1; i < len(source); i++ {
+				destination = append(destination, source[i])
+				if source[i] == '"' {
 					j := i - 1
 					for ; ; j-- {
-						if src[j] != '\\' {
+						if source[j] != '\\' {
 							break
 						}
 					}
@@ -650,17 +650,17 @@ func spec(src, dst []byte) []byte {
 					}
 				}
 			}
-		} else if src[i] == '}' || src[i] == ']' {
-			for j := len(dst) - 2; j >= 0; j-- {
-				if dst[j] <= ' ' {
+		} else if source[i] == '}' || source[i] == ']' {
+			for j := len(destination) - 2; j >= 0; j-- {
+				if destination[j] <= ' ' {
 					continue
 				}
-				if dst[j] == ',' {
-					dst[j] = ' '
+				if destination[j] == ',' {
+					destination[j] = ' '
 				}
 				break
 			}
 		}
 	}
-	return dst
+	return destination
 }
