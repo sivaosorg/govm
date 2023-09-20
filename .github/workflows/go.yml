@@ -5,7 +5,8 @@ name: Go
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "refs/tags/*" ]
+    tags: ["v*"]
   pull_request:
     branches: [ "master" ]
 
@@ -26,3 +27,30 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if [ -n "$GITHUB_REF" ]; then
+            TAG=${GITHUB_REF#refs/tags/}
+            echo "::set-output name=tag::$TAG"
+          else
+            echo "::set-output name=tag::"
+          fi
+        shell: bash
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "" # Replace with the path to your release artifacts
+          tag_name: ${{ steps.check_tag.outputs.tag }}
+          title: Release ${{ steps.check_tag.outputs.tag }}
+          body: |
+            :gem: released new version ${{ steps.check_tag.outputs.tag }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
