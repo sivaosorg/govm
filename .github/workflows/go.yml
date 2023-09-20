@@ -45,7 +45,6 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: "" # Replace with the path to your release artifacts
           tag_name: ${{ steps.check_tag.outputs.tag }}
           title: Release ${{ steps.check_tag.outputs.tag }}
           body: |
