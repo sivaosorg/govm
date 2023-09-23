@@ -29,16 +29,16 @@ func GetPreviousEndDay(at time.Time, previousDay int) time.Time {
 	return GetEndDay(lastDay)
 }
 
-// SetTimezoneX
-func SetTimezoneX(at time.Time, timezone string) (time.Time, error) {
+// ApplyTimezone
+func ApplyTimezone(at time.Time, timezone string) (time.Time, error) {
 	loc, err := time.LoadLocation(timezone)
 	now := at.In(loc)
 	return now, err
 }
 
-// SetTimezone
-func SetTimezone(at time.Time, timezone string) time.Time {
-	t, err := SetTimezoneX(at, timezone)
+// AdjustTimezone
+func AdjustTimezone(at time.Time, timezone string) time.Time {
+	t, err := ApplyTimezone(at, timezone)
 	if err != nil {
 		return at
 	}
