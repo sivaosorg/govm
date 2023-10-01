@@ -4,7 +4,7 @@ type SlackConfig struct {
 	IsEnabled bool     `json:"enabled" yaml:"enabled"`
 	DebugMode bool     `json:"debug_mode" yaml:"debug-mode"`
 	ChannelId []string `json:"channel_id" binding:"required" yaml:"channel_id"`
-	Token     string   `json:"token" binding:"required" yaml:"token"`
+	Token     string   `json:"-" binding:"required" yaml:"token"`
 }
 
 type SlackOptionConfig struct {

@@ -89,3 +89,83 @@ func GetMongodbConfigSample() *MongodbConfig {
 	m.SetUrlConn("mongodb://127.0.0.1:27017/u_db")
 	return m
 }
+
+func NewMongodbOptionConfig() *mongodbOptionConfig {
+	m := &mongodbOptionConfig{}
+	return m
+}
+
+func NewMultiTenantMongodbConfig() *MultiTenantMongodbConfig {
+	m := &MultiTenantMongodbConfig{}
+	return m
+}
+
+func (m *MultiTenantMongodbConfig) SetKey(value string) *MultiTenantMongodbConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Key is required")
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantMongodbConfig) SetUsableDefault(value bool) *MultiTenantMongodbConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantMongodbConfig) SetConfig(value MongodbConfig) *MultiTenantMongodbConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantMongodbConfig) SetConfigCursor(value *MongodbConfig) *MultiTenantMongodbConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantMongodbConfig) SetOption(value mongodbOptionConfig) *MultiTenantMongodbConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantMongodbConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func MultiTenantMongodbConfigValidator(m *MultiTenantMongodbConfig) {
+	m.SetKey(m.Key)
+}
+
+func GetMultiTenantMongodbConfigSample() *MultiTenantMongodbConfig {
+	m := NewMultiTenantMongodbConfig().
+		SetKey("tenant_1").
+		SetConfigCursor(GetMongodbConfigSample()).
+		SetUsableDefault(false).
+		SetOption(*NewMongodbOptionConfig())
+	return m
+}
+
+func NewClusterMultiTenantMongodbConfig() *ClusterMultiTenantMongodbConfig {
+	c := &ClusterMultiTenantMongodbConfig{}
+	return c
+}
+
+func (c *ClusterMultiTenantMongodbConfig) SetClusters(values []MultiTenantMongodbConfig) *ClusterMultiTenantMongodbConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantMongodbConfig) AppendClusters(values ...MultiTenantMongodbConfig) *ClusterMultiTenantMongodbConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantMongodbConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func GetClusterMultiTenantMongodbConfigSample() *ClusterMultiTenantMongodbConfig {
+	c := NewClusterMultiTenantMongodbConfig()
+	c.AppendClusters(*GetMultiTenantMongodbConfigSample(), *GetMultiTenantMongodbConfigSample().SetKey("tenant_2"))
+	return c
+}

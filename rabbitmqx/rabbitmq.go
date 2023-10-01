@@ -232,3 +232,83 @@ func (r *RabbitMqConfig) FindClusterBy(key string) (RabbitMqMessageConfig, error
 	}
 	return *NewRabbitMqMessageConfig(), fmt.Errorf("The rabbit.mq cluster not found")
 }
+
+func NewRabbitMqOptionConfig() *rabbitMqOptionConfig {
+	r := &rabbitMqOptionConfig{}
+	return r
+}
+
+func NewMultiTenantRabbitMqConfig() *MultiTenantRabbitMqConfig {
+	m := &MultiTenantRabbitMqConfig{}
+	return m
+}
+
+func (m *MultiTenantRabbitMqConfig) SetKey(value string) *MultiTenantRabbitMqConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Key is required")
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantRabbitMqConfig) SetUsableDefault(value bool) *MultiTenantRabbitMqConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantRabbitMqConfig) SetConfig(value RabbitMqConfig) *MultiTenantRabbitMqConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantRabbitMqConfig) SetConfigCursor(value *RabbitMqConfig) *MultiTenantRabbitMqConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantRabbitMqConfig) SetOption(value rabbitMqOptionConfig) *MultiTenantRabbitMqConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantRabbitMqConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func MultiTenantRabbitMqConfigValidator(m *MultiTenantRabbitMqConfig) {
+	m.SetKey(m.Key)
+}
+
+func GetMultiTenantRabbitMqConfigSample() *MultiTenantRabbitMqConfig {
+	m := NewMultiTenantRabbitMqConfig().
+		SetKey("tenant_1").
+		SetUsableDefault(false).
+		SetOption(*NewRabbitMqOptionConfig()).
+		SetConfigCursor(GetRabbitMqConfigSample())
+	return m
+}
+
+func NewClusterMultiTenantRabbitMqConfig() *ClusterMultiTenantRabbitMqConfig {
+	c := &ClusterMultiTenantRabbitMqConfig{}
+	return c
+}
+
+func (c *ClusterMultiTenantRabbitMqConfig) SetClusters(values []MultiTenantRabbitMqConfig) *ClusterMultiTenantRabbitMqConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantRabbitMqConfig) AppendClusters(values ...MultiTenantRabbitMqConfig) *ClusterMultiTenantRabbitMqConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantRabbitMqConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func GetClusterMultiTenantRabbitMqConfigSample() *ClusterMultiTenantRabbitMqConfig {
+	c := NewClusterMultiTenantRabbitMqConfig().
+		AppendClusters(*GetMultiTenantRabbitMqConfigSample(), *GetMultiTenantRabbitMqConfigSample().SetKey("tenant_2"))
+	return c
+}

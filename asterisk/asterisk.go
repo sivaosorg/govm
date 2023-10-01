@@ -105,3 +105,77 @@ func GetAsteriskConfigSample() *AsteriskConfig {
 	a.SetTelephony(*t)
 	return a
 }
+
+func NewMultiTenantAsteriskConfig() *MultiTenantAsteriskConfig {
+	m := &MultiTenantAsteriskConfig{}
+	return m
+}
+
+func (m *MultiTenantAsteriskConfig) SetKey(value string) *MultiTenantAsteriskConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Key is required")
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantAsteriskConfig) SetUsableDefault(value bool) *MultiTenantAsteriskConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantAsteriskConfig) SetConfig(value AsteriskConfig) *MultiTenantAsteriskConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantAsteriskConfig) SetConfigCursor(value *AsteriskConfig) *MultiTenantAsteriskConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantAsteriskConfig) SetOption(value AsteriskOptionConfig) *MultiTenantAsteriskConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantAsteriskConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func MultiTenantAsteriskConfigValidator(m *MultiTenantAsteriskConfig) {
+	m.SetKey(m.Key)
+}
+
+func GetMultiTenantAsteriskConfigSample() *MultiTenantAsteriskConfig {
+	m := NewMultiTenantAsteriskConfig().
+		SetKey("tenant_1").
+		SetUsableDefault(false).
+		SetConfigCursor(GetAsteriskConfigSample())
+	return m
+}
+
+func NewClusterMultiTenantAsteriskConfig() *ClusterMultiTenantAsteriskConfig {
+	c := &ClusterMultiTenantAsteriskConfig{}
+	return c
+}
+
+func (c *ClusterMultiTenantAsteriskConfig) SetClusters(values []MultiTenantAsteriskConfig) *ClusterMultiTenantAsteriskConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantAsteriskConfig) AppendClusters(values ...MultiTenantAsteriskConfig) *ClusterMultiTenantAsteriskConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantAsteriskConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func GetClusterMultiTenantAsteriskConfigSample() *ClusterMultiTenantAsteriskConfig {
+	c := NewClusterMultiTenantAsteriskConfig()
+	c.AppendClusters(*GetMultiTenantAsteriskConfigSample(), *GetMultiTenantAsteriskConfigSample().SetKey("tenant_2"))
+	return c
+}

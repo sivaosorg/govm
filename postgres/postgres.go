@@ -96,3 +96,83 @@ func GetPostgresConfigSample() *PostgresConfig {
 	p.SetMaxIdleConn(3)
 	return p
 }
+
+func NewPostgresOptionConfig() *postgresOptionConfig {
+	p := &postgresOptionConfig{}
+	return p
+}
+
+func NewMultiTenantPostgresConfig() *MultiTenantPostgresConfig {
+	m := &MultiTenantPostgresConfig{}
+	return m
+}
+
+func (m *MultiTenantPostgresConfig) SetKey(value string) *MultiTenantPostgresConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Key is required")
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantPostgresConfig) SetUsableDefault(value bool) *MultiTenantPostgresConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantPostgresConfig) SetConfig(value PostgresConfig) *MultiTenantPostgresConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantPostgresConfig) SetConfigCursor(value *PostgresConfig) *MultiTenantPostgresConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantPostgresConfig) SetOption(value postgresOptionConfig) *MultiTenantPostgresConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantPostgresConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func MultiTenantPostgresConfigValidator(m *MultiTenantPostgresConfig) {
+	m.SetKey(m.Key)
+}
+
+func GetMultiTenantPostgresConfigSample() *MultiTenantPostgresConfig {
+	m := NewMultiTenantPostgresConfig().
+		SetKey("tenant_1").
+		SetUsableDefault(false).
+		SetOption(*NewPostgresOptionConfig()).
+		SetConfigCursor(GetPostgresConfigSample())
+	return m
+}
+
+func NewClusterMultiTenantPostgresConfig() *ClusterMultiTenantPostgresConfig {
+	c := &ClusterMultiTenantPostgresConfig{}
+	return c
+}
+
+func (c *ClusterMultiTenantPostgresConfig) SetClusters(values []MultiTenantPostgresConfig) *ClusterMultiTenantPostgresConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantPostgresConfig) AppendClusters(values ...MultiTenantPostgresConfig) *ClusterMultiTenantPostgresConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantPostgresConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func GetClusterMultiTenantPostgresConfigSample() *ClusterMultiTenantPostgresConfig {
+	c := NewClusterMultiTenantPostgresConfig().
+		AppendClusters(*GetMultiTenantPostgresConfigSample(), *GetMultiTenantPostgresConfigSample().SetKey("tenant_2"))
+	return c
+}

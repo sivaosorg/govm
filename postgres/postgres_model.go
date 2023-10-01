@@ -7,8 +7,22 @@ type PostgresConfig struct {
 	Host        string `json:"host" binding:"required" yaml:"host"`
 	Port        int    `json:"port" binding:"required" yaml:"port"`
 	Username    string `json:"username" yaml:"username"`
-	Password    string `json:"password" yaml:"password"`
+	Password    string `json:"-" yaml:"password"`
 	SSLMode     string `json:"ssl_mode" binding:"required" yaml:"ssl-mode"`
 	MaxOpenConn int    `json:"max_open_conn" binding:"required" yaml:"max-open-conn"`
 	MaxIdleConn int    `json:"max_idle_conn" binding:"required" yaml:"max-idle-conn"`
+}
+
+type postgresOptionConfig struct {
+}
+
+type MultiTenantPostgresConfig struct {
+	Key             string               `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool                 `json:"usable_default" yaml:"usable_default"`
+	Config          PostgresConfig       `json:"config" yaml:"config"`
+	Option          postgresOptionConfig `json:"option,omitempty" yaml:"option"`
+}
+
+type ClusterMultiTenantPostgresConfig struct {
+	Clusters []MultiTenantPostgresConfig `json:"clusters,omitempty" yaml:"clusters"`
 }

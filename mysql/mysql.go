@@ -101,3 +101,82 @@ func GetMysqlConfigSample() *MysqlConfig {
 	m.SetMaxLifeTimeMinutesConn(10)
 	return m
 }
+
+func NewMysqlOptionConfig() *mysqlOptionConfig {
+	m := &mysqlOptionConfig{}
+	return m
+}
+
+func NewMultiTenantMysqlConfig() *MultiTenantMysqlConfig {
+	m := &MultiTenantMysqlConfig{}
+	return m
+}
+
+func (m *MultiTenantMysqlConfig) SetKey(value string) *MultiTenantMysqlConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Key is required")
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantMysqlConfig) SetUsableDefault(value bool) *MultiTenantMysqlConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantMysqlConfig) SetConfig(value MysqlConfig) *MultiTenantMysqlConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantMysqlConfig) SetConfigCursor(value *MysqlConfig) *MultiTenantMysqlConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantMysqlConfig) SetOption(value mysqlOptionConfig) *MultiTenantMysqlConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantMysqlConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func MultiTenantMysqlConfigValidator(m *MultiTenantMysqlConfig) {
+	m.SetKey(m.Key)
+}
+
+func GetMultiTenantMysqlConfigSample() *MultiTenantMysqlConfig {
+	m := NewMultiTenantMysqlConfig().
+		SetKey("tenant_1").
+		SetUsableDefault(false).
+		SetConfigCursor(GetMysqlConfigSample())
+	return m
+}
+
+func NewClusterMultiTenantMysqlConfig() *ClusterMultiTenantMysqlConfig {
+	c := &ClusterMultiTenantMysqlConfig{}
+	return c
+}
+
+func (c *ClusterMultiTenantMysqlConfig) SetClusters(values []MultiTenantMysqlConfig) *ClusterMultiTenantMysqlConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantMysqlConfig) AppendClusters(values ...MultiTenantMysqlConfig) *ClusterMultiTenantMysqlConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantMysqlConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func GetClusterMultiTenantMysqlConfigSample() *ClusterMultiTenantMysqlConfig {
+	c := NewClusterMultiTenantMysqlConfig().
+		AppendClusters(*GetMultiTenantMysqlConfigSample(), *GetMultiTenantMysqlConfigSample().SetKey("tenant_2"))
+	return c
+}

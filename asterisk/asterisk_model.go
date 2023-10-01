@@ -12,6 +12,20 @@ type AsteriskConfig struct {
 	Port      int             `json:"port" binding:"required" yaml:"port"`
 	Host      string          `json:"host" binding:"required" yaml:"host"`
 	Username  string          `json:"username" binding:"required" yaml:"username"`
-	Password  string          `json:"password" yaml:"password"`
+	Password  string          `json:"-" yaml:"password"`
 	Telephony TelephonyConfig `json:"telephony" yaml:"telephony"`
+}
+
+type AsteriskOptionConfig struct {
+}
+
+type MultiTenantAsteriskConfig struct {
+	Key             string               `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool                 `json:"usable_default" yaml:"usable_default"`
+	Config          AsteriskConfig       `json:"config" yaml:"config"`
+	Option          AsteriskOptionConfig `json:"option,omitempty" yaml:"option"`
+}
+
+type ClusterMultiTenantAsteriskConfig struct {
+	Clusters []MultiTenantAsteriskConfig `json:"clusters,omitempty" yaml:"clusters"`
 }

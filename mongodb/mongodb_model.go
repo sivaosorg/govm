@@ -8,7 +8,21 @@ type MongodbConfig struct {
 	Port               int    `json:"port" binding:"required" yaml:"port"`
 	Database           string `json:"database" binding:"required" yaml:"database"`
 	Username           string `json:"username" yaml:"username"`
-	Password           string `json:"password" yaml:"password"`
+	Password           string `json:"-" yaml:"password"`
 	TimeoutSecondsConn int    `json:"timeout_seconds_conn" yaml:"timeout-seconds-conn"`
 	AllowConnSync      bool   `json:"allow_conn_sync" yaml:"allow-conn-sync"`
+}
+
+type mongodbOptionConfig struct {
+}
+
+type MultiTenantMongodbConfig struct {
+	Key             string              `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool                `json:"usable_default" yaml:"usable_default"`
+	Config          MongodbConfig       `json:"config" yaml:"config"`
+	Option          mongodbOptionConfig `json:"option,omitempty" yaml:"option"`
+}
+
+type ClusterMultiTenantMongodbConfig struct {
+	Clusters []MultiTenantMongodbConfig `json:"clusters,omitempty" yaml:"clusters"`
 }

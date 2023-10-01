@@ -1,6 +1,10 @@
 package redisx
 
-import "github.com/sivaosorg/govm/utils"
+import (
+	"log"
+
+	"github.com/sivaosorg/govm/utils"
+)
 
 func NewRedisConfig() *RedisConfig {
 	r := &RedisConfig{}
@@ -43,4 +47,84 @@ func GetRedisConfigSample() *RedisConfig {
 	r.SetDatabase("database_stable")
 	r.SetUrlConn("localhost:6379")
 	return r
+}
+
+func NewRedisOptionConfig() *redisOptionConfig {
+	r := &redisOptionConfig{}
+	return r
+}
+
+func NewMultiTenantRedisConfig() *MultiTenantRedisConfig {
+	m := &MultiTenantRedisConfig{}
+	return m
+}
+
+func (m *MultiTenantRedisConfig) SetKey(value string) *MultiTenantRedisConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Key is required")
+	}
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantRedisConfig) SetUsableDefault(value bool) *MultiTenantRedisConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantRedisConfig) SetConfig(value RedisConfig) *MultiTenantRedisConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantRedisConfig) SetConfigCursor(value *RedisConfig) *MultiTenantRedisConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantRedisConfig) SetOption(value redisOptionConfig) *MultiTenantRedisConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantRedisConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func MultiTenantRedisConfigValidator(m *MultiTenantRedisConfig) {
+	m.SetKey(m.Key)
+}
+
+func GetMultiTenantRedisConfigSample() *MultiTenantRedisConfig {
+	m := NewMultiTenantRedisConfig().
+		SetKey("tenant_1").
+		SetUsableDefault(false).
+		SetConfigCursor(GetRedisConfigSample()).
+		SetOption(*NewRedisOptionConfig())
+	return m
+}
+
+func NewClusterMultiTenantRedisConfig() *ClusterMultiTenantRedisConfig {
+	c := &ClusterMultiTenantRedisConfig{}
+	return c
+}
+
+func (c *ClusterMultiTenantRedisConfig) SetClusters(values []MultiTenantRedisConfig) *ClusterMultiTenantRedisConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantRedisConfig) AppendClusters(values ...MultiTenantRedisConfig) *ClusterMultiTenantRedisConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantRedisConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func GetClusterMultiTenantRedisConfigSample() *ClusterMultiTenantRedisConfig {
+	c := NewClusterMultiTenantRedisConfig().
+		AppendClusters(*GetMultiTenantRedisConfigSample(), *GetMultiTenantRedisConfigSample().SetKey("tenant_2"))
+	return c
 }

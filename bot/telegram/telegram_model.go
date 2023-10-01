@@ -6,7 +6,7 @@ type TelegramConfig struct {
 	IsEnabled bool    `json:"enabled" yaml:"enabled"`
 	DebugMode bool    `json:"debug_mode" yaml:"debug-mode"`
 	ChatID    []int64 `json:"chat_id" binding:"required" yaml:"chat_id"`
-	Token     string  `json:"token" binding:"required" yaml:"token"`
+	Token     string  `json:"-" binding:"required" yaml:"token"`
 }
 
 type TelegramOptionConfig struct {
