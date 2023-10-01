@@ -1,6 +1,7 @@
 package redisx
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -127,4 +128,19 @@ func GetClusterMultiTenantRedisConfigSample() *ClusterMultiTenantRedisConfig {
 	c := NewClusterMultiTenantRedisConfig().
 		AppendClusters(*GetMultiTenantRedisConfigSample(), *GetMultiTenantRedisConfigSample().SetKey("tenant_2"))
 	return c
+}
+
+func (c *ClusterMultiTenantRedisConfig) FindClusterBy(key string) (MultiTenantRedisConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantRedisConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantRedisConfig(), fmt.Errorf("No redis cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantRedisConfig(), fmt.Errorf("The redis cluster not found")
 }

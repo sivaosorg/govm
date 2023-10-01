@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -175,4 +176,19 @@ func GetClusterMultiTenantPostgresConfigSample() *ClusterMultiTenantPostgresConf
 	c := NewClusterMultiTenantPostgresConfig().
 		AppendClusters(*GetMultiTenantPostgresConfigSample(), *GetMultiTenantPostgresConfigSample().SetKey("tenant_2"))
 	return c
+}
+
+func (c *ClusterMultiTenantPostgresConfig) FindClusterBy(key string) (MultiTenantPostgresConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantPostgresConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantPostgresConfig(), fmt.Errorf("No postgres cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantPostgresConfig(), fmt.Errorf("The postgres cluster not found")
 }

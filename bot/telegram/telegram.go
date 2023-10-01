@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -153,4 +154,19 @@ func (t *TelegramOptionConfig) SetTypeWith(value string) *TelegramOptionConfig {
 
 func (t *TelegramOptionConfig) Json() string {
 	return utils.ToJson(t)
+}
+
+func (c *ClusterMultiTenantTelegramConfig) FindClusterBy(key string) (MultiTenantTelegramConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantTelegramConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantTelegramConfig(), fmt.Errorf("No telegram cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantTelegramConfig(), fmt.Errorf("The telegram cluster not found")
 }

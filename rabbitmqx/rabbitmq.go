@@ -312,3 +312,18 @@ func GetClusterMultiTenantRabbitMqConfigSample() *ClusterMultiTenantRabbitMqConf
 		AppendClusters(*GetMultiTenantRabbitMqConfigSample(), *GetMultiTenantRabbitMqConfigSample().SetKey("tenant_2"))
 	return c
 }
+
+func (c *ClusterMultiTenantRabbitMqConfig) FindClusterBy(key string) (MultiTenantRabbitMqConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantRabbitMqConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantRabbitMqConfig(), fmt.Errorf("No rabbitmq cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantRabbitMqConfig(), fmt.Errorf("The rabbitmq cluster not found")
+}

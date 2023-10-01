@@ -1,6 +1,7 @@
 package asterisk
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -178,4 +179,19 @@ func GetClusterMultiTenantAsteriskConfigSample() *ClusterMultiTenantAsteriskConf
 	c := NewClusterMultiTenantAsteriskConfig()
 	c.AppendClusters(*GetMultiTenantAsteriskConfigSample(), *GetMultiTenantAsteriskConfigSample().SetKey("tenant_2"))
 	return c
+}
+
+func (c *ClusterMultiTenantAsteriskConfig) FindClusterBy(key string) (MultiTenantAsteriskConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantAsteriskConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantAsteriskConfig(), fmt.Errorf("No asterisk cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantAsteriskConfig(), fmt.Errorf("The asterisk cluster not found")
 }

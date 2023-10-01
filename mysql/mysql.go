@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -179,4 +180,19 @@ func GetClusterMultiTenantMysqlConfigSample() *ClusterMultiTenantMysqlConfig {
 	c := NewClusterMultiTenantMysqlConfig().
 		AppendClusters(*GetMultiTenantMysqlConfigSample(), *GetMultiTenantMysqlConfigSample().SetKey("tenant_2"))
 	return c
+}
+
+func (c *ClusterMultiTenantMysqlConfig) FindClusterBy(key string) (MultiTenantMysqlConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantMysqlConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantMysqlConfig(), fmt.Errorf("No mysql cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantMysqlConfig(), fmt.Errorf("The mysql cluster not found")
 }

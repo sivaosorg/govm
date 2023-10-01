@@ -1,6 +1,7 @@
 package slack
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -136,4 +137,19 @@ func GetClusterMultiTenantSlackConfigSample() *ClusterMultiTenantSlackConfig {
 	c := NewClusterMultiTenantSlackConfig()
 	c.AppendClusters(*GetMultiTenantSlackConfigSample(), *GetMultiTenantSlackConfigSample().SetKey("tenant_2"))
 	return c
+}
+
+func (c *ClusterMultiTenantSlackConfig) FindClusterBy(key string) (MultiTenantSlackConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantSlackConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantSlackConfig(), fmt.Errorf("No slack cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantSlackConfig(), fmt.Errorf("The slack cluster not found")
 }

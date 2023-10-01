@@ -1,6 +1,7 @@
 package mongodb
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/sivaosorg/govm/utils"
@@ -168,4 +169,19 @@ func GetClusterMultiTenantMongodbConfigSample() *ClusterMultiTenantMongodbConfig
 	c := NewClusterMultiTenantMongodbConfig()
 	c.AppendClusters(*GetMultiTenantMongodbConfigSample(), *GetMultiTenantMongodbConfigSample().SetKey("tenant_2"))
 	return c
+}
+
+func (c *ClusterMultiTenantMongodbConfig) FindClusterBy(key string) (MultiTenantMongodbConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantMongodbConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantMongodbConfig(), fmt.Errorf("No mongodb cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantMongodbConfig(), fmt.Errorf("The mongodb cluster not found")
 }
