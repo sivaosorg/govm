@@ -9,62 +9,62 @@ import (
 	"github.com/sivaosorg/govm/utils"
 )
 
-func NewResponseEntity() *ResponseEntity {
-	r := &ResponseEntity{}
+func NewResponseEntity() *responseEntity {
+	r := &responseEntity{}
 	r.SetHeaders(make(map[string]interface{}))
 	r.SetMeta(*NewMetaEntity())
 	return r
 }
 
-func NewPaginationEntity() *PaginationEntity {
-	p := &PaginationEntity{}
+func NewPaginationEntity() *paginationEntity {
+	p := &paginationEntity{}
 	p.SetIsLast(false)
 	return p
 }
 
-func NewMetaEntity() *MetaEntity {
-	m := &MetaEntity{}
+func NewMetaEntity() *metaEntity {
+	m := &metaEntity{}
 	m.SetCustomFields(make(map[string]interface{}))
 	m.SetRequestedTime(time.Now())
 	m.SetApiVersion("v1.0.0")
 	return m
 }
 
-func (m *MetaEntity) SetApiVersion(value string) *MetaEntity {
+func (m *metaEntity) SetApiVersion(value string) *metaEntity {
 	m.ApiVersion = utils.TrimSpaces(value)
 	return m
 }
 
-func (m *MetaEntity) SetRequestId(value string) *MetaEntity {
+func (m *metaEntity) SetRequestId(value string) *metaEntity {
 	m.RequestId = value
 	return m
 }
 
-func (m *MetaEntity) SetRequestedTime(value time.Time) *MetaEntity {
+func (m *metaEntity) SetRequestedTime(value time.Time) *metaEntity {
 	m.RequestedTime = value
 	return m
 }
 
-func (m *MetaEntity) SetCustomFields(value map[string]interface{}) *MetaEntity {
+func (m *metaEntity) SetCustomFields(value map[string]interface{}) *metaEntity {
 	m.CustomFields = value
 	return m
 }
 
-func (m *MetaEntity) AppendCustomField(value string, key interface{}) *MetaEntity {
+func (m *metaEntity) AppendCustomField(value string, key interface{}) *metaEntity {
 	m.CustomFields[value] = key
 	return m
 }
 
-func (m *MetaEntity) AppendCustomFields(value string, keys ...interface{}) *MetaEntity {
+func (m *metaEntity) AppendCustomFields(value string, keys ...interface{}) *metaEntity {
 	m.CustomFields[value] = keys
 	return m
 }
 
-func (m *MetaEntity) Json() string {
+func (m *metaEntity) Json() string {
 	return utils.ToJson(m)
 }
 
-func (p *PaginationEntity) SetPage(value int) *PaginationEntity {
+func (p *paginationEntity) SetPage(value int) *paginationEntity {
 	if value <= 0 {
 		log.Panicf("Invalid page: %v", value)
 	}
@@ -72,7 +72,7 @@ func (p *PaginationEntity) SetPage(value int) *PaginationEntity {
 	return p
 }
 
-func (p *PaginationEntity) SetPerPage(value int) *PaginationEntity {
+func (p *paginationEntity) SetPerPage(value int) *paginationEntity {
 	if value < 0 {
 		log.Panicf("Invalid per_page: %v", value)
 	}
@@ -80,7 +80,7 @@ func (p *PaginationEntity) SetPerPage(value int) *PaginationEntity {
 	return p
 }
 
-func (p *PaginationEntity) SetTotalPages(value int) *PaginationEntity {
+func (p *paginationEntity) SetTotalPages(value int) *paginationEntity {
 	if value < 0 {
 		log.Panicf("Invalid total_pages: %v", value)
 	}
@@ -88,7 +88,7 @@ func (p *PaginationEntity) SetTotalPages(value int) *PaginationEntity {
 	return p
 }
 
-func (p *PaginationEntity) SetTotalItems(value int) *PaginationEntity {
+func (p *paginationEntity) SetTotalItems(value int) *paginationEntity {
 	if value < 0 {
 		log.Panicf("Invalid total_items: %v", value)
 	}
@@ -96,28 +96,28 @@ func (p *PaginationEntity) SetTotalItems(value int) *PaginationEntity {
 	return p
 }
 
-func (p *PaginationEntity) SetIsLast(value bool) *PaginationEntity {
+func (p *paginationEntity) SetIsLast(value bool) *paginationEntity {
 	p.IsLast = value
 	return p
 }
 
-func (p *PaginationEntity) Json() string {
+func (p *paginationEntity) Json() string {
 	return utils.ToJson(p)
 }
 
-func PaginationEntityValidator(p *PaginationEntity) {
+func PaginationEntityValidator(p *paginationEntity) {
 	p.SetPage(p.Page).
 		SetPerPage(p.PerPage).
 		SetTotalPages(p.TotalPages).
 		SetTotalItems(p.TotalItems)
 }
 
-func (r *ResponseEntity) SetStatusCode(value int) *ResponseEntity {
+func (r *responseEntity) SetStatusCode(value int) *responseEntity {
 	r.StatusCode = value
 	return r
 }
 
-func (r *ResponseEntity) SetTotal(value int) *ResponseEntity {
+func (r *responseEntity) SetTotal(value int) *responseEntity {
 	if value < 0 {
 		log.Panicf("Invalid total: %v", value)
 	}
@@ -125,66 +125,66 @@ func (r *ResponseEntity) SetTotal(value int) *ResponseEntity {
 	return r
 }
 
-func (r *ResponseEntity) SetMessage(value string) *ResponseEntity {
+func (r *responseEntity) SetMessage(value string) *responseEntity {
 	r.Message = value
 	return r
 }
 
-func (r *ResponseEntity) AppendMessage(value ...string) *ResponseEntity {
+func (r *responseEntity) AppendMessage(value ...string) *responseEntity {
 	r.Message = strings.Join(value, ",")
 	return r
 }
 
-func (r *ResponseEntity) SetData(value interface{}) *ResponseEntity {
+func (r *responseEntity) SetData(value interface{}) *responseEntity {
 	r.Data = value
 	return r
 }
 
-func (r *ResponseEntity) SetErrors(value interface{}) *ResponseEntity {
+func (r *responseEntity) SetErrors(value interface{}) *responseEntity {
 	r.Errors = value
 	return r
 }
 
-func (r *ResponseEntity) SetError(value error) *ResponseEntity {
+func (r *responseEntity) SetError(value error) *responseEntity {
 	r.Errors = value.Error()
 	return r
 }
 
-func (r *ResponseEntity) SetHeaders(value map[string]interface{}) *ResponseEntity {
+func (r *responseEntity) SetHeaders(value map[string]interface{}) *responseEntity {
 	r.Headers = value
 	return r
 }
 
-func (r *ResponseEntity) AppendHeader(key string, value string) *ResponseEntity {
+func (r *responseEntity) AppendHeader(key string, value string) *responseEntity {
 	r.Headers[key] = value
 	return r
 }
 
-func (r *ResponseEntity) AppendHeaders(key string, value ...string) *ResponseEntity {
+func (r *responseEntity) AppendHeaders(key string, value ...string) *responseEntity {
 	r.Headers[key] = value
 	return r
 }
 
-func (r *ResponseEntity) AppendHeaderWith(key string, value interface{}) *ResponseEntity {
+func (r *responseEntity) AppendHeaderWith(key string, value interface{}) *responseEntity {
 	r.Headers[key] = value
 	return r
 }
 
-func (r *ResponseEntity) SetMeta(value MetaEntity) *ResponseEntity {
+func (r *responseEntity) SetMeta(value metaEntity) *responseEntity {
 	r.Meta = value
 	return r
 }
 
-func (r *ResponseEntity) SetPagination(value PaginationEntity) *ResponseEntity {
+func (r *responseEntity) SetPagination(value paginationEntity) *responseEntity {
 	r.Pagination = value
 	return r
 }
 
-func (r *ResponseEntity) Json() string {
+func (r *responseEntity) Json() string {
 	return utils.ToJson(r)
 }
 
-func (ResponseEntity) Ok(message string, data interface{}) ResponseEntity {
+func (responseEntity) Ok(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusOK).
 		SetMessage(message).
@@ -193,7 +193,7 @@ func (ResponseEntity) Ok(message string, data interface{}) ResponseEntity {
 	return *r
 }
 
-func (ResponseEntity) Created(message string, data interface{}) ResponseEntity {
+func (responseEntity) Created(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusCreated).
 		SetMessage(message).
@@ -202,7 +202,7 @@ func (ResponseEntity) Created(message string, data interface{}) ResponseEntity {
 	return *r
 }
 
-func (ResponseEntity) BadRequest(message string, data interface{}) ResponseEntity {
+func (responseEntity) BadRequest(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusBadRequest).
 		SetMessage(message).
@@ -211,7 +211,7 @@ func (ResponseEntity) BadRequest(message string, data interface{}) ResponseEntit
 	return *r
 }
 
-func (ResponseEntity) NotFound(message string, data interface{}) ResponseEntity {
+func (responseEntity) NotFound(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusNotFound).
 		SetMessage(message).
@@ -220,7 +220,7 @@ func (ResponseEntity) NotFound(message string, data interface{}) ResponseEntity 
 	return *r
 }
 
-func (ResponseEntity) NotImplemented(message string, data interface{}) ResponseEntity {
+func (responseEntity) NotImplemented(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusNotImplemented).
 		SetMessage(message).
@@ -229,7 +229,7 @@ func (ResponseEntity) NotImplemented(message string, data interface{}) ResponseE
 	return *r
 }
 
-func (ResponseEntity) TooManyRequest(message string, data interface{}) ResponseEntity {
+func (responseEntity) TooManyRequest(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusTooManyRequests).
 		SetMessage(message).
@@ -238,7 +238,7 @@ func (ResponseEntity) TooManyRequest(message string, data interface{}) ResponseE
 	return *r
 }
 
-func (ResponseEntity) Locked(message string, data interface{}) ResponseEntity {
+func (responseEntity) Locked(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusLocked).
 		SetMessage(message).
@@ -247,7 +247,7 @@ func (ResponseEntity) Locked(message string, data interface{}) ResponseEntity {
 	return *r
 }
 
-func (ResponseEntity) NoContent(message string, data interface{}) ResponseEntity {
+func (responseEntity) NoContent(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusNoContent).
 		SetMessage(message).
@@ -256,7 +256,7 @@ func (ResponseEntity) NoContent(message string, data interface{}) ResponseEntity
 	return *r
 }
 
-func (ResponseEntity) Processing(message string, data interface{}) ResponseEntity {
+func (responseEntity) Processing(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusProcessing).
 		SetMessage(message).
@@ -265,7 +265,7 @@ func (ResponseEntity) Processing(message string, data interface{}) ResponseEntit
 	return *r
 }
 
-func (ResponseEntity) UpgradeRequired(message string, data interface{}) ResponseEntity {
+func (responseEntity) UpgradeRequired(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusUpgradeRequired).
 		SetMessage(message).
@@ -274,7 +274,7 @@ func (ResponseEntity) UpgradeRequired(message string, data interface{}) Response
 	return *r
 }
 
-func (ResponseEntity) ServiceUnavailable(message string, data interface{}) ResponseEntity {
+func (responseEntity) ServiceUnavailable(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusServiceUnavailable).
 		SetMessage(message).
@@ -283,7 +283,7 @@ func (ResponseEntity) ServiceUnavailable(message string, data interface{}) Respo
 	return *r
 }
 
-func (ResponseEntity) InternalServerError(message string, data interface{}) ResponseEntity {
+func (responseEntity) InternalServerError(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusInternalServerError).
 		SetMessage(message).
@@ -292,7 +292,7 @@ func (ResponseEntity) InternalServerError(message string, data interface{}) Resp
 	return *r
 }
 
-func (ResponseEntity) GatewayTimeout(message string, data interface{}) ResponseEntity {
+func (responseEntity) GatewayTimeout(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusGatewayTimeout).
 		SetMessage(message).
@@ -301,7 +301,7 @@ func (ResponseEntity) GatewayTimeout(message string, data interface{}) ResponseE
 	return *r
 }
 
-func (ResponseEntity) MethodNotAllowed(message string, data interface{}) ResponseEntity {
+func (responseEntity) MethodNotAllowed(message string, data interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(http.StatusMethodNotAllowed).
 		SetMessage(message).
@@ -310,7 +310,7 @@ func (ResponseEntity) MethodNotAllowed(message string, data interface{}) Respons
 	return *r
 }
 
-func (ResponseEntity) BuildX(statusCode int, message string, data interface{}, errors interface{}) ResponseEntity {
+func (responseEntity) BuildX(statusCode int, message string, data interface{}, errors interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(statusCode).
 		SetMessage(message).
