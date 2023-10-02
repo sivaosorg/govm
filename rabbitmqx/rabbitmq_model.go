@@ -1,5 +1,7 @@
 package rabbitmqx
 
+import "time"
+
 type clusters map[string]RabbitMqMessageConfig
 
 type RabbitMqConfig struct {
@@ -12,6 +14,7 @@ type RabbitMqConfig struct {
 	Port      int                   `json:"port" binding:"required" yaml:"port"`
 	Message   RabbitMqMessageConfig `json:"message,omitempty" yaml:"message"`
 	Clusters  clusters              `json:"clusters,omitempty" yaml:"clusters"`
+	Timeout   time.Duration         `json:"-" yaml:"-"`
 }
 
 type RabbitMqExchangeConfig struct {

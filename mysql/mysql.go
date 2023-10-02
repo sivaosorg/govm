@@ -3,12 +3,14 @@ package mysql
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewMysqlConfig() *MysqlConfig {
 	m := &MysqlConfig{}
+	m.SetTimeout(10 * time.Second)
 	return m
 }
 
@@ -74,6 +76,11 @@ func (m *MysqlConfig) SetMaxLifeTimeMinutesConn(values int) *MysqlConfig {
 
 func (m *MysqlConfig) SetDebugMode(value bool) *MysqlConfig {
 	m.DebugMode = value
+	return m
+}
+
+func (m *MysqlConfig) SetTimeout(value time.Duration) *MysqlConfig {
+	m.Timeout = value
 	return m
 }
 

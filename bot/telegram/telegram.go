@@ -3,12 +3,14 @@ package telegram
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewTelegramConfig() *TelegramConfig {
 	t := &TelegramConfig{}
+	t.SetTimeout(10 * time.Second)
 	return t
 }
 
@@ -40,6 +42,11 @@ func (t *TelegramConfig) SetChatId(values []int64) *TelegramConfig {
 
 func (t *TelegramConfig) AppendChatId(values ...int64) *TelegramConfig {
 	t.ChatID = append(t.ChatID, values...)
+	return t
+}
+
+func (t *TelegramConfig) SetTimeout(value time.Duration) *TelegramConfig {
+	t.Timeout = value
 	return t
 }
 

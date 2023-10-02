@@ -1,11 +1,14 @@
 package redisx
 
+import "time"
+
 type RedisConfig struct {
-	IsEnabled bool   `json:"enabled" yaml:"enabled"`
-	DebugMode bool   `json:"debug_mode" yaml:"debug-mode"`
-	UrlConn   string `json:"url_conn" binding:"required" yaml:"url-conn"`
-	Password  string `json:"-" binding:"required" yaml:"password"`
-	Database  string `json:"database" binding:"required" yaml:"database"`
+	IsEnabled bool          `json:"enabled" yaml:"enabled"`
+	DebugMode bool          `json:"debug_mode" yaml:"debug-mode"`
+	UrlConn   string        `json:"url_conn" binding:"required" yaml:"url-conn"`
+	Password  string        `json:"-" binding:"required" yaml:"password"`
+	Database  string        `json:"database" binding:"required" yaml:"database"`
+	Timeout   time.Duration `json:"-" yaml:"-"`
 }
 
 type redisOptionConfig struct {

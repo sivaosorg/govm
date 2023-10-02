@@ -1,5 +1,7 @@
 package asterisk
 
+import "time"
+
 type TelephonyConfig struct {
 	Region      string        `json:"region" yaml:"region"`
 	PhonePrefix []string      `json:"phone_prefix" yaml:"phone-prefix"`
@@ -14,6 +16,7 @@ type AsteriskConfig struct {
 	Username  string          `json:"username" binding:"required" yaml:"username"`
 	Password  string          `json:"-" yaml:"password"`
 	Telephony TelephonyConfig `json:"telephony" yaml:"telephony"`
+	Timeout   time.Duration   `json:"-" yaml:"-"`
 }
 
 type AsteriskOptionConfig struct {

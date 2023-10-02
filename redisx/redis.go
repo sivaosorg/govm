@@ -3,12 +3,14 @@ package redisx
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewRedisConfig() *RedisConfig {
 	r := &RedisConfig{}
+	r.SetTimeout(10 * time.Second)
 	return r
 }
 
@@ -34,6 +36,11 @@ func (r *RedisConfig) SetDatabase(value string) *RedisConfig {
 
 func (r *RedisConfig) SetDebugMode(value bool) *RedisConfig {
 	r.DebugMode = value
+	return r
+}
+
+func (r *RedisConfig) SetTimeout(value time.Duration) *RedisConfig {
+	r.Timeout = value
 	return r
 }
 

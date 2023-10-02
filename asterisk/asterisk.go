@@ -3,12 +3,14 @@ package asterisk
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewAsteriskConfig() *AsteriskConfig {
 	a := &AsteriskConfig{}
+	a.SetTimeout(10 * time.Second) // default timeout 10s
 	return a
 }
 
@@ -77,6 +79,11 @@ func (a *AsteriskConfig) SetTelephony(value TelephonyConfig) *AsteriskConfig {
 
 func (a *AsteriskConfig) SetDebugMode(value bool) *AsteriskConfig {
 	a.DebugMode = value
+	return a
+}
+
+func (a *AsteriskConfig) SetTimeout(value time.Duration) *AsteriskConfig {
+	a.Timeout = value
 	return a
 }
 

@@ -3,12 +3,14 @@ package postgres
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewPostgresConfig() *PostgresConfig {
 	p := &PostgresConfig{}
+	p.SetTimeout(10 * time.Second)
 	return p
 }
 
@@ -71,6 +73,11 @@ func (p *PostgresConfig) SetMaxIdleConn(value int) *PostgresConfig {
 
 func (p *PostgresConfig) SetDebugMode(value bool) *PostgresConfig {
 	p.DebugMode = value
+	return p
+}
+
+func (p *PostgresConfig) SetTimeout(value time.Duration) *PostgresConfig {
+	p.Timeout = value
 	return p
 }
 

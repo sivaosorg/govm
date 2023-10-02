@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/sivaosorg/govm/coltx"
 	"github.com/sivaosorg/govm/utils"
@@ -11,6 +12,7 @@ import (
 
 func NewRabbitMqConfig() *RabbitMqConfig {
 	r := &RabbitMqConfig{}
+	r.SetTimeout(10 * time.Second)
 	return r
 }
 
@@ -92,6 +94,11 @@ func (r *RabbitMqConfig) SetClusters(values map[string]RabbitMqMessageConfig) *R
 	if len(values) > 0 {
 		r.Clusters = values
 	}
+	return r
+}
+
+func (r *RabbitMqConfig) SetTimeout(value time.Duration) *RabbitMqConfig {
+	r.Timeout = value
 	return r
 }
 

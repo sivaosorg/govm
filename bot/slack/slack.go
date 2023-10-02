@@ -3,12 +3,14 @@ package slack
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewSlackConfig() *SlackConfig {
 	s := &SlackConfig{}
+	s.SetTimeout(10 * time.Second) // default timeout 10s
 	return s
 }
 
@@ -40,6 +42,11 @@ func (s *SlackConfig) SetToken(value string) *SlackConfig {
 		log.Panicf("Invalid token: %v", value)
 	}
 	s.Token = value
+	return s
+}
+
+func (s *SlackConfig) SetTimeout(value time.Duration) *SlackConfig {
+	s.Timeout = value
 	return s
 }
 

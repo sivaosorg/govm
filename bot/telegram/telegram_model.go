@@ -1,12 +1,15 @@
 package telegram
 
+import "time"
+
 type TelegramFormatType string
 
 type TelegramConfig struct {
-	IsEnabled bool    `json:"enabled" yaml:"enabled"`
-	DebugMode bool    `json:"debug_mode" yaml:"debug-mode"`
-	ChatID    []int64 `json:"chat_id" binding:"required" yaml:"chat_id"`
-	Token     string  `json:"-" binding:"required" yaml:"token"`
+	IsEnabled bool          `json:"enabled" yaml:"enabled"`
+	DebugMode bool          `json:"debug_mode" yaml:"debug-mode"`
+	ChatID    []int64       `json:"chat_id" binding:"required" yaml:"chat_id"`
+	Token     string        `json:"-" binding:"required" yaml:"token"`
+	Timeout   time.Duration `json:"-" yaml:"-"`
 }
 
 type TelegramOptionConfig struct {

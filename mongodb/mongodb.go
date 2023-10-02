@@ -3,12 +3,14 @@ package mongodb
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewMongodbConfig() *MongodbConfig {
 	m := &MongodbConfig{}
+	m.SetTimeout(10 * time.Second)
 	return m
 }
 
@@ -65,6 +67,11 @@ func (m *MongodbConfig) SetAllowConnSync(value bool) *MongodbConfig {
 
 func (m *MongodbConfig) SetDebugMode(value bool) *MongodbConfig {
 	m.DebugMode = value
+	return m
+}
+
+func (m *MongodbConfig) SetTimeout(value time.Duration) *MongodbConfig {
+	m.Timeout = value
 	return m
 }
 
