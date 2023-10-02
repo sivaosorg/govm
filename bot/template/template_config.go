@@ -1,23 +1,23 @@
 package template
 
 const (
-	MessageTypeNotification = "Notification"
-	MessageTypeInformation  = "Information"
-	MessageTypeWarning      = "Warning"
-	MessageTypeError        = "Error"
-	MessageTypeDebug        = "Debug"
-	MessageTypeSuccess      = "Success"
-	MessageTypeBug          = "Bug"
-	MessageTypeTrace        = "Trace"
+	TypeNotification = "Notification"
+	TypeInformation  = "Info"
+	TypeWarning      = "Warning"
+	TypeError        = "Error"
+	TypeDebug        = "Debug"
+	TypeSuccess      = "Success"
+	TypeBug          = "Bug"
+	TypeTrace        = "Trace"
 )
 
-var MessageTypeIcons = map[string]string{
-	MessageTypeNotification: "🔔",
-	MessageTypeInformation:  "ℹ️",
-	MessageTypeWarning:      "⚠️",
-	MessageTypeError:        "❌",
-	MessageTypeDebug:        "🐞",
-	MessageTypeSuccess:      "✅",
-	MessageTypeBug:          "🐛",
-	MessageTypeTrace:        "🔍",
+var TypeIcons = map[string]string{
+	TypeNotification: "🔔",
+	TypeInformation:  "ℹ️",
+	TypeWarning:      "⚠️",
+	TypeError:        "❌",
+	TypeDebug:        "🐞",
+	TypeSuccess:      "✅",
+	TypeBug:          "🐛",
+	TypeTrace:        "🔍",
 }
