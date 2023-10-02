@@ -10,14 +10,15 @@ type SlackConfig struct {
 	Timeout   time.Duration `json:"-" yaml:"-"`
 }
 
-type SlackOptionConfig struct {
+type slackOptionConfig struct {
+	MaxRetries int `json:"max_retries" yaml:"max-retries"`
 }
 
 type MultiTenantSlackConfig struct {
 	Key             string            `json:"key" binding:"required" yaml:"key"`
 	IsUsableDefault bool              `json:"usable_default" yaml:"usable_default"`
 	Config          SlackConfig       `json:"config" yaml:"config"`
-	Option          SlackOptionConfig `json:"option,omitempty" yaml:"option"`
+	Option          slackOptionConfig `json:"option,omitempty" yaml:"option"`
 }
 
 type ClusterMultiTenantSlackConfig struct {

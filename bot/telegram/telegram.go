@@ -3,6 +3,7 @@ package telegram
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"time"
 
 	"github.com/sivaosorg/govm/utils"
@@ -97,7 +98,7 @@ func (m *MultiTenantTelegramConfig) SetConfigCursor(value *TelegramConfig) *Mult
 	return m
 }
 
-func (m *MultiTenantTelegramConfig) SetOption(value TelegramOptionConfig) *MultiTenantTelegramConfig {
+func (m *MultiTenantTelegramConfig) SetOption(value telegramOptionConfig) *MultiTenantTelegramConfig {
 	m.Option = value
 	return m
 }
@@ -140,18 +141,19 @@ func GetClusterMultiTenantTelegramConfigSample() *ClusterMultiTenantTelegramConf
 	return c
 }
 
-func NewTelegramOptionConfig() *TelegramOptionConfig {
-	t := &TelegramOptionConfig{}
+func NewTelegramOptionConfig() *telegramOptionConfig {
+	t := &telegramOptionConfig{}
 	t.SetType(ModeMarkdown)
+	t.SetMaxRetries(2)
 	return t
 }
 
-func (t *TelegramOptionConfig) SetType(value TelegramFormatType) *TelegramOptionConfig {
+func (t *telegramOptionConfig) SetType(value TelegramFormatType) *telegramOptionConfig {
 	t.Type = value
 	return t
 }
 
-func (t *TelegramOptionConfig) SetTypeWith(value string) *TelegramOptionConfig {
+func (t *telegramOptionConfig) SetTypeWith(value string) *telegramOptionConfig {
 	if ok, _ := ModeText[TelegramFormatType(value)]; !ok || utils.IsEmpty(value) {
 		log.Panicf("Invalid type: %s", value)
 	}
@@ -159,7 +161,15 @@ func (t *TelegramOptionConfig) SetTypeWith(value string) *TelegramOptionConfig {
 	return t
 }
 
-func (t *TelegramOptionConfig) Json() string {
+func (t *telegramOptionConfig) SetMaxRetries(value int) *telegramOptionConfig {
+	if value <= 0 {
+		log.Panicf("Invalid max-retries: %v", value)
+	}
+	t.MaxRetries = value
+	return t
+}
+
+func (t *telegramOptionConfig) Json() string {
 	return utils.ToJson(t)
 }
 
@@ -176,4 +186,70 @@ func (c *ClusterMultiTenantTelegramConfig) FindClusterBy(key string) (MultiTenan
 		}
 	}
 	return *NewMultiTenantTelegramConfig(), fmt.Errorf("The telegram cluster not found")
+}
+
+func NewButton() *button {
+	b := &button{}
+	return b
+}
+
+func (b *button) SetText(value string) *button {
+	b.Text = value
+	return b
+}
+
+func (b *button) SetUrl(value string) *button {
+	_, err := url.Parse(value)
+	if err != nil {
+		log.Fatalf("Parse Url %v got an error: %v", value, err.Error())
+	}
+	b.Url = value
+	return b
+}
+
+func (b *button) Json() string {
+	return utils.ToJson(b)
+}
+
+func GetButtonSample() *button {
+	b := NewButton().
+		SetText("Click").
+		SetUrl("https://www.google.com")
+	return b
+}
+
+func NewInlineKeyboard() *inlineKeyboard {
+	i := &inlineKeyboard{}
+	return i
+}
+
+func (i *inlineKeyboard) SetText(value string) *inlineKeyboard {
+	i.Text = value
+	return i
+}
+
+func (i *inlineKeyboard) SetUrl(value string) *inlineKeyboard {
+	_, err := url.Parse(value)
+	if err != nil {
+		log.Fatalf("Parse Url %v got an error: %v", value, err.Error())
+	}
+	i.Url = value
+	return i
+}
+
+func (i *inlineKeyboard) SetPayload(value string) *inlineKeyboard {
+	i.Payload = value
+	return i
+}
+
+func (i *inlineKeyboard) Json() string {
+	return utils.ToJson(i)
+}
+
+func GetInlineKeyboardButtonSample() *inlineKeyboard {
+	i := NewInlineKeyboard().
+		SetText("Click").
+		SetUrl("https://www.google.com").
+		SetPayload("Hook Trial")
+	return i
 }

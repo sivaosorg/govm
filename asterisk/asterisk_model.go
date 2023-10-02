@@ -19,14 +19,14 @@ type AsteriskConfig struct {
 	Timeout   time.Duration   `json:"-" yaml:"-"`
 }
 
-type AsteriskOptionConfig struct {
+type asteriskOptionConfig struct {
 }
 
 type MultiTenantAsteriskConfig struct {
 	Key             string               `json:"key" binding:"required" yaml:"key"`
 	IsUsableDefault bool                 `json:"usable_default" yaml:"usable_default"`
 	Config          AsteriskConfig       `json:"config" yaml:"config"`
-	Option          AsteriskOptionConfig `json:"option,omitempty" yaml:"option"`
+	Option          asteriskOptionConfig `json:"option,omitempty" yaml:"option"`
 }
 
 type ClusterMultiTenantAsteriskConfig struct {

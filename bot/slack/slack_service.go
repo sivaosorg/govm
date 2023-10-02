@@ -16,17 +16,18 @@ type SlackService interface {
 
 type slackServiceImpl struct {
 	config SlackConfig       `json:"-"`
-	option SlackOptionConfig `json:"-"`
+	option slackOptionConfig `json:"-"`
 }
 
 func NewSlackService(config SlackConfig) SlackService {
 	s := &slackServiceImpl{
 		config: config,
 	}
+	s.option = *NewSlackOptionConfig()
 	return s
 }
 
-func NewSlackServiceWith(config SlackConfig, option SlackOptionConfig) SlackService {
+func NewSlackServiceWith(config SlackConfig, option slackOptionConfig) SlackService {
 	s := &slackServiceImpl{
 		config: config,
 		option: option,
@@ -70,7 +71,7 @@ func (s *slackServiceImpl) sendText(message builder.MapBuilder) (builder.MapBuil
 	url := fmt.Sprintf("%s/chat.postMessage", Host)
 	client := restify.New()
 	result := &map[string]interface{}{}
-	client.SetRetryCount(2).
+	client.SetRetryCount(s.option.MaxRetries).
 		// Default is 100 milliseconds.
 		SetRetryWaitTime(10 * time.Second).
 		// Default is 2 seconds.

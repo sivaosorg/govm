@@ -12,17 +12,34 @@ type TelegramConfig struct {
 	Timeout   time.Duration `json:"-" yaml:"-"`
 }
 
-type TelegramOptionConfig struct {
-	Type TelegramFormatType `json:"type" binding:"required" yaml:"type"`
+type telegramOptionConfig struct {
+	Type       TelegramFormatType `json:"type" binding:"required" yaml:"type"`
+	MaxRetries int                `json:"max_retries" yaml:"max-retries"`
 }
 
 type MultiTenantTelegramConfig struct {
 	Key             string               `json:"key" binding:"required" yaml:"key"`
 	IsUsableDefault bool                 `json:"usable_default" yaml:"usable_default"`
 	Config          TelegramConfig       `json:"config" yaml:"config"`
-	Option          TelegramOptionConfig `json:"option" binding:"required" yaml:"option"`
+	Option          telegramOptionConfig `json:"option" binding:"required" yaml:"option"`
 }
 
 type ClusterMultiTenantTelegramConfig struct {
 	Clusters []MultiTenantTelegramConfig `json:"clusters,omitempty" yaml:"clusters"`
+}
+
+// Components
+
+// Table of contents
+// Button
+type button struct {
+	Text string `json:"text"`
+	Url  string `json:"url,omitempty"`
+}
+
+// Inline Keyboard
+type inlineKeyboard struct {
+	Text    string `json:"text"`
+	Url     string `json:"url,omitempty"`
+	Payload string `json:"callback_data,omitempty"`
 }

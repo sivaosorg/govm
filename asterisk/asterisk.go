@@ -142,7 +142,7 @@ func (m *MultiTenantAsteriskConfig) SetConfigCursor(value *AsteriskConfig) *Mult
 	return m
 }
 
-func (m *MultiTenantAsteriskConfig) SetOption(value AsteriskOptionConfig) *MultiTenantAsteriskConfig {
+func (m *MultiTenantAsteriskConfig) SetOption(value asteriskOptionConfig) *MultiTenantAsteriskConfig {
 	m.Option = value
 	return m
 }

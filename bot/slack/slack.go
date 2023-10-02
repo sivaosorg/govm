@@ -67,8 +67,17 @@ func GetSlackConfigSample() *SlackConfig {
 	return s
 }
 
-func NewSlackOptionConfig() *SlackOptionConfig {
-	s := &SlackOptionConfig{}
+func NewSlackOptionConfig() *slackOptionConfig {
+	s := &slackOptionConfig{}
+	s.SetMaxRetries(2)
+	return s
+}
+
+func (s *slackOptionConfig) SetMaxRetries(value int) *slackOptionConfig {
+	if value <= 0 {
+		log.Fatalf("Invalid max-retries: %v", value)
+	}
+	s.MaxRetries = value
 	return s
 }
 
@@ -100,7 +109,7 @@ func (m *MultiTenantSlackConfig) SetConfigCursor(value *SlackConfig) *MultiTenan
 	return m
 }
 
-func (m *MultiTenantSlackConfig) SetOption(value SlackOptionConfig) *MultiTenantSlackConfig {
+func (m *MultiTenantSlackConfig) SetOption(value slackOptionConfig) *MultiTenantSlackConfig {
 	m.Option = value
 	return m
 }
