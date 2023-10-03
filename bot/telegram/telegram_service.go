@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/sivaosorg/govm/bot/blueprint"
 	"github.com/sivaosorg/govm/builder"
 	"github.com/sivaosorg/govm/restify"
 )
@@ -17,6 +18,23 @@ type TelegramService interface {
 	SendFile(filename string, message ...string) (builder.MapBuilder, error)
 	SendFiles(attachment map[string]string) (builder.MapBuilder, error)
 	SendInlineKeyboard(message interface{}, buttons ...button) (builder.MapBuilder, error)
+
+	// Send message as notification
+	SendNotification(topic, message string) (builder.MapBuilder, error)
+	// Send message as information
+	SendInfo(topic, message string) (builder.MapBuilder, error)
+	// Send message as warning
+	SendWarning(topic, message string) (builder.MapBuilder, error)
+	// Send message as error
+	SendError(topic, message string) (builder.MapBuilder, error)
+	// Send message as debug
+	SendDebug(topic, message string) (builder.MapBuilder, error)
+	// Send message as success
+	SendSuccess(topic, message string) (builder.MapBuilder, error)
+	// Send message as bug
+	SendBug(topic, message string) (builder.MapBuilder, error)
+	// Send message as trace
+	SendTrace(topic, message string) (builder.MapBuilder, error)
 }
 
 type telegramServiceImpl struct {
@@ -115,13 +133,54 @@ func (s *telegramServiceImpl) SendInlineKeyboard(message interface{}, buttons ..
 	return _response, _err
 }
 
+func (s *telegramServiceImpl) SendNotification(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeNotification).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendInfo(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeInfo).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendWarning(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeWarning).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendError(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeError).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendDebug(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeDebug).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendSuccess(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeSuccess).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendBug(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeBug).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
+func (s *telegramServiceImpl) SendTrace(topic, message string) (builder.MapBuilder, error) {
+	b := blueprint.NewCard().SetIconText(blueprint.TypeTrace).SetDescription(message).SetTitle(topic)
+	return s.SendMessage(b.GenCardDefault())
+}
+
 func (s *telegramServiceImpl) sendText(chatId int64, message interface{}) (builder.MapBuilder, error) {
 	if !s.config.IsEnabled {
 		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
 	}
 	url := fmt.Sprintf("%s/bot%s/sendMessage", Host, s.config.Token)
 	client := restify.New()
-	result := &map[string]interface{}{}
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
 	client.
 		SetRetryCount(s.option.MaxRetries).
 		// Default is 100 milliseconds.
@@ -145,13 +204,22 @@ func (s *telegramServiceImpl) sendText(chatId int64, message interface{}) (build
 		"text":       message,
 		"parse_mode": s.option.Type,
 	}
-	_, err := client.R().
-		SetResult(&result).
+	r, err := client.R().
 		SetBody(payload).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
 		ForceContentType("application/json").
 		Post(url)
-	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
-	return *response, err
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
 }
 
 func (s *telegramServiceImpl) sendInlineKeyboard(chatId int64, message interface{}, buttons []button) (builder.MapBuilder, error) {
@@ -167,7 +235,8 @@ func (s *telegramServiceImpl) sendInlineKeyboard(chatId int64, message interface
 	}
 	url := fmt.Sprintf("%s/bot%s/sendMessage", Host, s.config.Token)
 	client := restify.New()
-	result := &map[string]interface{}{}
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
 	client.
 		SetRetryCount(s.option.MaxRetries).
 		// Default is 100 milliseconds.
@@ -195,13 +264,22 @@ func (s *telegramServiceImpl) sendInlineKeyboard(chatId int64, message interface
 			"resize_keyboard": true,
 		},
 	}
-	_, err := client.R().
-		SetResult(&result).
+	r, err := client.R().
 		SetBody(payload).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
 		ForceContentType("application/json").
 		Post(url)
-	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
-	return *response, err
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
 }
 
 func (s *telegramServiceImpl) sendFile(chatId int64, filename string, message ...string) (builder.MapBuilder, error) {
@@ -210,7 +288,8 @@ func (s *telegramServiceImpl) sendFile(chatId int64, filename string, message ..
 	}
 	url := fmt.Sprintf("%s/bot%s/sendDocument", Host, s.config.Token)
 	client := restify.New()
-	result := &map[string]interface{}{}
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
 	client.
 		SetRetryCount(s.option.MaxRetries).
 		// Default is 100 milliseconds.
@@ -235,12 +314,21 @@ func (s *telegramServiceImpl) sendFile(chatId int64, filename string, message ..
 	if len(message) > 0 {
 		payload["caption"] = strings.Join(message, ",")
 	}
-	_, err := client.R().
-		SetResult(&result).
+	r, err := client.R().
 		SetQueryParams(payload).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
 		SetFile("document", filename).
 		ForceContentType("application/json").
 		Post(url)
-	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
-	return *response, err
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
 }

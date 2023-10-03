@@ -70,7 +70,8 @@ func (s *slackServiceImpl) sendText(message builder.MapBuilder) (builder.MapBuil
 	}
 	url := fmt.Sprintf("%s/chat.postMessage", Host)
 	client := restify.New()
-	result := &map[string]interface{}{}
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
 	client.SetRetryCount(s.option.MaxRetries).
 		// Default is 100 milliseconds.
 		SetRetryWaitTime(10 * time.Second).
@@ -90,11 +91,20 @@ func (s *slackServiceImpl) sendText(message builder.MapBuilder) (builder.MapBuil
 			"Content-Type": "application/json;charset=utf-8",
 		}).SetAuthToken(s.config.Token)
 
-	_, err := client.R().
-		SetResult(&result).
+	r, err := client.R().
 		SetBody(message.Build()).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
 		ForceContentType("application/json").
 		Post(url)
-	response, _ := builder.NewMapBuilder().DeserializeJsonI(result)
-	return *response, err
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
 }
