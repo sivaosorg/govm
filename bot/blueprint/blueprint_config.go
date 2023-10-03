@@ -25,7 +25,7 @@ var TypeIcons = map[IconText]string{
 // CardDefault is the HTML template for the card
 var CardDefault = `
 <b> {{.Icon}} {{.Title}} </b>
-<pre>{{.Description}}</pre>
+<i>{{.Description}}</i>
 {{if .ImageUrl}}
 <img src="{{.ImageUrl}}">
 {{end}}
