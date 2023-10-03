@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sivaosorg/govm/bot/blueprint"
+	"github.com/sivaosorg/govm/blueprint"
 	"github.com/sivaosorg/govm/builder"
 	"github.com/sivaosorg/govm/restify"
 )
