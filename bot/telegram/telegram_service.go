@@ -19,6 +19,13 @@ type TelegramService interface {
 	SendFiles(attachment map[string]string) (builder.MapBuilder, error)
 	SendInlineKeyboard(message interface{}, buttons ...button) (builder.MapBuilder, error)
 
+	// Get user information.
+	GetMe() (builder.MapBuilder, error)
+	// Receive incoming updates using long polling.
+	GetUpdates(request builder.MapBuilder) (builder.MapBuilder, error)
+	// Send text message by request body
+	// Set customize request body
+	SendMessageHandshake(request builder.MapBuilder) (builder.MapBuilder, error)
 	// Send message as notification
 	SendNotification(topic, message string) (builder.MapBuilder, error)
 	// Send message as information
@@ -131,6 +138,145 @@ func (s *telegramServiceImpl) SendInlineKeyboard(message interface{}, buttons ..
 	}
 	wg.Wait()
 	return _response, _err
+}
+
+func (s *telegramServiceImpl) GetMe() (builder.MapBuilder, error) {
+	if !s.config.IsEnabled {
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
+	}
+	url := fmt.Sprintf("%s/bot%s/getMe", Host, s.config.Token)
+	client := restify.New()
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
+	client.
+		SetRetryCount(s.option.MaxRetries).
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *restify.Response, err error) bool {
+				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired)
+			},
+		).
+		SetDebug(s.config.DebugMode).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		})
+
+	payload := map[string]interface{}{}
+	r, err := client.R().
+		SetBody(payload).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
+		ForceContentType("application/json").
+		Post(url)
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
+}
+
+func (s *telegramServiceImpl) GetUpdates(request builder.MapBuilder) (builder.MapBuilder, error) {
+	if !s.config.IsEnabled {
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
+	}
+	url := fmt.Sprintf("%s/bot%s/getUpdates", Host, s.config.Token)
+	client := restify.New()
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
+	client.
+		SetRetryCount(s.option.MaxRetries).
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *restify.Response, err error) bool {
+				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired)
+			},
+		).
+		SetDebug(s.config.DebugMode).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		})
+
+	r, err := client.R().
+		SetBody(request.Build()).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
+		ForceContentType("application/json").
+		Post(url)
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
+}
+
+func (s *telegramServiceImpl) SendMessageHandshake(request builder.MapBuilder) (builder.MapBuilder, error) {
+	if !s.config.IsEnabled {
+		return *builder.NewMapBuilder(), fmt.Errorf("Telegram Bot service unavailable")
+	}
+	if !request.Contains("chat_id") {
+		return *builder.NewMapBuilder(), fmt.Errorf("chat_id is required")
+	}
+	if !request.Contains("text") {
+		return *builder.NewMapBuilder(), fmt.Errorf("text is required")
+	}
+	url := fmt.Sprintf("%s/bot%s/sendMessage", Host, s.config.Token)
+	client := restify.New()
+	var resultSuccess map[string]interface{}
+	var resultFailure interface{}
+	client.
+		SetRetryCount(s.option.MaxRetries).
+		// Default is 100 milliseconds.
+		SetRetryWaitTime(10 * time.Second).
+		// Default is 2 seconds.
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(
+			// RetryConditionFunc type is for retry condition function
+			// input: non-nil Response OR request execution error
+			func(r *restify.Response, err error) bool {
+				return (r.StatusCode() >= http.StatusBadRequest && r.StatusCode() <= http.StatusNetworkAuthenticationRequired)
+			},
+		).
+		SetDebug(s.config.DebugMode).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+		})
+
+	r, err := client.R().
+		SetBody(request.Build()).
+		SetResult(&resultSuccess).
+		SetError(&resultFailure).
+		ForceContentType("application/json").
+		Post(url)
+
+	if r.IsError() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultFailure)
+		return *response, err
+	}
+	if r.IsSuccess() {
+		response, _ := builder.NewMapBuilder().DeserializeJsonI(resultSuccess)
+		return *response, err
+	}
+	return *builder.NewMapBuilder(), err
 }
 
 func (s *telegramServiceImpl) SendNotification(topic, message string) (builder.MapBuilder, error) {

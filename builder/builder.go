@@ -17,7 +17,7 @@ func NewMapBuilder() *MapBuilder {
 }
 
 func (m *MapBuilder) SetResult(value map[string]interface{}) *MapBuilder {
-	m.Result = value
+	m.result = value
 	return m
 }
 
@@ -25,25 +25,25 @@ func (m *MapBuilder) Add(key string, value interface{}) *MapBuilder {
 	if utils.IsEmpty(key) {
 		log.Panicf("Invalid key")
 	}
-	m.Result[key] = value
+	m.result[key] = value
 	return m
 }
 
 func (m *MapBuilder) Build() map[string]interface{} {
-	return m.Result
+	return m.result
 }
 
 func (m *MapBuilder) Size() int {
-	return len(m.Result)
+	return len(m.result)
 }
 
 func (m *MapBuilder) Remove(key string) *MapBuilder {
-	delete(m.Result, key)
+	delete(m.result, key)
 	return m
 }
 
 func (m *MapBuilder) Contains(key string) bool {
-	_, ok := m.Result[key]
+	_, ok := m.result[key]
 	return ok
 }
 
@@ -52,26 +52,26 @@ func (m *MapBuilder) Merge(value map[string]interface{}) *MapBuilder {
 		return m
 	}
 	for k, v := range value {
-		m.Result[k] = v
+		m.result[k] = v
 	}
 	return m
 }
 
 func (m *MapBuilder) Json() string {
-	return utils.ToJson(m.Result)
+	return utils.ToJson(m.result)
 }
 
 func (m *MapBuilder) Get(key string) (interface{}, bool) {
-	v, ok := m.Result[key]
+	v, ok := m.result[key]
 	return v, ok
 }
 
 func (m *MapBuilder) Keys() []string {
-	if len(m.Result) == 0 {
+	if len(m.result) == 0 {
 		return []string{}
 	}
-	keys := make([]string, 0, len(m.Result))
-	for k := range m.Result {
+	keys := make([]string, 0, len(m.result))
+	for k := range m.result {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -87,20 +87,20 @@ func (m *MapBuilder) Update(key string, value interface{}) *MapBuilder {
 	if utils.IsEmpty(key) {
 		return m
 	}
-	if _, ok := m.Result[key]; ok {
-		m.Result[key] = value
+	if _, ok := m.result[key]; ok {
+		m.result[key] = value
 	}
 	return m
 }
 
 func (m *MapBuilder) DeepMerge(values map[string]interface{}) *MapBuilder {
-	coltx.DeepMergeMap(m.Result, values)
+	coltx.DeepMergeMap(m.result, values)
 	return m
 }
 
 func (m *MapBuilder) Filter(callback func(key string, value interface{}) bool) *MapBuilder {
 	filtered := make(map[string]interface{})
-	for key, value := range m.Result {
+	for key, value := range m.result {
 		if callback(key, value) {
 			filtered[key] = value
 		}
@@ -111,7 +111,7 @@ func (m *MapBuilder) Filter(callback func(key string, value interface{}) bool) *
 
 func (m *MapBuilder) FilterWith(callback func(key string, value interface{}) bool) map[string]interface{} {
 	filtered := make(map[string]interface{})
-	for key, value := range m.Result {
+	for key, value := range m.result {
 		if callback(key, value) {
 			filtered[key] = value
 		}
@@ -126,7 +126,7 @@ func (m *MapBuilder) IsEmpty() bool {
 func (m *MapBuilder) SubMap(keys []string) map[string]interface{} {
 	subs := make(map[string]interface{})
 	for _, key := range keys {
-		if value, exists := m.Result[key]; exists {
+		if value, exists := m.result[key]; exists {
 			subs[key] = value
 		}
 	}
@@ -153,15 +153,15 @@ func (k *KeyValuePair) Json() string {
 }
 
 func (m *MapBuilder) ToKeyValuePairs() []KeyValuePair {
-	pairs := make([]KeyValuePair, 0, len(m.Result))
-	for key, value := range m.Result {
+	pairs := make([]KeyValuePair, 0, len(m.result))
+	for key, value := range m.result {
 		pairs = append(pairs, *NewKeyValuePair().SetKey(key).SetValue(value))
 	}
 	return pairs
 }
 
 func (m *MapBuilder) DeserializeJson(jsonString string) (*MapBuilder, error) {
-	err := utils.UnmarshalFromString(jsonString, &m.Result)
+	err := utils.UnmarshalFromString(jsonString, &m.result)
 	if err != nil {
 		return m, err
 	}
@@ -180,7 +180,7 @@ func (m *MapBuilder) IsNumericValue(key string) bool {
 	if utils.IsEmpty(key) {
 		return false
 	}
-	value, ok := m.Result[key]
+	value, ok := m.result[key]
 	if !ok {
 		return false
 	}
@@ -192,7 +192,7 @@ func (m *MapBuilder) IsNumericValue(key string) bool {
 func (m *MapBuilder) MaxNumericValue() (float64, bool) {
 	max := -1.0
 	found := false
-	for _, value := range m.Result {
+	for _, value := range m.result {
 		if floatValue, ok := value.(float64); ok {
 			if !found || floatValue > max {
 				max = floatValue
@@ -211,7 +211,7 @@ func (m *MapBuilder) MaxNumericValue() (float64, bool) {
 func (m *MapBuilder) MinNumericValue() (float64, bool) {
 	min := -1.0
 	found := false
-	for _, value := range m.Result {
+	for _, value := range m.result {
 		if floatValue, ok := value.(float64); ok {
 			if !found || floatValue < min {
 				min = floatValue
@@ -228,7 +228,7 @@ func (m *MapBuilder) MinNumericValue() (float64, bool) {
 }
 
 func (m *MapBuilder) IsArray(key string) bool {
-	value, ok := m.Result[key]
+	value, ok := m.result[key]
 	if !ok {
 		return false
 	}
@@ -237,7 +237,7 @@ func (m *MapBuilder) IsArray(key string) bool {
 }
 
 func (m *MapBuilder) IsObject(key string) bool {
-	value, ok := m.Result[key]
+	value, ok := m.result[key]
 	if !ok {
 		return false
 	}
@@ -258,7 +258,7 @@ func asMap(value interface{}) (*MapBuilder, bool) {
 	v := reflect.ValueOf(value)
 	if v.Kind() == reflect.Map && v.Type().Key().Kind() == reflect.String {
 		mb := NewMapBuilder()
-		mb.Result = value.(map[string]interface{})
+		mb.result = value.(map[string]interface{})
 		return mb, true
 	}
 	if v.Kind() == reflect.Struct {

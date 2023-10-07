@@ -1,7 +1,7 @@
 package builder
 
 type MapBuilder struct {
-	Result map[string]interface{} `json:"_map,omitempty"`
+	result map[string]interface{} `json:"-"`
 }
 
 type KeyValuePair struct {
