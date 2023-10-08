@@ -12,6 +12,7 @@ import (
 	"github.com/sivaosorg/govm/asterisk"
 	"github.com/sivaosorg/govm/bot/slack"
 	"github.com/sivaosorg/govm/bot/telegram"
+	"github.com/sivaosorg/govm/corsx"
 	"github.com/sivaosorg/govm/logger"
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
@@ -173,6 +174,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetRedis(*redisx.GetRedisConfigSample().SetEnabled(false))
 	k.SetTelegram(*telegram.GetTelegramConfigSample().SetEnabled(false))
 	k.SetSlack(*slack.GetSlackConfigSample().SetEnabled(false))
+	k.SetCors(*corsx.GetCorsConfigSample().SetEnabled(false))
 	return k
 }
 
@@ -193,6 +195,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"redis":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"telegram": fmt.Sprintf("################################\n%s\n%s\n################################", "Telegram Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"slack":    fmt.Sprintf("################################\n%s\n%s\n################################", "Slack Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"cors":     fmt.Sprintf("################################\n%s\n%s\n################################", "Cors Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -273,6 +276,16 @@ func (ClusterMultiTenancyKeysConfig) ReadDefaultConfig() {
 		return
 	}
 	logger.Infof("%+v", keys)
+}
+
+func (ClusterMultiTenancyKeysConfig) ReadCurrentConfig() (ClusterMultiTenancyKeysConfig, error) {
+	keys, err := ReadConfig[ClusterMultiTenancyKeysConfig](filepath.Join(".", FilenameDefaultClusterMultiTenantConf))
+	return *keys, err
+}
+
+func (ClusterMultiTenancyKeysConfig) ReadCurrentConfigWith(filename string) (ClusterMultiTenancyKeysConfig, error) {
+	keys, err := ReadConfig[ClusterMultiTenancyKeysConfig](filepath.Join(".", filename))
+	return *keys, err
 }
 
 func ReadConfig[T any](path string) (*T, error) {
@@ -383,5 +396,15 @@ func (k *KeysConfig) SetSlack(value slack.SlackConfig) *KeysConfig {
 
 func (k *KeysConfig) SetSlackCursor(value *slack.SlackConfig) *KeysConfig {
 	k.Slack = *value
+	return k
+}
+
+func (k *KeysConfig) SetCors(value corsx.CorsConfig) *KeysConfig {
+	k.Cors = value
+	return k
+}
+
+func (k *KeysConfig) SetCorsCursor(value *corsx.CorsConfig) *KeysConfig {
+	k.Cors = *value
 	return k
 }

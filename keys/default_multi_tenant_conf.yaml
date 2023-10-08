@@ -1,0 +1,124 @@
+key: tenant_1
+usable_default: false
+config:
+  asterisk:
+    enabled: false
+    debug-mode: false
+    port: 5038
+    host: http://127.0.0.1
+    username: u@root
+    password: pwd
+    telephony:
+      region: VN
+      phone-prefix:
+      - "9"
+      - "6064"
+      digits-exten:
+      - 4
+      - 5
+      - 6
+  mongodb:
+    enabled: false
+    debug-mode: false
+    url-conn: mongodb://127.0.0.1:27017/u_db
+    host: 127.0.0.1
+    port: 27017
+    database: u_db
+    username: u@root
+    password: pwd
+    timeout-seconds-conn: 30
+    allow-conn-sync: true
+  mysql:
+    enabled: false
+    debug-mode: false
+    database: u_db
+    host: 127.0.0.1
+    port: 3306
+    username: u@root
+    password: pwd
+    max-open-conn: 10
+    max-idle-conn: 2
+    max-life-time-minutes-conn: 10
+  postgres:
+    enabled: false
+    debug-mode: false
+    database: u_db
+    host: 127.0.0.1
+    port: 5432
+    username: u@root
+    password: pwd
+    ssl-mode: disable
+    max-open-conn: 5
+    max-idle-conn: 3
+  rabbitmq:
+    enabled: false
+    debug-mode: false
+    url-conn: amqp://guest:guest@localhost:5672/
+    username: guest
+    password: guest
+    host: 127.0.0.1
+    port: 5672
+    message:
+      enabled: true
+      exchange:
+        name: guest_exchange
+        kind: fanout
+        durable: true
+      queue:
+        name: guest_queue
+        durable: true
+    clusters:
+      rabbit_mq_1:
+        enabled: true
+        exchange:
+          name: guest_exchange
+          kind: fanout
+          durable: true
+        queue:
+          name: guest_queue
+          durable: true
+      rabbit_mq_2:
+        enabled: true
+        exchange:
+          name: guest_exchange
+          kind: fanout
+          durable: true
+        queue:
+          name: guest_queue
+          durable: true
+  redis:
+    enabled: false
+    debug-mode: false
+    url-conn: localhost:6379
+    password: redis.pwd
+    database: database_stable
+  telegram:
+    enabled: false
+    debug-mode: true
+    chat_id:
+    - 123456789
+    token: <token_here>
+  slack:
+    enabled: false
+    debug-mode: true
+    channel_id:
+    - "123456789"
+    token: <token-here>
+  cors:
+    enabled: false
+    allowed-origins:
+    - '*'
+    allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+    allowed-headers:
+    - Origin
+    - Accept
+    - Content-Type
+    - Authorization
+    exposed-headers: []
+    allow-credentials: true
+    max-age: 0

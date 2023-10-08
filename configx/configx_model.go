@@ -4,6 +4,7 @@ import (
 	"github.com/sivaosorg/govm/asterisk"
 	"github.com/sivaosorg/govm/bot/slack"
 	"github.com/sivaosorg/govm/bot/telegram"
+	"github.com/sivaosorg/govm/corsx"
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
 	"github.com/sivaosorg/govm/postgres"
@@ -29,6 +30,7 @@ type KeysConfig struct {
 	Redis    redisx.RedisConfig       `json:"redis,omitempty" yaml:"redis"`
 	Telegram telegram.TelegramConfig  `json:"telegram,omitempty" yaml:"telegram"`
 	Slack    slack.SlackConfig        `json:"slack,omitempty" yaml:"slack"`
+	Cors     corsx.CorsConfig         `json:"cors,omitempty" yaml:"cors"`
 }
 
 type MultiTenancyKeysConfig struct {
