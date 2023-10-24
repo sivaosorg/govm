@@ -82,7 +82,7 @@ func (c *CorsConfig) Json() string {
 func GetCorsConfigSample() *CorsConfig {
 	c := NewCorsConfig().
 		SetEnabled(true).
-		SetMaxAge(0).
+		SetMaxAge(3600).
 		SetAllowCredentials(true).
 		AppendAllowedOrigins("*").
 		AppendAllowedMethods(restify.MethodGet, restify.MethodPost, restify.MethodPut, restify.MethodDelete, restify.MethodOptions).
@@ -102,6 +102,10 @@ func (c *CorsConfig) ApplyCorsHeaders(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(common.HeaderAccessControlAllowMethods, strings.Join(c.AllowedMethods, ","))
 		w.Header().Set(common.HeaderAccessControlAllowHeaders, strings.Join(c.AllowedHeaders, ","))
 		w.Header().Set(common.HeaderAccessControlExposeHeaders, strings.Join(c.ExposedHeaders, ","))
+		if r.Method == http.MethodOptions { // handle preflight request
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 		if c.AllowCredentials {
 			w.Header().Set(common.HeaderAccessControlAllowCredentials, strconv.FormatBool(c.AllowCredentials))
 		}
@@ -109,6 +113,13 @@ func (c *CorsConfig) ApplyCorsHeaders(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set(common.HeaderAccessControlMaxAge, strconv.Itoa(c.MaxAge))
 		}
 	}
+}
+
+func (c *CorsConfig) CoreMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c.ApplyCorsHeaders(w, r)
+		next.ServeHTTP(w, r)
+	})
 }
 
 // isOriginAllowed checks if the provided origin is allowed based on the configuration.
