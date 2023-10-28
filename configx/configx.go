@@ -19,6 +19,7 @@ import (
 	"github.com/sivaosorg/govm/postgres"
 	"github.com/sivaosorg/govm/rabbitmqx"
 	"github.com/sivaosorg/govm/redisx"
+	"github.com/sivaosorg/govm/server"
 	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
 	"gopkg.in/yaml.v2"
@@ -166,6 +167,7 @@ func (c *ClusterMultiTenancyKeysConfig) Json() string {
 
 func GetKeysDefaultConfig() *KeysConfig {
 	k := NewKeysConfig()
+	k.SetServer(*server.GetServerSample())
 	k.SetAsterisk(*asterisk.GetAsteriskConfigSample().SetEnabled(false))
 	k.SetMongodb(*mongodb.GetMongodbConfigSample().SetEnabled(false))
 	k.SetMySql(*mysql.GetMysqlConfigSample().SetEnabled(false))
@@ -175,6 +177,14 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetTelegram(*telegram.GetTelegramConfigSample().SetEnabled(false))
 	k.SetSlack(*slack.GetSlackConfigSample().SetEnabled(false))
 	k.SetCors(*corsx.GetCorsConfigSample().SetEnabled(false))
+	k.AppendTelegramSeekers(*telegram.GetMultiTenantTelegramConfigSample())
+	k.AppendSlackSeekers(*slack.GetMultiTenantSlackConfigSample())
+	k.AppendAsteriskSeekers(*asterisk.GetMultiTenantAsteriskConfigSample())
+	k.AppendMongodbSeekers(*mongodb.GetMultiTenantMongodbConfigSample())
+	k.AppendMySqlSeekers(*mysql.GetMultiTenantMysqlConfigSample())
+	k.AppendPostgresSeekers(*postgres.GetMultiTenantPostgresConfigSample())
+	k.AppendRabbitMqSeekers(*rabbitmqx.GetMultiTenantRabbitMqConfigSample())
+	k.AppendRedisSeekers(*redisx.GetMultiTenantRedisConfigSample())
 	return k
 }
 
@@ -187,15 +197,24 @@ func (KeysConfig) WriteDefaultConfig() {
 	m := NewKeyCmtConfig()
 	m.SetData(GetKeysDefaultConfig())
 	m.SetComment(map[string]string{
-		"asterisk": fmt.Sprintf("################################\n%s\n%s\n################################", "Asterisk Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"mongodb":  fmt.Sprintf("################################\n%s\n%s\n################################", "Mongodb Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"mysql":    fmt.Sprintf("################################\n%s\n%s\n################################", "MySQL Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"postgres": fmt.Sprintf("################################\n%s\n%s\n################################", "Postgres Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"rabbitmq": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"redis":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"telegram": fmt.Sprintf("################################\n%s\n%s\n################################", "Telegram Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"slack":    fmt.Sprintf("################################\n%s\n%s\n################################", "Slack Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
-		"cors":     fmt.Sprintf("################################\n%s\n%s\n################################", "Cors Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"server":           fmt.Sprintf("################################\n%s\n%s\n################################", "Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"asterisk":         fmt.Sprintf("################################\n%s\n%s\n################################", "Asterisk Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"mongodb":          fmt.Sprintf("################################\n%s\n%s\n################################", "Mongodb Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"mysql":            fmt.Sprintf("################################\n%s\n%s\n################################", "MySQL Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"postgres":         fmt.Sprintf("################################\n%s\n%s\n################################", "Postgres Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"rabbitmq":         fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"redis":            fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"telegram":         fmt.Sprintf("################################\n%s\n%s\n################################", "Telegram Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"slack":            fmt.Sprintf("################################\n%s\n%s\n################################", "Slack Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"cors":             fmt.Sprintf("################################\n%s\n%s\n################################", "Cors Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"telegram-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "Telegram Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"slack-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "Slack Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"asterisk-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "Asterisk Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"mongodb-seekers":  fmt.Sprintf("################################\n%s\n%s\n################################", "Mongodb Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"mysql-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "MySQL Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"postgres-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "Postgres Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"rabbitmq-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"redis-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -389,6 +408,160 @@ func (k *KeysConfig) SetCors(value corsx.CorsConfig) *KeysConfig {
 func (k *KeysConfig) SetCorsCursor(value *corsx.CorsConfig) *KeysConfig {
 	k.Cors = *value
 	return k
+}
+
+func (k *KeysConfig) SetServer(value server.Server) *KeysConfig {
+	k.Server = value
+	return k
+}
+
+func (k *KeysConfig) SetServerCursor(value *server.Server) *KeysConfig {
+	k.Server = *value
+	return k
+}
+
+func (k *KeysConfig) SetTelegramSeekers(values []telegram.MultiTenantTelegramConfig) *KeysConfig {
+	k.TelegramSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendTelegramSeekers(values ...telegram.MultiTenantTelegramConfig) *KeysConfig {
+	k.TelegramSeekers = append(k.TelegramSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) SetSlackSeekers(values []slack.MultiTenantSlackConfig) *KeysConfig {
+	k.SlackSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendSlackSeekers(values ...slack.MultiTenantSlackConfig) *KeysConfig {
+	k.SlackSeekers = append(k.SlackSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) SetAsteriskSeekers(values []asterisk.MultiTenantAsteriskConfig) *KeysConfig {
+	k.AsteriskSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendAsteriskSeekers(values ...asterisk.MultiTenantAsteriskConfig) *KeysConfig {
+	k.AsteriskSeekers = append(k.AsteriskSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) SetMongodbSeekers(values []mongodb.MultiTenantMongodbConfig) *KeysConfig {
+	k.MongodbSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendMongodbSeekers(values ...mongodb.MultiTenantMongodbConfig) *KeysConfig {
+	k.MongodbSeekers = append(k.MongodbSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) SetMySqlSeekers(values []mysql.MultiTenantMysqlConfig) *KeysConfig {
+	k.MySqlSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendMySqlSeekers(values ...mysql.MultiTenantMysqlConfig) *KeysConfig {
+	k.MySqlSeekers = append(k.MySqlSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) SetPostgresSeekers(values []postgres.MultiTenantPostgresConfig) *KeysConfig {
+	k.PostgresSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendPostgresSeekers(values ...postgres.MultiTenantPostgresConfig) *KeysConfig {
+	k.PostgresSeekers = values
+	return k
+}
+
+func (k *KeysConfig) SetRabbitMqSeekers(values []rabbitmqx.MultiTenantRabbitMqConfig) *KeysConfig {
+	k.RabbitMqSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendRabbitMqSeekers(values ...rabbitmqx.MultiTenantRabbitMqConfig) *KeysConfig {
+	k.RabbitMqSeekers = append(k.RabbitMqSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) SetRedisSeekers(values []redisx.MultiTenantRedisConfig) *KeysConfig {
+	k.RedisSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendRedisSeekers(values ...redisx.MultiTenantRedisConfig) *KeysConfig {
+	k.RedisSeekers = append(k.RedisSeekers, values...)
+	return k
+}
+
+func (k *KeysConfig) AvailableTelegramSeekers() bool {
+	return len(k.TelegramSeekers) > 0
+}
+
+func (k *KeysConfig) AvailableSlackSeekers() bool {
+	return len(k.SlackSeekers) > 0
+}
+
+func (k *KeysConfig) AvailableAsteriskSeekers() bool {
+	return len(k.AsteriskSeekers) > 0
+}
+
+func (k *KeysConfig) AvailableMongodbSeekers() bool {
+	return len(k.MongodbSeekers) > 0
+}
+
+func (k *KeysConfig) AvailableMySqlSeekers() bool {
+	return len(k.MySqlSeekers) > 0
+}
+
+func (k *KeysConfig) AvailablePostgresSeekers() bool {
+	return len(k.PostgresSeekers) > 0
+}
+
+func (k *KeysConfig) AvailableRabbitMqSeekers() bool {
+	return len(k.RabbitMqSeekers) > 0
+}
+
+func (k *KeysConfig) AvailableRedisSeekers() bool {
+	return len(k.RedisSeekers) > 0
+}
+
+func (k *KeysConfig) FindTelegramSeeker(key string) (telegram.MultiTenantTelegramConfig, error) {
+	return telegram.NewClusterMultiTenantTelegramConfig().SetClusters(k.TelegramSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindSlackSeeker(key string) (slack.MultiTenantSlackConfig, error) {
+	return slack.NewClusterMultiTenantSlackConfig().SetClusters(k.SlackSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindAsteriskSeeker(key string) (asterisk.MultiTenantAsteriskConfig, error) {
+	return asterisk.NewClusterMultiTenantAsteriskConfig().SetClusters(k.AsteriskSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindMongodbSeeker(key string) (mongodb.MultiTenantMongodbConfig, error) {
+	return mongodb.NewClusterMultiTenantMongodbConfig().SetClusters(k.MongodbSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindMySqlSeeker(key string) (mysql.MultiTenantMysqlConfig, error) {
+	return mysql.NewClusterMultiTenantMysqlConfig().SetClusters(k.MySqlSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindPostgresSeeker(key string) (postgres.MultiTenantPostgresConfig, error) {
+	return postgres.NewClusterMultiTenantPostgresConfig().SetClusters(k.PostgresSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindRabbitMqSeeker(key string) (rabbitmqx.MultiTenantRabbitMqConfig, error) {
+	return rabbitmqx.NewClusterMultiTenantRabbitMqConfig().SetClusters(k.RabbitMqSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindRedisSeeker(key string) (redisx.MultiTenantRedisConfig, error) {
+	return redisx.NewClusterMultiTenantRedisConfig().SetClusters(k.RedisSeekers).FindClusterBy(key)
 }
 
 func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {

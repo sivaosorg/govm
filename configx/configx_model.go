@@ -10,6 +10,7 @@ import (
 	"github.com/sivaosorg/govm/postgres"
 	"github.com/sivaosorg/govm/rabbitmqx"
 	"github.com/sivaosorg/govm/redisx"
+	"github.com/sivaosorg/govm/server"
 )
 
 type FieldCommentConfig map[string]string
@@ -22,6 +23,7 @@ type CommentedConfig struct {
 }
 
 type KeysConfig struct {
+	// Basic
 	Asterisk asterisk.AsteriskConfig  `json:"asterisk,omitempty" yaml:"asterisk"`
 	Mongodb  mongodb.MongodbConfig    `json:"mongodb,omitempty" yaml:"mongodb"`
 	MySql    mysql.MysqlConfig        `json:"mysql,omitempty" yaml:"mysql"`
@@ -31,6 +33,17 @@ type KeysConfig struct {
 	Telegram telegram.TelegramConfig  `json:"telegram,omitempty" yaml:"telegram"`
 	Slack    slack.SlackConfig        `json:"slack,omitempty" yaml:"slack"`
 	Cors     corsx.CorsConfig         `json:"cors,omitempty" yaml:"cors"`
+	Server   server.Server            `json:"server,omitempty" yaml:"server"`
+
+	// Seekers
+	TelegramSeekers []telegram.MultiTenantTelegramConfig  `json:"telegram_seekers,omitempty" yaml:"telegram-seekers"`
+	SlackSeekers    []slack.MultiTenantSlackConfig        `json:"slack_seekers,omitempty" yaml:"slack-seekers"`
+	AsteriskSeekers []asterisk.MultiTenantAsteriskConfig  `json:"asterisk_seekers,omitempty" yaml:"asterisk-seekers"`
+	MongodbSeekers  []mongodb.MultiTenantMongodbConfig    `json:"mongodb_seekers,omitempty" yaml:"mongodb-seekers"`
+	MySqlSeekers    []mysql.MultiTenantMysqlConfig        `json:"mysql_seekers,omitempty" yaml:"mysql-seekers"`
+	PostgresSeekers []postgres.MultiTenantPostgresConfig  `json:"postgres_seekers,omitempty" yaml:"postgres-seekers"`
+	RabbitMqSeekers []rabbitmqx.MultiTenantRabbitMqConfig `json:"rabbitmq_seekers,omitempty" yaml:"rabbitmq-seekers"`
+	RedisSeekers    []redisx.MultiTenantRedisConfig       `json:"redis_seekers,omitempty" yaml:"redis-seekers"`
 }
 
 type MultiTenancyKeysConfig struct {
