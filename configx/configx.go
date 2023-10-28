@@ -330,37 +330,6 @@ func CreateConfigWithComments[T any](path string, data CommentedConfig) error {
 	return nil
 }
 
-func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {
-	bytes, err := yaml.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-	lines := strings.Split(string(bytes), "\n")
-	for field, comment := range comments {
-		for i, line := range lines {
-			if strings.Contains(line, field+":") {
-				if strings.Contains(comment, "\n") {
-					commentLines := strings.Split(comment, "\n")
-					for j := len(commentLines) - 1; j >= 0; j-- {
-						commentLine := fmt.Sprintf("# %s", commentLines[j])
-						lines = insertStringAt(lines, i, commentLine)
-					}
-				} else {
-					commentLine := fmt.Sprintf("# %s", comment)
-					lines = insertStringAt(lines, i, commentLine)
-				}
-				break
-			}
-		}
-	}
-	c := strings.Join(lines, "\n")
-	return []byte(c), nil
-}
-
-func insertStringAt(slice []string, index int, value string) []string {
-	return append(slice[:index], append([]string{value}, slice[index:]...)...)
-}
-
 func (c *ClusterMultiTenancyKeysConfig) FindClusterBy(key string) (MultiTenancyKeysConfig, error) {
 	if len(c.Clusters) == 0 {
 		return *NewMultiTenantKeysConfig(), fmt.Errorf("No multi-tenant cluster")
@@ -377,6 +346,19 @@ func (c *ClusterMultiTenancyKeysConfig) FindClusterBy(key string) (MultiTenancyK
 		}
 	}
 	return *NewMultiTenantKeysConfig(), fmt.Errorf("The multi-tenant cluster not found")
+}
+
+func (c *ClusterMultiTenancyKeysConfig) AllowedUsableDefault() bool {
+	if len(c.Clusters) == 0 {
+		return true
+	}
+	counter := 0
+	for _, v := range c.Clusters {
+		if v.IsUsableDefault {
+			counter++
+		}
+	}
+	return counter <= 1
 }
 
 func (k *KeysConfig) SetTelegram(value telegram.TelegramConfig) *KeysConfig {
@@ -407,4 +389,35 @@ func (k *KeysConfig) SetCors(value corsx.CorsConfig) *KeysConfig {
 func (k *KeysConfig) SetCorsCursor(value *corsx.CorsConfig) *KeysConfig {
 	k.Cors = *value
 	return k
+}
+
+func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {
+	bytes, err := yaml.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	lines := strings.Split(string(bytes), "\n")
+	for field, comment := range comments {
+		for i, line := range lines {
+			if strings.Contains(line, field+":") {
+				if strings.Contains(comment, "\n") {
+					commentLines := strings.Split(comment, "\n")
+					for j := len(commentLines) - 1; j >= 0; j-- {
+						commentLine := fmt.Sprintf("# %s", commentLines[j])
+						lines = insertStringAt(lines, i, commentLine)
+					}
+				} else {
+					commentLine := fmt.Sprintf("# %s", comment)
+					lines = insertStringAt(lines, i, commentLine)
+				}
+				break
+			}
+		}
+	}
+	c := strings.Join(lines, "\n")
+	return []byte(c), nil
+}
+
+func insertStringAt(slice []string, index int, value string) []string {
+	return append(slice[:index], append([]string{value}, slice[index:]...)...)
 }

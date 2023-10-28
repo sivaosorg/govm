@@ -20,11 +20,17 @@ func (p *PostgresConfig) SetEnabled(value bool) *PostgresConfig {
 }
 
 func (p *PostgresConfig) SetDatabase(value string) *PostgresConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Database is required")
+	}
 	p.Database = utils.TrimSpaces(value)
 	return p
 }
 
 func (p *PostgresConfig) SetHost(value string) *PostgresConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Host is required")
+	}
 	p.Host = utils.TrimSpaces(value)
 	return p
 }
@@ -57,7 +63,7 @@ func (p *PostgresConfig) SetSslMode(value string) *PostgresConfig {
 
 func (p *PostgresConfig) SetMaxOpenConn(value int) *PostgresConfig {
 	if value <= 0 {
-		log.Panicf("Invalid max-open-conn")
+		log.Panicf("Invalid max-open-conn: %v", value)
 	}
 	p.MaxOpenConn = value
 	return p
@@ -65,7 +71,7 @@ func (p *PostgresConfig) SetMaxOpenConn(value int) *PostgresConfig {
 
 func (p *PostgresConfig) SetMaxIdleConn(value int) *PostgresConfig {
 	if value <= 0 {
-		log.Panicf("Invalid max-idle-conn")
+		log.Panicf("Invalid max-idle-conn: %v", value)
 	}
 	p.MaxIdleConn = value
 	return p
@@ -85,10 +91,20 @@ func (p *PostgresConfig) Json() string {
 	return utils.ToJson(p)
 }
 
+func (p *PostgresConfig) GetConnString() string {
+	PostgresConfigValidator(p)
+	conn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
+		p.Host, p.Port, p.Username, p.Database, p.Password, p.SSLMode)
+	return conn
+}
+
 func PostgresConfigValidator(p *PostgresConfig) {
 	p.SetPort(p.Port).
 		SetMaxOpenConn(p.MaxOpenConn).
-		SetMaxIdleConn(p.MaxIdleConn)
+		SetMaxIdleConn(p.MaxIdleConn).
+		SetDatabase(p.Database).
+		SetHost(p.Host).
+		SetSslMode(p.SSLMode)
 }
 
 func GetPostgresConfigSample() *PostgresConfig {

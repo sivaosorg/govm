@@ -21,13 +21,16 @@ func (m *MysqlConfig) SetEnabled(value bool) *MysqlConfig {
 
 func (m *MysqlConfig) SetDatabase(value string) *MysqlConfig {
 	if utils.IsEmpty(value) {
-		log.Panic("Invalid database")
+		log.Panicf("Database is required")
 	}
 	m.Database = utils.TrimSpaces(value)
 	return m
 }
 
 func (m *MysqlConfig) SetHost(value string) *MysqlConfig {
+	if utils.IsEmpty(value) {
+		log.Panicf("Host is required")
+	}
 	m.Host = utils.TrimSpaces(value)
 	return m
 }
@@ -88,12 +91,19 @@ func (m *MysqlConfig) Json() string {
 	return utils.ToJson(m)
 }
 
+func (m *MysqlConfig) GetConnString() string {
+	MysqlConfigValidator(m)
+	hostname := fmt.Sprintf("%s:%d", m.Host, m.Port)
+	return fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", m.Username, m.Password, hostname, m.Database)
+}
+
 func MysqlConfigValidator(m *MysqlConfig) {
 	m.SetPort(m.Port).
 		SetDatabase(m.Database).
 		SetMaxOpenConn(m.MaxOpenConn).
 		SetMaxIdleConn(m.MaxIdleConn).
-		SetMaxLifeTimeMinutesConn(m.MaxLifeTimeMinutesConn)
+		SetMaxLifeTimeMinutesConn(m.MaxLifeTimeMinutesConn).
+		SetHost(m.Host)
 }
 
 func GetMysqlConfigSample() *MysqlConfig {
