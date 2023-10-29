@@ -33,3 +33,15 @@ var CardDefault = `
 <a href="{{.ButtonUrl}}">{{.ButtonText}}</a>
 {{end}}
 `
+
+// CardMarkdownDefault is the Markdown template for the card
+var CardMarkdownDefault = `
+**{{.Icon}} {{.Title}}**
+*{{.Description}}*
+{{if .ImageUrl}}
+![Image]({{.ImageUrl}})
+{{end}}
+{{if .ButtonUrl}}
+[{{.ButtonText}}]({{.ButtonUrl}})
+{{end}}
+`

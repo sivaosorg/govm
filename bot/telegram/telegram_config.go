@@ -5,9 +5,10 @@ const (
 )
 
 const (
-	ModeMarkdown TelegramFormatType = "Markdown"
-	ModeHTML     TelegramFormatType = "HTML"
-	ModeNone     TelegramFormatType = "None"
+	ModeMarkdown   TelegramFormatType = "Markdown"
+	ModeMarkdownV2 TelegramFormatType = "MarkdownV2"
+	ModeHTML       TelegramFormatType = "HTML"
+	ModeNone       TelegramFormatType = "None"
 )
 
 var (

@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/sivaosorg/govm/utils"
 )
 
 func Contains[T comparable](array []T, item T) bool {
@@ -392,4 +394,34 @@ func MergeMapsString(maps ...map[string]string) map[string]string {
 		}
 	}
 	return result
+}
+
+// MapString2Table returns a map as a table without borders.
+func MapString2Table(data map[string]string) string {
+	var builder strings.Builder
+	maxKeyLength := 0
+	for key := range data {
+		if len(key) > maxKeyLength {
+			maxKeyLength = len(key)
+		}
+	}
+	for key, value := range data {
+		fmt.Fprintf(&builder, "%-*s   %s\n", maxKeyLength, key, value)
+	}
+	return builder.String()
+}
+
+// MapToTable returns a map as a table without borders.
+func Map2Table(data map[string]interface{}) string {
+	var builder strings.Builder
+	maxKeyLength := 0
+	for key := range data {
+		if len(key) > maxKeyLength {
+			maxKeyLength = len(key)
+		}
+	}
+	for key, value := range data {
+		fmt.Fprintf(&builder, "%-*s   %s\n", maxKeyLength, key, utils.ToJson(value))
+	}
+	return builder.String()
 }

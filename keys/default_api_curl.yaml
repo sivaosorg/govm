@@ -1,0 +1,97 @@
+base_url: http://127.0.0.1:8080
+authentication:
+  enabled: false
+  type: basic
+  token: <token-here>
+  username: user
+  password: pwd
+headers:
+  Content-Type: application/json
+endpoints:
+  a_endpoint:
+    enabled: true
+    debug_mode: true
+    base_url: http://127.0.0.1:8080
+    timeout: 10s
+    path: /api/v1/users
+    method: POST
+    description: Create new user
+    query_params: {}
+    path_params: {}
+    headers:
+      Content-Type: application/json
+    body:
+      email: tester@gmail.com
+      username: tester
+    retry:
+      enabled: false
+      max_attempts: 2
+      initial_interval: 2s
+      max_interval: 10s
+      backoff_factor: 2
+      retry_on_status:
+      - 500
+      - 504
+    authentication:
+      enabled: false
+      type: basic
+      token: <token-here>
+      username: user
+      password: pwd
+    telegram:
+      enabled: false
+      debug-mode: true
+      chat_id:
+      - 123456789
+      token: <token_here>
+  b_endpoint:
+    enabled: true
+    debug_mode: true
+    base_url: http://127.0.0.1:8080
+    timeout: 10s
+    path: /api/v1/users
+    method: POST
+    description: Create new user
+    query_params: {}
+    path_params: {}
+    headers:
+      Content-Type: application/json
+    body:
+      email: tester@gmail.com
+      username: tester
+    retry:
+      enabled: false
+      max_attempts: 2
+      initial_interval: 2s
+      max_interval: 10s
+      backoff_factor: 2
+      retry_on_status:
+      - 500
+      - 504
+    authentication:
+      enabled: false
+      type: basic
+      token: <token-here>
+      username: user
+      password: pwd
+    telegram:
+      enabled: false
+      debug-mode: true
+      chat_id:
+      - 123456789
+      token: <token_here>
+retry:
+  enabled: true
+  max_attempts: 2
+  initial_interval: 2s
+  max_interval: 10s
+  backoff_factor: 2
+  retry_on_status:
+  - 500
+  - 504
+telegram:
+  enabled: true
+  debug-mode: true
+  chat_id:
+  - 123456789
+  token: <token_here>

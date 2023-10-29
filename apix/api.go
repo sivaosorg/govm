@@ -7,48 +7,49 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/sivaosorg/govm/bot/telegram"
 	"github.com/sivaosorg/govm/coltx"
 	"github.com/sivaosorg/govm/curlx"
 	"github.com/sivaosorg/govm/utils"
 )
 
-func NewAuthentication() *Authentication {
-	a := &Authentication{}
+func NewAuthentication() *AuthenticationConfig {
+	a := &AuthenticationConfig{}
 	return a
 }
 
-func (a *Authentication) SetEnabled(value bool) *Authentication {
+func (a *AuthenticationConfig) SetEnabled(value bool) *AuthenticationConfig {
 	a.IsEnabled = value
 	return a
 }
 
-func (a *Authentication) SetType(value string) *Authentication {
+func (a *AuthenticationConfig) SetType(value string) *AuthenticationConfig {
 	a.Type = value
 	return a
 }
 
-func (a *Authentication) SetToken(value string) *Authentication {
+func (a *AuthenticationConfig) SetToken(value string) *AuthenticationConfig {
 	a.Token = value
 	return a
 }
 
-func (a *Authentication) SetUsername(value string) *Authentication {
+func (a *AuthenticationConfig) SetUsername(value string) *AuthenticationConfig {
 	a.Username = value
 	return a
 }
 
-func (a *Authentication) SetPassword(value string) *Authentication {
+func (a *AuthenticationConfig) SetPassword(value string) *AuthenticationConfig {
 	a.Password = value
 	return a
 }
 
-func (a *Authentication) Json() string {
+func (a *AuthenticationConfig) Json() string {
 	return utils.ToJson(a)
 }
 
-func GetAuthenticationSample() *Authentication {
+func GetAuthenticationSample() *AuthenticationConfig {
 	a := NewAuthentication().
-		SetEnabled(true).
+		SetEnabled(false).
 		SetPassword("pwd").
 		SetUsername("user").
 		SetType("basic").
@@ -56,17 +57,17 @@ func GetAuthenticationSample() *Authentication {
 	return a
 }
 
-func NewRetry() *Retry {
-	r := &Retry{}
+func NewRetry() *RetryConfig {
+	r := &RetryConfig{}
 	return r
 }
 
-func (r *Retry) SetEnabled(value bool) *Retry {
+func (r *RetryConfig) SetEnabled(value bool) *RetryConfig {
 	r.IsEnabled = value
 	return r
 }
 
-func (r *Retry) SetMaxAttempts(value int) *Retry {
+func (r *RetryConfig) SetMaxAttempts(value int) *RetryConfig {
 	if value <= 0 {
 		log.Panicf("Invalid max_attempts: %v", value)
 	}
@@ -74,17 +75,17 @@ func (r *Retry) SetMaxAttempts(value int) *Retry {
 	return r
 }
 
-func (r *Retry) SetInitialInterval(value time.Duration) *Retry {
+func (r *RetryConfig) SetInitialInterval(value time.Duration) *RetryConfig {
 	r.InitialInterval = value
 	return r
 }
 
-func (r *Retry) SetMaxInterval(value time.Duration) *Retry {
+func (r *RetryConfig) SetMaxInterval(value time.Duration) *RetryConfig {
 	r.MaxInterval = value
 	return r
 }
 
-func (r *Retry) SetBackoffFactor(value int) *Retry {
+func (r *RetryConfig) SetBackoffFactor(value int) *RetryConfig {
 	if value < 0 {
 		log.Panicf("Invalid backoff_factor: %v", value)
 	}
@@ -92,26 +93,26 @@ func (r *Retry) SetBackoffFactor(value int) *Retry {
 	return r
 }
 
-func (r *Retry) SetRetryOnStatus(values []int) *Retry {
+func (r *RetryConfig) SetRetryOnStatus(values []int) *RetryConfig {
 	r.RetryOnStatus = values
 	return r
 }
 
-func (r *Retry) AppendRetryOnStatus(values ...int) *Retry {
+func (r *RetryConfig) AppendRetryOnStatus(values ...int) *RetryConfig {
 	r.RetryOnStatus = append(r.RetryOnStatus, values...)
 	return r
 }
 
-func (r *Retry) Json() string {
+func (r *RetryConfig) Json() string {
 	return utils.ToJson(r)
 }
 
-func RetryValidator(r *Retry) {
+func RetryValidator(r *RetryConfig) {
 	r.SetMaxAttempts(r.MaxAttempts).
 		SetBackoffFactor(r.BackoffFactor)
 }
 
-func GetRetrySample() *Retry {
+func GetRetrySample() *RetryConfig {
 	r := NewRetry().
 		SetEnabled(true).
 		SetBackoffFactor(2).
@@ -122,23 +123,22 @@ func GetRetrySample() *Retry {
 	return r
 }
 
-func NewEndpoint() *Endpoint {
-	e := &Endpoint{}
-	e.SetRepeat(1)
+func NewEndpoint() *EndpointConfig {
+	e := &EndpointConfig{}
 	return e
 }
 
-func (e *Endpoint) SetEnabled(value bool) *Endpoint {
+func (e *EndpointConfig) SetEnabled(value bool) *EndpointConfig {
 	e.IsEnabled = value
 	return e
 }
 
-func (e *Endpoint) SetDebugMode(value bool) *Endpoint {
+func (e *EndpointConfig) SetDebugMode(value bool) *EndpointConfig {
 	e.DebugMode = value
 	return e
 }
 
-func (e *Endpoint) SetBaseURL(value string) *Endpoint {
+func (e *EndpointConfig) SetBaseURL(value string) *EndpointConfig {
 	u, err := url.Parse(value)
 	if err != nil {
 		log.Panicf("Invalid base_url: %v", err.Error())
@@ -147,17 +147,17 @@ func (e *Endpoint) SetBaseURL(value string) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) SetTimeout(value time.Duration) *Endpoint {
+func (e *EndpointConfig) SetTimeout(value time.Duration) *EndpointConfig {
 	e.Timeout = value
 	return e
 }
 
-func (e *Endpoint) SetPath(value string) *Endpoint {
+func (e *EndpointConfig) SetPath(value string) *EndpointConfig {
 	e.Path = value
 	return e
 }
 
-func (e *Endpoint) SetMethod(value string) *Endpoint {
+func (e *EndpointConfig) SetMethod(value string) *EndpointConfig {
 	v, ok := curlx.MethodWithRequestBody[curlx.Method(value)]
 	if !ok || !v {
 		log.Panicf("Invalid method: %v", value)
@@ -166,17 +166,17 @@ func (e *Endpoint) SetMethod(value string) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) SetDescription(value string) *Endpoint {
+func (e *EndpointConfig) SetDescription(value string) *EndpointConfig {
 	e.Description = value
 	return e
 }
 
-func (e *Endpoint) SetQueryParams(value map[string]string) *Endpoint {
+func (e *EndpointConfig) SetQueryParams(value map[string]string) *EndpointConfig {
 	e.QueryParams = value
 	return e
 }
 
-func (e *Endpoint) AppendQueryParam(key string, value string) *Endpoint {
+func (e *EndpointConfig) AppendQueryParam(key string, value string) *EndpointConfig {
 	if len(e.QueryParams) == 0 {
 		e.SetQueryParams(make(map[string]string))
 	}
@@ -184,12 +184,12 @@ func (e *Endpoint) AppendQueryParam(key string, value string) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) SetPathParams(value map[string]string) *Endpoint {
+func (e *EndpointConfig) SetPathParams(value map[string]string) *EndpointConfig {
 	e.PathParams = value
 	return e
 }
 
-func (e *Endpoint) AppendPathParam(key, value string) *Endpoint {
+func (e *EndpointConfig) AppendPathParam(key, value string) *EndpointConfig {
 	if len(e.PathParams) == 0 {
 		e.SetPathParams(make(map[string]string))
 	}
@@ -197,12 +197,12 @@ func (e *Endpoint) AppendPathParam(key, value string) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) SetHeaders(value map[string]string) *Endpoint {
+func (e *EndpointConfig) SetHeaders(value map[string]string) *EndpointConfig {
 	e.Headers = value
 	return e
 }
 
-func (e *Endpoint) AppendHeader(key, value string) *Endpoint {
+func (e *EndpointConfig) AppendHeader(key, value string) *EndpointConfig {
 	if len(e.Headers) == 0 {
 		e.SetHeaders(make(map[string]string))
 	}
@@ -210,12 +210,12 @@ func (e *Endpoint) AppendHeader(key, value string) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) SetBody(value map[string]interface{}) *Endpoint {
+func (e *EndpointConfig) SetBody(value map[string]interface{}) *EndpointConfig {
 	e.Body = value
 	return e
 }
 
-func (e *Endpoint) AppendBody(key, value string) *Endpoint {
+func (e *EndpointConfig) AppendBody(key, value string) *EndpointConfig {
 	if len(e.Body) == 0 {
 		e.SetBody(make(map[string]interface{}))
 	}
@@ -223,7 +223,7 @@ func (e *Endpoint) AppendBody(key, value string) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) AppendBodyWith(key string, value interface{}) *Endpoint {
+func (e *EndpointConfig) AppendBodyWith(key string, value interface{}) *EndpointConfig {
 	if len(e.Body) == 0 {
 		e.SetBody(make(map[string]interface{}))
 	}
@@ -231,35 +231,31 @@ func (e *Endpoint) AppendBodyWith(key string, value interface{}) *Endpoint {
 	return e
 }
 
-func (e *Endpoint) SetRetry(value Retry) *Endpoint {
+func (e *EndpointConfig) SetRetry(value RetryConfig) *EndpointConfig {
 	e.Retry = value
 	return e
 }
 
-func (e *Endpoint) SetAuthentication(value Authentication) *Endpoint {
+func (e *EndpointConfig) SetAuthentication(value AuthenticationConfig) *EndpointConfig {
 	e.Authentication = value
 	return e
 }
 
-func (e *Endpoint) SetRepeat(value int) *Endpoint {
-	if value <= 0 {
-		log.Panicf("Invalid repeat: %v", value)
-	}
-	e.Repeat = value
+func (e *EndpointConfig) SetTelegram(value telegram.TelegramConfig) *EndpointConfig {
+	e.Telegram = value
 	return e
 }
 
-func (e *Endpoint) Json() string {
+func (e *EndpointConfig) Json() string {
 	return utils.ToJson(e)
 }
 
-func EndpointValidator(e *Endpoint) {
+func EndpointValidator(e *EndpointConfig) {
 	e.SetBaseURL(e.BaseURL).
-		SetRepeat(e.Repeat).
 		SetMethod(e.Method)
 }
 
-func GetEndpointSample() *Endpoint {
+func GetEndpointSample() *EndpointConfig {
 	e := NewEndpoint().
 		SetEnabled(true).
 		SetDebugMode(true).
@@ -269,20 +265,20 @@ func GetEndpointSample() *Endpoint {
 		SetMethod("POST").
 		SetDescription("Create new user").
 		AppendHeader("Content-Type", "application/json").
-		SetRepeat(2).
 		AppendBody("username", "tester").
 		AppendBody("email", "tester@gmail.com").
 		SetAuthentication(*GetAuthenticationSample()).
-		SetRetry(*GetRetrySample())
+		SetRetry(*GetRetrySample()).
+		SetTelegram(*telegram.GetTelegramConfigSample())
 	return e
 }
 
-func NewApiRequest() *ApiRequest {
-	a := &ApiRequest{}
+func NewApiRequest() *ApiRequestConfig {
+	a := &ApiRequestConfig{}
 	return a
 }
 
-func (a *ApiRequest) SetBaseURL(value string) *ApiRequest {
+func (a *ApiRequestConfig) SetBaseURL(value string) *ApiRequestConfig {
 	u, err := url.Parse(value)
 	if err != nil {
 		log.Panicf("Invalid base_url: %v", err.Error())
@@ -291,17 +287,17 @@ func (a *ApiRequest) SetBaseURL(value string) *ApiRequest {
 	return a
 }
 
-func (a *ApiRequest) SetAuthentication(value Authentication) *ApiRequest {
+func (a *ApiRequestConfig) SetAuthentication(value AuthenticationConfig) *ApiRequestConfig {
 	a.Authentication = value
 	return a
 }
 
-func (a *ApiRequest) SetHeaders(value map[string]string) *ApiRequest {
+func (a *ApiRequestConfig) SetHeaders(value map[string]string) *ApiRequestConfig {
 	a.Headers = value
 	return a
 }
 
-func (a *ApiRequest) AppendHeader(key, value string) *ApiRequest {
+func (a *ApiRequestConfig) AppendHeader(key, value string) *ApiRequestConfig {
 	if len(a.Headers) == 0 {
 		a.SetHeaders(make(map[string]string))
 	}
@@ -309,76 +305,82 @@ func (a *ApiRequest) AppendHeader(key, value string) *ApiRequest {
 	return a
 }
 
-func (a *ApiRequest) SetRetry(value Retry) *ApiRequest {
+func (a *ApiRequestConfig) SetRetry(value RetryConfig) *ApiRequestConfig {
 	a.Retry = value
 	return a
 }
 
-func (a *ApiRequest) SetEndpoints(value map[string]Endpoint) *ApiRequest {
+func (a *ApiRequestConfig) SetEndpoints(value map[string]EndpointConfig) *ApiRequestConfig {
 	a.Endpoints = value
 	return a
 }
 
-func (a *ApiRequest) AppendEndpoint(key string, endpoint Endpoint) *ApiRequest {
+func (a *ApiRequestConfig) AppendEndpoint(key string, endpoint EndpointConfig) *ApiRequestConfig {
 	if len(a.Endpoints) == 0 {
-		a.SetEndpoints(make(map[string]Endpoint))
+		a.SetEndpoints(make(map[string]EndpointConfig))
 	}
 	a.Endpoints[key] = endpoint
 	return a
 }
 
-func (a *ApiRequest) Json() string {
+func (a *ApiRequestConfig) SetTelegram(value telegram.TelegramConfig) *ApiRequestConfig {
+	a.Telegram = value
+	return a
+}
+
+func (a *ApiRequestConfig) Json() string {
 	return utils.ToJson(a)
 }
 
-func GetApiRequestSample() *ApiRequest {
+func GetApiRequestSample() *ApiRequestConfig {
 	a := NewApiRequest().
-		SetBaseURL("http:127.0.0.1:8080").
+		SetBaseURL("http://127.0.0.1:8080").
 		SetAuthentication(*GetAuthenticationSample()).
 		AppendHeader("Content-Type", "application/json").
 		AppendEndpoint("a_endpoint", *GetEndpointSample()).
 		AppendEndpoint("b_endpoint", *GetEndpointSample()).
-		SetRetry(*GetRetrySample())
+		SetRetry(*GetRetrySample()).
+		SetTelegram(*telegram.GetTelegramConfigSample())
 	return a
 }
 
-func (a *ApiRequest) AvailableEndpoint() bool {
+func (a *ApiRequestConfig) AvailableEndpoint() bool {
 	return len(a.Endpoints) > 0
 }
 
-func (a *ApiRequest) AvailableHeader() bool {
+func (a *ApiRequestConfig) AvailableHeader() bool {
 	return len(a.Headers) > 0
 }
 
-func (a *ApiRequest) GetEndpoint(key string) (Endpoint, error) {
+func (a *ApiRequestConfig) GetEndpoint(key string) (EndpointConfig, error) {
 	v, ok := a.Endpoints[key]
 	if !ok {
-		return Endpoint{}, fmt.Errorf("Endpoint not found")
+		return EndpointConfig{}, fmt.Errorf("Endpoint not found")
 	}
 	return v, nil
 }
 
-func (e *Endpoint) Url() (string, error) {
+func (e *EndpointConfig) Url() (string, error) {
 	return e.UrlWith(e.BaseURL)
 }
 
-func (e *Endpoint) AvailableBody() bool {
+func (e *EndpointConfig) AvailableBody() bool {
 	return len(e.Body) > 0
 }
 
-func (e *Endpoint) AvailableQueryParams() bool {
+func (e *EndpointConfig) AvailableQueryParams() bool {
 	return len(e.QueryParams) > 0
 }
 
-func (e *Endpoint) AvailablePathParams() bool {
+func (e *EndpointConfig) AvailablePathParams() bool {
 	return len(e.PathParams) > 0
 }
 
-func (e *Endpoint) AvailableHeaders() bool {
+func (e *EndpointConfig) AvailableHeaders() bool {
 	return len(e.Headers) > 0
 }
 
-func (e *Endpoint) UrlWith(baseURL string) (string, error) {
+func (e *EndpointConfig) UrlWith(baseURL string) (string, error) {
 	u, err := url.Parse(baseURL)
 	if err != nil {
 		return "", err
@@ -392,16 +394,16 @@ func (e *Endpoint) UrlWith(baseURL string) (string, error) {
 	return u.String(), nil
 }
 
-func (e *Endpoint) AvailableTimeout() bool {
+func (e *EndpointConfig) AvailableTimeout() bool {
 	return isDuration(e.Timeout)
 }
 
-func (r *Retry) AvailableRetryOnStatus() bool {
+func (r *RetryConfig) AvailableRetryOnStatus() bool {
 	return len(r.RetryOnStatus) > 0
 }
 
-func (a *ApiRequest) FilterActivateEndpoints() *ApiRequest {
-	endpoints := make(map[string]Endpoint)
+func (a *ApiRequestConfig) FilterActivateEndpoints() *ApiRequestConfig {
+	endpoints := make(map[string]EndpointConfig)
 	for k, v := range a.Endpoints {
 		if !v.IsEnabled {
 			continue
@@ -412,43 +414,47 @@ func (a *ApiRequest) FilterActivateEndpoints() *ApiRequest {
 	return a
 }
 
-func (a *ApiRequest) CombineHeaders(e Endpoint) map[string]string {
+func (a *ApiRequestConfig) CombineHeaders(e EndpointConfig) map[string]string {
 	if a.AvailableHeader() {
 		return coltx.MergeMapsString(a.Headers, e.Headers)
 	}
 	return e.Headers
 }
 
-func (a *ApiRequest) CombineAuthentication(e Endpoint) Authentication {
-	if a.Authentication.IsEnabled {
-		return a.Authentication
+func (a *ApiRequestConfig) CombineAuthentication(e EndpointConfig) AuthenticationConfig {
+	if e.Authentication.IsEnabled {
+		return e.Authentication
 	}
-	return e.Authentication
+	return a.Authentication
 }
 
-func (a *ApiRequest) CombineRetry(e Endpoint) Retry {
-	if a.Retry.IsEnabled {
-		return a.Retry
+func (a *ApiRequestConfig) CombineRetry(e EndpointConfig) RetryConfig {
+	if e.Retry.IsEnabled {
+		return e.Retry
 	}
-	return e.Retry
+	return a.Retry
 }
 
-func (a *ApiRequest) CombineHostURL(e Endpoint) string {
-	if !utils.IsEmpty(a.BaseURL) {
-		return a.BaseURL
+func (a *ApiRequestConfig) CombineHostURL(e EndpointConfig) string {
+	if utils.IsNotEmpty(e.BaseURL) {
+		return e.BaseURL
 	}
-	return e.BaseURL
+	return a.BaseURL
 }
 
-func (a *ApiRequest) CombineUrl(e Endpoint) (string, error) {
+func (a *ApiRequestConfig) CombineUrl(e EndpointConfig) (string, error) {
 	u, err := e.Url()
-	if utils.IsEmpty(a.BaseURL) {
-		return u, err
-	}
-	if err != nil {
+	if utils.IsEmpty(a.BaseURL) || utils.IsNotEmpty(e.BaseURL) {
 		return u, err
 	}
 	return e.UrlWith(a.BaseURL)
+}
+
+func (a *ApiRequestConfig) CombineTelegram(e EndpointConfig) telegram.TelegramConfig {
+	if e.Telegram.IsEnabled {
+		return e.Telegram
+	}
+	return a.Telegram
 }
 
 func isDuration(t time.Duration) bool {
