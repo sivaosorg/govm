@@ -12,6 +12,7 @@ import (
 	"github.com/sivaosorg/govm/asterisk"
 	"github.com/sivaosorg/govm/bot/slack"
 	"github.com/sivaosorg/govm/bot/telegram"
+	"github.com/sivaosorg/govm/cookies"
 	"github.com/sivaosorg/govm/corsx"
 	"github.com/sivaosorg/govm/logger"
 	"github.com/sivaosorg/govm/mongodb"
@@ -177,6 +178,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetTelegram(*telegram.GetTelegramConfigSample().SetEnabled(false))
 	k.SetSlack(*slack.GetSlackConfigSample().SetEnabled(false))
 	k.SetCors(*corsx.GetCorsConfigSample().SetEnabled(false))
+	k.SetCookie(*cookies.GetCookieConfigSample().SetEnabled(false))
 	k.AppendTelegramSeekers(*telegram.GetMultiTenantTelegramConfigSample())
 	k.AppendSlackSeekers(*slack.GetMultiTenantSlackConfigSample())
 	k.AppendAsteriskSeekers(*asterisk.GetMultiTenantAsteriskConfigSample())
@@ -185,6 +187,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.AppendPostgresSeekers(*postgres.GetMultiTenantPostgresConfigSample())
 	k.AppendRabbitMqSeekers(*rabbitmqx.GetMultiTenantRabbitMqConfigSample())
 	k.AppendRedisSeekers(*redisx.GetMultiTenantRedisConfigSample())
+	k.AppendCookieSeekers(*cookies.GetMultiTenantCookieConfigSample())
 	return k
 }
 
@@ -215,6 +218,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"postgres-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "Postgres Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"rabbitmq-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"redis-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"cookie-seekers":   fmt.Sprintf("################################\n%s\n%s\n################################", "Cookie Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -420,6 +424,16 @@ func (k *KeysConfig) SetServerCursor(value *server.Server) *KeysConfig {
 	return k
 }
 
+func (k *KeysConfig) SetCookie(value cookies.CookieConfig) *KeysConfig {
+	k.Cookie = value
+	return k
+}
+
+func (k *KeysConfig) SetCookieCursor(value *cookies.CookieConfig) *KeysConfig {
+	k.Cookie = *value
+	return k
+}
+
 func (k *KeysConfig) SetTelegramSeekers(values []telegram.MultiTenantTelegramConfig) *KeysConfig {
 	k.TelegramSeekers = values
 	return k
@@ -500,6 +514,16 @@ func (k *KeysConfig) AppendRedisSeekers(values ...redisx.MultiTenantRedisConfig)
 	return k
 }
 
+func (k *KeysConfig) SetCookieSeekers(values []cookies.MultiTenantCookieConfig) *KeysConfig {
+	k.CookieSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendCookieSeekers(values ...cookies.MultiTenantCookieConfig) *KeysConfig {
+	k.CookieSeekers = append(k.CookieSeekers, values...)
+	return k
+}
+
 func (k *KeysConfig) AvailableTelegramSeekers() bool {
 	return len(k.TelegramSeekers) > 0
 }
@@ -532,6 +556,10 @@ func (k *KeysConfig) AvailableRedisSeekers() bool {
 	return len(k.RedisSeekers) > 0
 }
 
+func (k *KeysConfig) AvailableCookieSeekers() bool {
+	return len(k.CookieSeekers) > 0
+}
+
 func (k *KeysConfig) FindTelegramSeeker(key string) (telegram.MultiTenantTelegramConfig, error) {
 	return telegram.NewClusterMultiTenantTelegramConfig().SetClusters(k.TelegramSeekers).FindClusterBy(key)
 }
@@ -562,6 +590,10 @@ func (k *KeysConfig) FindRabbitMqSeeker(key string) (rabbitmqx.MultiTenantRabbit
 
 func (k *KeysConfig) FindRedisSeeker(key string) (redisx.MultiTenantRedisConfig, error) {
 	return redisx.NewClusterMultiTenantRedisConfig().SetClusters(k.RedisSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindCookieSeeker(key string) (cookies.MultiTenantCookieConfig, error) {
+	return cookies.NewClusterMultiTenantCookieConfig().SetClusters(k.CookieSeekers).FindClusterBy(key)
 }
 
 func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {

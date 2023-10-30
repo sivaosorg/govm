@@ -131,6 +131,16 @@ config:
       read: 10s
       write: 10s
       idle: 10s
+  cookie:
+    enabled: false
+    name: user
+    value: ""
+    path: /
+    domain: ""
+    max_age: 86400
+    secure: false
+    http_only: true
+    timeout: 10s
   telegram-seekers:
   - key: tenant_1
     usable_default: false
@@ -269,3 +279,18 @@ config:
       password: redis.pwd
       database: database_stable
     option: {}
+  cookie-seekers:
+  - key: tenant_1
+    usable_default: true
+    config:
+      enabled: true
+      name: user
+      value: ""
+      path: /
+      domain: ""
+      max_age: 86400
+      secure: false
+      http_only: true
+      timeout: 10s
+    option:
+      max_retries: 2

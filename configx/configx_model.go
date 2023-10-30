@@ -4,6 +4,7 @@ import (
 	"github.com/sivaosorg/govm/asterisk"
 	"github.com/sivaosorg/govm/bot/slack"
 	"github.com/sivaosorg/govm/bot/telegram"
+	"github.com/sivaosorg/govm/cookies"
 	"github.com/sivaosorg/govm/corsx"
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
@@ -34,6 +35,7 @@ type KeysConfig struct {
 	Slack    slack.SlackConfig        `json:"slack,omitempty" yaml:"slack"`
 	Cors     corsx.CorsConfig         `json:"cors,omitempty" yaml:"cors"`
 	Server   server.Server            `json:"server,omitempty" yaml:"server"`
+	Cookie   cookies.CookieConfig     `json:"cookie,omitempty" yaml:"cookie"`
 
 	// Seekers
 	TelegramSeekers []telegram.MultiTenantTelegramConfig  `json:"telegram_seekers,omitempty" yaml:"telegram-seekers"`
@@ -44,6 +46,7 @@ type KeysConfig struct {
 	PostgresSeekers []postgres.MultiTenantPostgresConfig  `json:"postgres_seekers,omitempty" yaml:"postgres-seekers"`
 	RabbitMqSeekers []rabbitmqx.MultiTenantRabbitMqConfig `json:"rabbitmq_seekers,omitempty" yaml:"rabbitmq-seekers"`
 	RedisSeekers    []redisx.MultiTenantRedisConfig       `json:"redis_seekers,omitempty" yaml:"redis-seekers"`
+	CookieSeekers   []cookies.MultiTenantCookieConfig     `json:"cookie_seekers,omitempty" yaml:"cookie-seekers"`
 }
 
 type MultiTenancyKeysConfig struct {

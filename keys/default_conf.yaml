@@ -1,6 +1,6 @@
 # ################################
 # Asterisk Server Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 asterisk:
   enabled: false
@@ -20,7 +20,7 @@ asterisk:
     - 6
 # ################################
 # Mongodb Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 mongodb:
   enabled: false
@@ -35,7 +35,7 @@ mongodb:
   allow-conn-sync: true
 # ################################
 # MySQL Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 mysql:
   enabled: false
@@ -50,7 +50,7 @@ mysql:
   max-life-time-minutes-conn: 10
 # ################################
 # Postgres Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 postgres:
   enabled: false
@@ -65,7 +65,7 @@ postgres:
   max-idle-conn: 3
 # ################################
 # RabbitMQ Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 rabbitmq:
   enabled: false
@@ -105,7 +105,7 @@ rabbitmq:
         durable: true
 # ################################
 # Redis Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 redis:
   enabled: false
@@ -115,7 +115,7 @@ redis:
   database: database_stable
 # ################################
 # Telegram Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 telegram:
   enabled: false
@@ -125,7 +125,7 @@ telegram:
   token: <token_here>
 # ################################
 # Slack Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 slack:
   enabled: false
@@ -135,7 +135,7 @@ slack:
   token: <token-here>
 # ################################
 # Cors Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 cors:
   enabled: false
@@ -157,7 +157,7 @@ cors:
   max-age: 3600
 # ################################
 # Server Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 server:
   host: 127.0.0.1
@@ -168,9 +168,19 @@ server:
     read: 10s
     write: 10s
     idle: 10s
+cookie:
+  enabled: false
+  name: user
+  value: ""
+  path: /
+  domain: ""
+  max_age: 86400
+  secure: false
+  http_only: true
+  timeout: 10s
 # ################################
 # Telegram Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 telegram-seekers:
 - key: tenant_1
@@ -186,7 +196,7 @@ telegram-seekers:
     max-retries: 2
 # ################################
 # Slack Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 slack-seekers:
 - key: tenant_1
@@ -201,7 +211,7 @@ slack-seekers:
     max-retries: 0
 # ################################
 # Asterisk Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 asterisk-seekers:
 - key: tenant_1
@@ -225,7 +235,7 @@ asterisk-seekers:
   option: {}
 # ################################
 # Mongodb Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 mongodb-seekers:
 - key: tenant_1
@@ -244,7 +254,7 @@ mongodb-seekers:
   option: {}
 # ################################
 # MySQL Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 mysql-seekers:
 - key: tenant_1
@@ -263,7 +273,7 @@ mysql-seekers:
   option: {}
 # ################################
 # Postgres Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 postgres-seekers:
 - key: tenant_1
@@ -282,7 +292,7 @@ postgres-seekers:
   option: {}
 # ################################
 # RabbitMQ Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 rabbitmq-seekers:
 - key: tenant_1
@@ -326,7 +336,7 @@ rabbitmq-seekers:
   option: {}
 # ################################
 # Redis Seekers Config
-# 2023-10-28 17:41:16
+# 2023-10-30 15:13:58
 # ################################
 redis-seekers:
 - key: tenant_1
@@ -338,3 +348,22 @@ redis-seekers:
     password: redis.pwd
     database: database_stable
   option: {}
+# ################################
+# Cookie Seekers Config
+# 2023-10-30 15:13:58
+# ################################
+cookie-seekers:
+- key: tenant_1
+  usable_default: true
+  config:
+    enabled: true
+    name: user
+    value: ""
+    path: /
+    domain: ""
+    max_age: 86400
+    secure: false
+    http_only: true
+    timeout: 10s
+  option:
+    max_retries: 2
