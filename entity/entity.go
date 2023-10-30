@@ -310,6 +310,78 @@ func (responseEntity) MethodNotAllowed(message string, data interface{}) respons
 	return *r
 }
 
+func (responseEntity) Unauthorized(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusUnauthorized).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) Forbidden(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusForbidden).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) Accepted(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusAccepted).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) RequestTimeout(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusRequestTimeout).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) RequestEntityTooLarge(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusRequestEntityTooLarge).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) UnsupportedMediaType(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusUnsupportedMediaType).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) HTTPVersionNotSupported(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusHTTPVersionNotSupported).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
+func (responseEntity) PaymentRequired(message string, data interface{}) responseEntity {
+	r := NewResponseEntity().
+		SetStatusCode(http.StatusPaymentRequired).
+		SetMessage(message).
+		SetData(data).
+		SetTotal(0)
+	return *r
+}
+
 func (responseEntity) BuildX(statusCode int, message string, data interface{}, errors interface{}) responseEntity {
 	r := NewResponseEntity().
 		SetStatusCode(statusCode).

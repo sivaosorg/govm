@@ -8,9 +8,9 @@ type responseEntity struct {
 	StatusCode int                    `json:"status_code" binding:"required"`
 	Total      int                    `json:"total"`
 	Message    string                 `json:"message"`
-	Data       interface{}            `json:"data"`
+	Data       interface{}            `json:"data,omitempty"`
 	Errors     interface{}            `json:"errors"`
-	Headers    map[string]interface{} `json:"headers"`
+	Headers    map[string]interface{} `json:"headers,omitempty"`
 	Meta       metaEntity             `json:"meta,omitempty"`
 	Pagination paginationEntity       `json:"pagination,omitempty"`
 }
