@@ -9,6 +9,8 @@ import (
 
 func NewServer() *Server {
 	s := &Server{}
+	s.SetAttr(*NewAttribute())
+	s.SetTimeout(*NewTimeout().SetRead(15 * time.Second).SetWrite(15 * time.Second))
 	return s
 }
 
@@ -32,6 +34,11 @@ func (s *Server) SetTimeout(value Timeout) *Server {
 
 func (s *Server) SetMode(value string) *Server {
 	s.Mode = value
+	return s
+}
+
+func (s *Server) SetAttr(value Attr) *Server {
+	s.Attr = value
 	return s
 }
 
@@ -83,4 +90,18 @@ func GetTimeoutSample() *Timeout {
 		SetWrite(10 * time.Second).
 		SetServe(10 * time.Second)
 	return t
+}
+
+func NewAttribute() *Attr {
+	return &Attr{
+		MaxHeaderBytes: 1 << 20,
+	}
+}
+
+func (a *Attr) SetMaxHeaderBytes(value int) *Attr {
+	if value < 0 {
+		log.Panicf("Invalid max_header_bytes: %v", value)
+	}
+	a.MaxHeaderBytes = value
+	return a
 }
