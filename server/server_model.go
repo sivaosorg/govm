@@ -8,6 +8,7 @@ type Server struct {
 	Mode    string  `json:"mode" yaml:"mode"`
 	Timeout Timeout `json:"timeout" yaml:"timeout"`
 	Attr    Attr    `json:"attr" yaml:"attr"`
+	SSL     SSL     `json:"ssl" yaml:"ssl"`
 }
 
 type Timeout struct {
@@ -19,4 +20,10 @@ type Timeout struct {
 
 type Attr struct {
 	MaxHeaderBytes int `json:"max_header_bytes" yaml:"max_header_bytes"`
+}
+
+type SSL struct {
+	IsEnabled bool   `json:"enabled" yaml:"enabled"`
+	CertFile  string `json:"cert_file" yaml:"cert_file"`
+	KeyFile   string `json:"key_file" yaml:"key_file"`
 }

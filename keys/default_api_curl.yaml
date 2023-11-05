@@ -40,7 +40,7 @@ endpoints:
       password: pwd
     telegram:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       chat_id:
       - 123456789
       token: <token_here>
@@ -76,7 +76,7 @@ endpoints:
       password: pwd
     telegram:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       chat_id:
       - 123456789
       token: <token_here>
@@ -91,7 +91,7 @@ retry:
   - 504
 telegram:
   enabled: true
-  debug-mode: true
+  debug_mode: true
   chat_id:
   - 123456789
   token: <token_here>

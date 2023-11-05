@@ -1,10 +1,10 @@
 # ################################
 # Asterisk Server Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 asterisk:
   enabled: false
-  debug-mode: false
+  debug_mode: false
   port: 5038
   host: http://127.0.0.1
   username: u@root
@@ -20,26 +20,27 @@ asterisk:
     - 6
 # ################################
 # Mongodb Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 mongodb:
   enabled: false
-  debug-mode: false
-  url-conn: mongodb://127.0.0.1:27017/u_db
+  debug_mode: false
+  url_conn: mongodb://127.0.0.1:27017/u_db
   host: 127.0.0.1
   port: 27017
   database: u_db
   username: u@root
   password: pwd
-  timeout-seconds-conn: 30
-  allow-conn-sync: true
+  timeout_second_conn: 30
+  allow_conn_sync: true
+  timeout: 10s
 # ################################
 # MySQL Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 mysql:
   enabled: false
-  debug-mode: false
+  debug_mode: false
   database: u_db
   host: 127.0.0.1
   port: 3306
@@ -50,11 +51,11 @@ mysql:
   max-life-time-minutes-conn: 10
 # ################################
 # Postgres Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 postgres:
   enabled: false
-  debug-mode: false
+  debug_mode: false
   database: u_db
   host: 127.0.0.1
   port: 5432
@@ -65,12 +66,12 @@ postgres:
   max-idle-conn: 3
 # ################################
 # RabbitMQ Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 rabbitmq:
   enabled: false
-  debug-mode: false
-  url-conn: amqp://guest:guest@localhost:5672/
+  debug_mode: false
+  url_conn: amqp://guest:guest@localhost:5672/
   username: guest
   password: guest
   host: 127.0.0.1
@@ -105,37 +106,37 @@ rabbitmq:
         durable: true
 # ################################
 # Redis Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 redis:
   enabled: false
-  debug-mode: false
-  url-conn: localhost:6379
+  debug_mode: false
+  url_conn: localhost:6379
   password: redis.pwd
   database: database_stable
 # ################################
 # Telegram Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 telegram:
   enabled: false
-  debug-mode: true
+  debug_mode: true
   chat_id:
   - 123456789
   token: <token_here>
 # ################################
 # Slack Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 slack:
   enabled: false
-  debug-mode: true
+  debug_mode: true
   channel_id:
   - "123456789"
   token: <token-here>
 # ################################
 # Cors Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 cors:
   enabled: false
@@ -157,17 +158,27 @@ cors:
   max-age: 3600
 # ################################
 # Server Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 server:
   host: 127.0.0.1
   port: 8083
-  mode: ""
+  mode: debug
   timeout:
     serve: 10s
     read: 10s
     write: 10s
     idle: 10s
+  attr:
+    max_header_bytes: 1048576
+  ssl:
+    enabled: false
+    cert_file: ./keys/ssl/cert.crt
+    key_file: ./keys/ssl/key.pem
+# ################################
+# Cookie Config
+# 2023-11-05 08:06:30
+# ################################
 cookie:
   enabled: false
   name: user
@@ -180,14 +191,14 @@ cookie:
   timeout: 10s
 # ################################
 # Telegram Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 telegram-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: true
+    debug_mode: true
     chat_id:
     - 123456789
     token: <token_here>
@@ -196,14 +207,14 @@ telegram-seekers:
     max-retries: 2
 # ################################
 # Slack Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 slack-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: true
+    debug_mode: true
     channel_id:
     - "123456789"
     token: <token-here>
@@ -211,14 +222,14 @@ slack-seekers:
     max-retries: 0
 # ################################
 # Asterisk Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 asterisk-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: false
+    debug_mode: false
     port: 5038
     host: http://127.0.0.1
     username: u@root
@@ -235,33 +246,34 @@ asterisk-seekers:
   option: {}
 # ################################
 # Mongodb Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 mongodb-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: false
-    url-conn: mongodb://127.0.0.1:27017/u_db
+    debug_mode: false
+    url_conn: mongodb://127.0.0.1:27017/u_db
     host: 127.0.0.1
     port: 27017
     database: u_db
     username: u@root
     password: pwd
-    timeout-seconds-conn: 30
-    allow-conn-sync: true
+    timeout_second_conn: 30
+    allow_conn_sync: true
+    timeout: 10s
   option: {}
 # ################################
 # MySQL Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 mysql-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: false
+    debug_mode: false
     database: u_db
     host: 127.0.0.1
     port: 3306
@@ -273,14 +285,14 @@ mysql-seekers:
   option: {}
 # ################################
 # Postgres Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 postgres-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: false
+    debug_mode: false
     database: u_db
     host: 127.0.0.1
     port: 5432
@@ -292,15 +304,15 @@ postgres-seekers:
   option: {}
 # ################################
 # RabbitMQ Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 rabbitmq-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: false
-    url-conn: amqp://guest:guest@localhost:5672/
+    debug_mode: false
+    url_conn: amqp://guest:guest@localhost:5672/
     username: guest
     password: guest
     host: 127.0.0.1
@@ -336,21 +348,21 @@ rabbitmq-seekers:
   option: {}
 # ################################
 # Redis Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 redis-seekers:
 - key: tenant_1
   usable_default: false
   config:
     enabled: true
-    debug-mode: false
-    url-conn: localhost:6379
+    debug_mode: false
+    url_conn: localhost:6379
     password: redis.pwd
     database: database_stable
   option: {}
 # ################################
 # Cookie Seekers Config
-# 2023-10-30 15:13:58
+# 2023-11-05 08:06:30
 # ################################
 cookie-seekers:
 - key: tenant_1

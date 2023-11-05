@@ -4,7 +4,7 @@ clusters:
   config:
     asterisk:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       port: 5038
       host: http://127.0.0.1
       username: u@root
@@ -20,18 +20,19 @@ clusters:
         - 6
     mongodb:
       enabled: false
-      debug-mode: false
-      url-conn: mongodb://127.0.0.1:27017/u_db
+      debug_mode: false
+      url_conn: mongodb://127.0.0.1:27017/u_db
       host: 127.0.0.1
       port: 27017
       database: u_db
       username: u@root
       password: pwd
-      timeout-seconds-conn: 30
-      allow-conn-sync: true
+      timeout_second_conn: 30
+      allow_conn_sync: true
+      timeout: 10s
     mysql:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 3306
@@ -42,7 +43,7 @@ clusters:
       max-life-time-minutes-conn: 10
     postgres:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 5432
@@ -53,8 +54,8 @@ clusters:
       max-idle-conn: 3
     rabbitmq:
       enabled: false
-      debug-mode: false
-      url-conn: amqp://guest:guest@localhost:5672/
+      debug_mode: false
+      url_conn: amqp://guest:guest@localhost:5672/
       username: guest
       password: guest
       host: 127.0.0.1
@@ -89,19 +90,19 @@ clusters:
             durable: true
     redis:
       enabled: false
-      debug-mode: false
-      url-conn: localhost:6379
+      debug_mode: false
+      url_conn: localhost:6379
       password: redis.pwd
       database: database_stable
     telegram:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       chat_id:
       - 123456789
       token: <token_here>
     slack:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       channel_id:
       - "123456789"
       token: <token-here>
@@ -126,12 +127,18 @@ clusters:
     server:
       host: 127.0.0.1
       port: 8083
-      mode: ""
+      mode: debug
       timeout:
         serve: 10s
         read: 10s
         write: 10s
         idle: 10s
+      attr:
+        max_header_bytes: 1048576
+      ssl:
+        enabled: false
+        cert_file: ./keys/ssl/cert.crt
+        key_file: ./keys/ssl/key.pem
     cookie:
       enabled: false
       name: user
@@ -147,7 +154,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         chat_id:
         - 123456789
         token: <token_here>
@@ -159,7 +166,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         channel_id:
         - "123456789"
         token: <token-here>
@@ -170,7 +177,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         port: 5038
         host: http://127.0.0.1
         username: u@root
@@ -190,22 +197,23 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: mongodb://127.0.0.1:27017/u_db
+        debug_mode: false
+        url_conn: mongodb://127.0.0.1:27017/u_db
         host: 127.0.0.1
         port: 27017
         database: u_db
         username: u@root
         password: pwd
-        timeout-seconds-conn: 30
-        allow-conn-sync: true
+        timeout_second_conn: 30
+        allow_conn_sync: true
+        timeout: 10s
       option: {}
     mysql-seekers:
     - key: tenant_1
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 3306
@@ -220,7 +228,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 5432
@@ -235,8 +243,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: amqp://guest:guest@localhost:5672/
+        debug_mode: false
+        url_conn: amqp://guest:guest@localhost:5672/
         username: guest
         password: guest
         host: 127.0.0.1
@@ -275,8 +283,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: localhost:6379
+        debug_mode: false
+        url_conn: localhost:6379
         password: redis.pwd
         database: database_stable
       option: {}
@@ -300,7 +308,7 @@ clusters:
   config:
     asterisk:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       port: 5038
       host: http://127.0.0.1
       username: u@root
@@ -316,18 +324,19 @@ clusters:
         - 6
     mongodb:
       enabled: false
-      debug-mode: false
-      url-conn: mongodb://127.0.0.1:27017/u_db
+      debug_mode: false
+      url_conn: mongodb://127.0.0.1:27017/u_db
       host: 127.0.0.1
       port: 27017
       database: u_db
       username: u@root
       password: pwd
-      timeout-seconds-conn: 30
-      allow-conn-sync: true
+      timeout_second_conn: 30
+      allow_conn_sync: true
+      timeout: 10s
     mysql:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 3306
@@ -338,7 +347,7 @@ clusters:
       max-life-time-minutes-conn: 10
     postgres:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 5432
@@ -349,8 +358,8 @@ clusters:
       max-idle-conn: 3
     rabbitmq:
       enabled: false
-      debug-mode: false
-      url-conn: amqp://guest:guest@localhost:5672/
+      debug_mode: false
+      url_conn: amqp://guest:guest@localhost:5672/
       username: guest
       password: guest
       host: 127.0.0.1
@@ -385,19 +394,19 @@ clusters:
             durable: true
     redis:
       enabled: false
-      debug-mode: false
-      url-conn: localhost:6379
+      debug_mode: false
+      url_conn: localhost:6379
       password: redis.pwd
       database: database_stable
     telegram:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       chat_id:
       - 123456789
       token: <token_here>
     slack:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       channel_id:
       - "123456789"
       token: <token-here>
@@ -422,12 +431,18 @@ clusters:
     server:
       host: 127.0.0.1
       port: 8083
-      mode: ""
+      mode: debug
       timeout:
         serve: 10s
         read: 10s
         write: 10s
         idle: 10s
+      attr:
+        max_header_bytes: 1048576
+      ssl:
+        enabled: false
+        cert_file: ./keys/ssl/cert.crt
+        key_file: ./keys/ssl/key.pem
     cookie:
       enabled: false
       name: user
@@ -443,7 +458,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         chat_id:
         - 123456789
         token: <token_here>
@@ -455,7 +470,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         channel_id:
         - "123456789"
         token: <token-here>
@@ -466,7 +481,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         port: 5038
         host: http://127.0.0.1
         username: u@root
@@ -486,22 +501,23 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: mongodb://127.0.0.1:27017/u_db
+        debug_mode: false
+        url_conn: mongodb://127.0.0.1:27017/u_db
         host: 127.0.0.1
         port: 27017
         database: u_db
         username: u@root
         password: pwd
-        timeout-seconds-conn: 30
-        allow-conn-sync: true
+        timeout_second_conn: 30
+        allow_conn_sync: true
+        timeout: 10s
       option: {}
     mysql-seekers:
     - key: tenant_1
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 3306
@@ -516,7 +532,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 5432
@@ -531,8 +547,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: amqp://guest:guest@localhost:5672/
+        debug_mode: false
+        url_conn: amqp://guest:guest@localhost:5672/
         username: guest
         password: guest
         host: 127.0.0.1
@@ -571,8 +587,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: localhost:6379
+        debug_mode: false
+        url_conn: localhost:6379
         password: redis.pwd
         database: database_stable
       option: {}
@@ -596,7 +612,7 @@ clusters:
   config:
     asterisk:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       port: 5038
       host: http://127.0.0.1
       username: u@root
@@ -612,18 +628,19 @@ clusters:
         - 6
     mongodb:
       enabled: false
-      debug-mode: false
-      url-conn: mongodb://127.0.0.1:27017/u_db
+      debug_mode: false
+      url_conn: mongodb://127.0.0.1:27017/u_db
       host: 127.0.0.1
       port: 27017
       database: u_db
       username: u@root
       password: pwd
-      timeout-seconds-conn: 30
-      allow-conn-sync: true
+      timeout_second_conn: 30
+      allow_conn_sync: true
+      timeout: 10s
     mysql:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 3306
@@ -634,7 +651,7 @@ clusters:
       max-life-time-minutes-conn: 10
     postgres:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 5432
@@ -645,8 +662,8 @@ clusters:
       max-idle-conn: 3
     rabbitmq:
       enabled: false
-      debug-mode: false
-      url-conn: amqp://guest:guest@localhost:5672/
+      debug_mode: false
+      url_conn: amqp://guest:guest@localhost:5672/
       username: guest
       password: guest
       host: 127.0.0.1
@@ -681,19 +698,19 @@ clusters:
             durable: true
     redis:
       enabled: false
-      debug-mode: false
-      url-conn: localhost:6379
+      debug_mode: false
+      url_conn: localhost:6379
       password: redis.pwd
       database: database_stable
     telegram:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       chat_id:
       - 123456789
       token: <token_here>
     slack:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       channel_id:
       - "123456789"
       token: <token-here>
@@ -718,12 +735,18 @@ clusters:
     server:
       host: 127.0.0.1
       port: 8083
-      mode: ""
+      mode: debug
       timeout:
         serve: 10s
         read: 10s
         write: 10s
         idle: 10s
+      attr:
+        max_header_bytes: 1048576
+      ssl:
+        enabled: false
+        cert_file: ./keys/ssl/cert.crt
+        key_file: ./keys/ssl/key.pem
     cookie:
       enabled: false
       name: user
@@ -739,7 +762,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         chat_id:
         - 123456789
         token: <token_here>
@@ -751,7 +774,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         channel_id:
         - "123456789"
         token: <token-here>
@@ -762,7 +785,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         port: 5038
         host: http://127.0.0.1
         username: u@root
@@ -782,22 +805,23 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: mongodb://127.0.0.1:27017/u_db
+        debug_mode: false
+        url_conn: mongodb://127.0.0.1:27017/u_db
         host: 127.0.0.1
         port: 27017
         database: u_db
         username: u@root
         password: pwd
-        timeout-seconds-conn: 30
-        allow-conn-sync: true
+        timeout_second_conn: 30
+        allow_conn_sync: true
+        timeout: 10s
       option: {}
     mysql-seekers:
     - key: tenant_1
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 3306
@@ -812,7 +836,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 5432
@@ -827,8 +851,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: amqp://guest:guest@localhost:5672/
+        debug_mode: false
+        url_conn: amqp://guest:guest@localhost:5672/
         username: guest
         password: guest
         host: 127.0.0.1
@@ -867,8 +891,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: localhost:6379
+        debug_mode: false
+        url_conn: localhost:6379
         password: redis.pwd
         database: database_stable
       option: {}
@@ -892,7 +916,7 @@ clusters:
   config:
     asterisk:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       port: 5038
       host: http://127.0.0.1
       username: u@root
@@ -908,18 +932,19 @@ clusters:
         - 6
     mongodb:
       enabled: false
-      debug-mode: false
-      url-conn: mongodb://127.0.0.1:27017/u_db
+      debug_mode: false
+      url_conn: mongodb://127.0.0.1:27017/u_db
       host: 127.0.0.1
       port: 27017
       database: u_db
       username: u@root
       password: pwd
-      timeout-seconds-conn: 30
-      allow-conn-sync: true
+      timeout_second_conn: 30
+      allow_conn_sync: true
+      timeout: 10s
     mysql:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 3306
@@ -930,7 +955,7 @@ clusters:
       max-life-time-minutes-conn: 10
     postgres:
       enabled: false
-      debug-mode: false
+      debug_mode: false
       database: u_db
       host: 127.0.0.1
       port: 5432
@@ -941,8 +966,8 @@ clusters:
       max-idle-conn: 3
     rabbitmq:
       enabled: false
-      debug-mode: false
-      url-conn: amqp://guest:guest@localhost:5672/
+      debug_mode: false
+      url_conn: amqp://guest:guest@localhost:5672/
       username: guest
       password: guest
       host: 127.0.0.1
@@ -977,19 +1002,19 @@ clusters:
             durable: true
     redis:
       enabled: false
-      debug-mode: false
-      url-conn: localhost:6379
+      debug_mode: false
+      url_conn: localhost:6379
       password: redis.pwd
       database: database_stable
     telegram:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       chat_id:
       - 123456789
       token: <token_here>
     slack:
       enabled: false
-      debug-mode: true
+      debug_mode: true
       channel_id:
       - "123456789"
       token: <token-here>
@@ -1014,12 +1039,18 @@ clusters:
     server:
       host: 127.0.0.1
       port: 8083
-      mode: ""
+      mode: debug
       timeout:
         serve: 10s
         read: 10s
         write: 10s
         idle: 10s
+      attr:
+        max_header_bytes: 1048576
+      ssl:
+        enabled: false
+        cert_file: ./keys/ssl/cert.crt
+        key_file: ./keys/ssl/key.pem
     cookie:
       enabled: false
       name: user
@@ -1035,7 +1066,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         chat_id:
         - 123456789
         token: <token_here>
@@ -1047,7 +1078,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: true
+        debug_mode: true
         channel_id:
         - "123456789"
         token: <token-here>
@@ -1058,7 +1089,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         port: 5038
         host: http://127.0.0.1
         username: u@root
@@ -1078,22 +1109,23 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: mongodb://127.0.0.1:27017/u_db
+        debug_mode: false
+        url_conn: mongodb://127.0.0.1:27017/u_db
         host: 127.0.0.1
         port: 27017
         database: u_db
         username: u@root
         password: pwd
-        timeout-seconds-conn: 30
-        allow-conn-sync: true
+        timeout_second_conn: 30
+        allow_conn_sync: true
+        timeout: 10s
       option: {}
     mysql-seekers:
     - key: tenant_1
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 3306
@@ -1108,7 +1140,7 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
+        debug_mode: false
         database: u_db
         host: 127.0.0.1
         port: 5432
@@ -1123,8 +1155,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: amqp://guest:guest@localhost:5672/
+        debug_mode: false
+        url_conn: amqp://guest:guest@localhost:5672/
         username: guest
         password: guest
         host: 127.0.0.1
@@ -1163,8 +1195,8 @@ clusters:
       usable_default: false
       config:
         enabled: true
-        debug-mode: false
-        url-conn: localhost:6379
+        debug_mode: false
+        url_conn: localhost:6379
         password: redis.pwd
         database: database_stable
       option: {}

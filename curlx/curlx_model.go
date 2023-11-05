@@ -18,7 +18,7 @@ type CurlxContext struct {
 }
 
 type CurlxRequest struct {
-	DebugMode       bool              `json:"debug_mode" yaml:"debug-mode"`
+	DebugMode       bool              `json:"debug_mode" yaml:"debug_mode"`
 	Method          Method            `json:"method" binding:"required" yaml:"method"`
 	Endpoint        string            `json:"endpoint" yaml:"endpoint"`
 	Attachment      string            `json:"attachment,omitempty" yaml:"attachment"`

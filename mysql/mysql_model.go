@@ -4,7 +4,7 @@ import "time"
 
 type MysqlConfig struct {
 	IsEnabled              bool          `json:"enabled" yaml:"enabled"`
-	DebugMode              bool          `json:"debug_mode" yaml:"debug-mode"`
+	DebugMode              bool          `json:"debug_mode" yaml:"debug_mode"`
 	Database               string        `json:"database" binding:"required" yaml:"database"`
 	Host                   string        `json:"host" binding:"required" yaml:"host"`
 	Port                   int           `json:"port" binding:"required" yaml:"port"`

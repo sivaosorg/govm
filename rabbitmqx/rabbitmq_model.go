@@ -6,8 +6,8 @@ type clusters map[string]RabbitMqMessageConfig
 
 type RabbitMqConfig struct {
 	IsEnabled bool                  `json:"enabled" yaml:"enabled"`
-	DebugMode bool                  `json:"debug_mode" yaml:"debug-mode"`
-	UrlConn   string                `json:"url_conn" binding:"required" yaml:"url-conn"`
+	DebugMode bool                  `json:"debug_mode" yaml:"debug_mode"`
+	UrlConn   string                `json:"url_conn" binding:"required" yaml:"url_conn"`
 	Username  string                `json:"username" binding:"required" yaml:"username"`
 	Password  string                `json:"-" binding:"required" yaml:"password"`
 	Host      string                `json:"host" yaml:"host"`

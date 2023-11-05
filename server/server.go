@@ -1,9 +1,12 @@
 package server
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"time"
 
+	"github.com/sivaosorg/govm/logger"
 	"github.com/sivaosorg/govm/utils"
 )
 
@@ -11,6 +14,8 @@ func NewServer() *Server {
 	s := &Server{}
 	s.SetAttr(*NewAttribute())
 	s.SetTimeout(*NewTimeout().SetRead(15 * time.Second).SetWrite(15 * time.Second))
+	s.SetSSL(*GetSSLSample())
+	s.SetMode("debug")
 	return s
 }
 
@@ -39,6 +44,11 @@ func (s *Server) SetMode(value string) *Server {
 
 func (s *Server) SetAttr(value Attr) *Server {
 	s.Attr = value
+	return s
+}
+
+func (s *Server) SetSSL(value SSL) *Server {
+	s.SSL = value
 	return s
 }
 
@@ -104,4 +114,62 @@ func (a *Attr) SetMaxHeaderBytes(value int) *Attr {
 	}
 	a.MaxHeaderBytes = value
 	return a
+}
+
+func (s *Server) CreateAppServer(handler http.Handler) *http.Server {
+	h := &http.Server{
+		Addr:           fmt.Sprintf(":%v", s.Port),
+		ReadTimeout:    s.Timeout.Read,
+		WriteTimeout:   s.Timeout.Write,
+		MaxHeaderBytes: s.Attr.MaxHeaderBytes,
+		Handler:        handler,
+	}
+	return h
+}
+
+func NewSsl() *SSL {
+	return &SSL{}
+}
+
+func (s *SSL) SetEnabled(value bool) *SSL {
+	s.IsEnabled = value
+	return s
+}
+
+func (s *SSL) SetCertFile(value string) *SSL {
+	s.CertFile = value
+	return s
+}
+
+func (s *SSL) SetKeyFile(value string) *SSL {
+	s.KeyFile = value
+	return s
+}
+
+func (s *SSL) Json() string {
+	return utils.ToJson(s)
+}
+
+func GetSSLSample() *SSL {
+	s := NewSsl().
+		SetEnabled(false).
+		SetCertFile("./keys/ssl/cert.crt").
+		SetKeyFile("./keys/ssl/key.pem")
+	return s
+}
+
+func StartServer(h *http.Server) {
+	err := h.ListenAndServe()
+	if err != nil {
+		logger.Errorf("Start server got an error: %v", err, h.Addr)
+		panic(err)
+	}
+}
+
+func StartServerSecure(h *http.Server, cert, key string) {
+	err := h.ListenAndServeTLS(cert, key)
+	if err != nil {
+		logger.Errorf("Start server TLS got an error: %v", err, h.Addr)
+		panic(err)
+	}
 }

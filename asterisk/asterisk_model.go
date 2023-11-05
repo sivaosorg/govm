@@ -10,7 +10,7 @@ type TelephonyConfig struct {
 
 type AsteriskConfig struct {
 	IsEnabled bool            `json:"enabled" yaml:"enabled"`
-	DebugMode bool            `json:"debug_mode" yaml:"debug-mode"`
+	DebugMode bool            `json:"debug_mode" yaml:"debug_mode"`
 	Port      int             `json:"port" binding:"required" yaml:"port"`
 	Host      string          `json:"host" binding:"required" yaml:"host"`
 	Username  string          `json:"username" binding:"required" yaml:"username"`

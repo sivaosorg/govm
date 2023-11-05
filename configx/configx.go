@@ -201,6 +201,7 @@ func (KeysConfig) WriteDefaultConfig() {
 	m.SetData(GetKeysDefaultConfig())
 	m.SetComment(map[string]string{
 		"server":           fmt.Sprintf("################################\n%s\n%s\n################################", "Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"cookie":           fmt.Sprintf("################################\n%s\n%s\n################################", "Cookie Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"asterisk":         fmt.Sprintf("################################\n%s\n%s\n################################", "Asterisk Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"mongodb":          fmt.Sprintf("################################\n%s\n%s\n################################", "Mongodb Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"mysql":            fmt.Sprintf("################################\n%s\n%s\n################################", "MySQL Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
