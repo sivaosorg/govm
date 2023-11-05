@@ -9,6 +9,7 @@ type Server struct {
 	Timeout Timeout `json:"timeout" yaml:"timeout"`
 	Attr    Attr    `json:"attr" yaml:"attr"`
 	SSL     SSL     `json:"ssl" yaml:"ssl"`
+	SP      Pprof   `json:"serve_proxy" yaml:"serve_proxy"`
 }
 
 type Timeout struct {
@@ -26,4 +27,11 @@ type SSL struct {
 	IsEnabled bool   `json:"enabled" yaml:"enabled"`
 	CertFile  string `json:"cert_file" yaml:"cert_file"`
 	KeyFile   string `json:"key_file" yaml:"key_file"`
+}
+
+type Pprof struct {
+	IsEnabled bool    `json:"enabled" yaml:"enabled"`
+	Port      int     `json:"port" binding:"required" yaml:"port"`
+	Timeout   Timeout `json:"timeout" yaml:"timeout"`
+	Attr      Attr    `json:"attr" yaml:"attr"`
 }

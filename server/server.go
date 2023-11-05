@@ -16,6 +16,7 @@ func NewServer() *Server {
 	s.SetTimeout(*NewTimeout().SetRead(15 * time.Second).SetWrite(15 * time.Second))
 	s.SetSSL(*GetSSLSample())
 	s.SetMode("debug")
+	s.SetSP(*GetPprofSample())
 	return s
 }
 
@@ -49,6 +50,11 @@ func (s *Server) SetAttr(value Attr) *Server {
 
 func (s *Server) SetSSL(value SSL) *Server {
 	s.SSL = value
+	return s
+}
+
+func (s *Server) SetSP(value Pprof) *Server {
+	s.SP = value
 	return s
 }
 
@@ -156,6 +162,54 @@ func GetSSLSample() *SSL {
 		SetCertFile("./keys/ssl/cert.crt").
 		SetKeyFile("./keys/ssl/key.pem")
 	return s
+}
+
+func NewPprof() *Pprof {
+	return &Pprof{}
+}
+
+func (p *Pprof) SetEnabled(value bool) *Pprof {
+	p.IsEnabled = value
+	return p
+}
+
+func (p *Pprof) SetPort(value int) *Pprof {
+	p.Port = value
+	return p
+}
+
+func (p *Pprof) SetTimeout(value Timeout) *Pprof {
+	p.Timeout = value
+	return p
+}
+
+func (p *Pprof) SetAttr(value Attr) *Pprof {
+	p.Attr = value
+	return p
+}
+
+func (p *Pprof) Json() string {
+	return utils.ToJson(p)
+}
+
+func (p *Pprof) CreateAppServer(handler http.Handler) *http.Server {
+	h := &http.Server{
+		Addr:           fmt.Sprintf(":%v", p.Port),
+		ReadTimeout:    p.Timeout.Read,
+		WriteTimeout:   p.Timeout.Write,
+		MaxHeaderBytes: p.Attr.MaxHeaderBytes,
+		Handler:        handler,
+	}
+	return h
+}
+
+func GetPprofSample() *Pprof {
+	p := NewPprof().
+		SetEnabled(false).
+		SetPort(8101).
+		SetAttr(*NewAttribute()).
+		SetTimeout(*GetTimeoutSample())
+	return p
 }
 
 func StartServer(h *http.Server) {

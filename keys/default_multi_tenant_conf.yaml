@@ -138,6 +138,16 @@ config:
       enabled: false
       cert_file: ./keys/ssl/cert.crt
       key_file: ./keys/ssl/key.pem
+    serve_proxy:
+      enabled: false
+      port: 9999
+      timeout:
+        serve: 10s
+        read: 10s
+        write: 10s
+        idle: 10s
+      attr:
+        max_header_bytes: 1048576
   cookie:
     enabled: false
     name: user
