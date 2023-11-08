@@ -328,6 +328,11 @@ func (a *ApiRequestConfig) SetTelegram(value telegram.TelegramConfig) *ApiReques
 	return a
 }
 
+func (a *ApiRequestConfig) SetKey(value string) *ApiRequestConfig {
+	a.Key = value
+	return a
+}
+
 func (a *ApiRequestConfig) Json() string {
 	return utils.ToJson(a)
 }
@@ -459,4 +464,18 @@ func (a *ApiRequestConfig) CombineTelegram(e EndpointConfig) telegram.TelegramCo
 
 func isDuration(t time.Duration) bool {
 	return t != 0 && t > 0
+}
+
+func Get(node []ApiRequestConfig, key string) ApiRequestConfig {
+	if len(node) == 0 {
+		return ApiRequestConfig{}
+	}
+	var value ApiRequestConfig
+	for _, v := range node {
+		if v.Key == key {
+			value = v
+			break
+		}
+	}
+	return value
 }

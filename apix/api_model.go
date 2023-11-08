@@ -42,6 +42,7 @@ type EndpointConfig struct {
 
 type ApiRequestConfig struct {
 	BaseURL        string                    `json:"base_url" yaml:"base_url"`
+	Key            string                    `json:"key" yaml:"key"`
 	Authentication AuthenticationConfig      `json:"authentication" yaml:"authentication"`
 	Headers        map[string]string         `json:"headers" yaml:"headers"`
 	Endpoints      map[string]EndpointConfig `json:"endpoints" yaml:"endpoints"`
