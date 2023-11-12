@@ -425,3 +425,417 @@ func Map2Table(data map[string]interface{}) string {
 	}
 	return builder.String()
 }
+
+// IndexExists checks if the given index is within the valid range of the slice.
+func IndexExists[T any](slice []T, index int) bool {
+	return index >= 0 && index < len(slice)
+}
+
+// Iterate generic function to iterate over a collection (slice, array, map)
+func Iterate(collection interface{}, callback func(index int, value interface{})) {
+	v := reflect.ValueOf(collection)
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			callback(i, v.Index(i).Interface())
+		}
+	} else if v.Kind() == reflect.Map {
+		keys := v.MapKeys()
+		for _, key := range keys {
+			callback(-1, key.Interface())
+			callback(-1, v.MapIndex(key).Interface())
+		}
+	}
+}
+
+// Map generic function to map a collection (slice, array, map) using a mapping function
+func MapZ(collection interface{}, mapper func(value interface{}) interface{}) interface{} {
+	v := reflect.ValueOf(collection)
+	result := reflect.MakeSlice(reflect.SliceOf(reflect.TypeOf(mapper(v.Index(0).Interface()))), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			mappedValue := mapper(v.Index(i).Interface())
+			result = reflect.Append(result, reflect.ValueOf(mappedValue))
+		}
+	} else if v.Kind() == reflect.Map {
+		keys := v.MapKeys()
+		for _, key := range keys {
+			mappedKey := mapper(key.Interface())
+			mappedValue := mapper(v.MapIndex(key).Interface())
+			result = reflect.Append(result, reflect.ValueOf(mappedKey))
+			result = reflect.Append(result, reflect.ValueOf(mappedValue))
+		}
+	}
+
+	return result.Interface()
+}
+
+// Filter generic function to filter a collection (slice, array) using a filter function
+func FilterZ(collection interface{}, predicate func(value interface{}) bool) interface{} {
+	v := reflect.ValueOf(collection)
+	result := reflect.MakeSlice(v.Type(), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i).Interface()
+			if predicate(item) {
+				result = reflect.Append(result, reflect.ValueOf(item))
+			}
+		}
+	}
+
+	return result.Interface()
+}
+
+// Reduce generic function to reduce a collection (slice, array) to a single value using a reducer function
+func ReduceZ(collection interface{}, reducer func(acc interface{}, value interface{}) interface{}, initialValue interface{}) interface{} {
+	v := reflect.ValueOf(collection)
+	accumulator := initialValue
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			accumulator = reducer(accumulator, v.Index(i).Interface())
+		}
+	}
+
+	return accumulator
+}
+
+// Find generic function to find an element in a collection (slice, array) based on a condition
+func Find(collection interface{}, predicate func(value interface{}) bool) interface{} {
+	v := reflect.ValueOf(collection)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i).Interface()
+			if predicate(item) {
+				return item
+			}
+		}
+	}
+
+	return nil
+}
+
+// All generic function to check if all elements in a collection (slice, array) satisfy a condition
+func All(collection interface{}, condition func(value interface{}) bool) bool {
+	v := reflect.ValueOf(collection)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			if !condition(v.Index(i).Interface()) {
+				return false
+			}
+		}
+		return true
+	}
+
+	return false
+}
+
+// Any generic function to check if any element in a collection (slice, array) satisfies a condition
+func Any(collection interface{}, condition func(value interface{}) bool) bool {
+	v := reflect.ValueOf(collection)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			if condition(v.Index(i).Interface()) {
+				return true
+			}
+		}
+		return false
+	}
+
+	return false
+}
+
+// Count generic function to count the number of elements in a collection (slice, array) that satisfy a condition
+func Count(collection interface{}, condition func(value interface{}) bool) int {
+	v := reflect.ValueOf(collection)
+	count := 0
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			if condition(v.Index(i).Interface()) {
+				count++
+			}
+		}
+	}
+
+	return count
+}
+
+// Remove generic function to remove elements from a collection (slice) that satisfy a condition
+func Remove(collection interface{}, condition func(value interface{}) bool) interface{} {
+	v := reflect.ValueOf(collection)
+	result := reflect.MakeSlice(v.Type(), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i).Interface()
+			if !condition(item) {
+				result = reflect.Append(result, reflect.ValueOf(item))
+			}
+		}
+	}
+
+	return result.Interface()
+}
+
+// Sort generic function to sort a collection (slice, array)
+func SortZ(collection interface{}, less func(i, j int) bool) {
+	v := reflect.ValueOf(collection)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		sort.SliceStable(collection, func(i, j int) bool {
+			return less(i, j)
+		})
+	}
+}
+
+// Reverse generic function to reverse the elements of a collection (slice, array)
+func ReverseZ(collection interface{}) {
+	v := reflect.ValueOf(collection)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		length := v.Len()
+		for i := 0; i < length/2; i++ {
+			j := length - i - 1
+			vi := v.Index(i).Interface()
+			vj := v.Index(j).Interface()
+			v.Index(i).Set(reflect.ValueOf(vj))
+			v.Index(j).Set(reflect.ValueOf(vi))
+		}
+	}
+}
+
+// Unique generic function to remove duplicate elements from a collection (slice, array)
+func UniqueZ(collection interface{}) interface{} {
+	v := reflect.ValueOf(collection)
+	uniqueMap := make(map[interface{}]struct{})
+	result := reflect.MakeSlice(v.Type(), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i).Interface()
+			if _, found := uniqueMap[item]; !found {
+				uniqueMap[item] = struct{}{}
+				result = reflect.Append(result, reflect.ValueOf(item))
+			}
+		}
+	}
+
+	return result.Interface()
+}
+
+// Contains generic function to check if a collection (slice, array) contains an element
+func ContainsZ(collection interface{}, element interface{}) bool {
+	v := reflect.ValueOf(collection)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			if reflect.DeepEqual(v.Index(i).Interface(), element) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// Difference generic function to compute the difference between two collections (slices, arrays)
+func DifferenceZ(collection1 interface{}, collection2 interface{}) interface{} {
+	v1 := reflect.ValueOf(collection1)
+	result := reflect.MakeSlice(v1.Type(), 0, 0)
+
+	if v1.Kind() == reflect.Slice || v1.Kind() == reflect.Array {
+		for i := 0; i < v1.Len(); i++ {
+			item := v1.Index(i).Interface()
+			if !ContainsZ(collection2, item) {
+				result = reflect.Append(result, v1.Index(i))
+			}
+		}
+	}
+
+	return result.Interface()
+}
+
+// Intersection generic function to compute the intersection of two collections (slices, arrays)
+func Intersection(collection1 interface{}, collection2 interface{}) interface{} {
+	v1 := reflect.ValueOf(collection1)
+	result := reflect.MakeSlice(v1.Type(), 0, 0)
+
+	if v1.Kind() == reflect.Slice || v1.Kind() == reflect.Array {
+		for i := 0; i < v1.Len(); i++ {
+			item := v1.Index(i).Interface()
+			if ContainsZ(collection2, item) {
+				result = reflect.Append(result, v1.Index(i))
+			}
+		}
+	}
+
+	return result.Interface()
+}
+
+// Slice generic function to extract a sub-collection from a collection (slice, array) based on start and end indices.
+func Slice(collection interface{}, start, end int) interface{} {
+	v := reflect.ValueOf(collection)
+	result := reflect.MakeSlice(v.Type(), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		if start < 0 {
+			start = 0
+		}
+		if end > v.Len() {
+			end = v.Len()
+		}
+
+		for i := start; i < end; i++ {
+			result = reflect.Append(result, v.Index(i))
+		}
+	}
+
+	return result.Interface()
+}
+
+// SliceWithIndices generic function to extract a sub-collection from a collection (slice, array) based on a list of indices.
+func SliceWithIndices(collection interface{}, indices []int) interface{} {
+	v := reflect.ValueOf(collection)
+	result := reflect.MakeSlice(v.Type(), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for _, index := range indices {
+			if index >= 0 && index < v.Len() {
+				result = reflect.Append(result, v.Index(index))
+			}
+		}
+	}
+
+	return result.Interface()
+}
+
+// GroupBy generic function to group elements in a collection (slice, array) by a specified key function.
+func GroupByZ(collection interface{}, keyFunc func(value interface{}) interface{}) map[interface{}][]interface{} {
+	v := reflect.ValueOf(collection)
+	groups := make(map[interface{}][]interface{})
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i).Interface()
+			key := keyFunc(item)
+			if _, found := groups[key]; !found {
+				groups[key] = make([]interface{}, 0)
+			}
+			groups[key] = append(groups[key], item)
+		}
+	}
+
+	return groups
+}
+
+// Partition generic function to partition elements in a collection (slice, array) based on a condition.
+func Partition(collection interface{}, condition func(value interface{}) bool) (interface{}, interface{}) {
+	v := reflect.ValueOf(collection)
+	truePartition := reflect.MakeSlice(v.Type(), 0, 0)
+	falsePartition := reflect.MakeSlice(v.Type(), 0, 0)
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i).Interface()
+			if condition(item) {
+				truePartition = reflect.Append(truePartition, reflect.ValueOf(item))
+			} else {
+				falsePartition = reflect.Append(falsePartition, reflect.ValueOf(item))
+			}
+		}
+	}
+
+	return truePartition.Interface(), falsePartition.Interface()
+}
+
+// Zip generic function to combine elements from multiple collections (slices, arrays) into tuples.
+func Zip(collections ...interface{}) []interface{} {
+	minLength := -1
+
+	for _, collection := range collections {
+		v := reflect.ValueOf(collection)
+		if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+			return nil
+		}
+
+		if minLength == -1 || v.Len() < minLength {
+			minLength = v.Len()
+		}
+	}
+
+	result := make([]interface{}, minLength)
+
+	for i := 0; i < minLength; i++ {
+		tuple := make([]interface{}, len(collections))
+		for j, collection := range collections {
+			v := reflect.ValueOf(collection)
+			tuple[j] = v.Index(i).Interface()
+		}
+		result[i] = tuple
+	}
+
+	return result
+}
+
+// ReduceRight generic function to perform a right-to-left reduction on a collection (slice, array).
+func ReduceRight(collection interface{}, reducer func(acc, value interface{}) interface{}, initialValue interface{}) interface{} {
+	v := reflect.ValueOf(collection)
+	accumulator := initialValue
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := v.Len() - 1; i >= 0; i-- {
+			accumulator = reducer(accumulator, v.Index(i).Interface())
+		}
+	}
+
+	return accumulator
+}
+
+// RotateLeft generic function to cyclically rotate elements in a collection (slice, array) to the left by a specified number of positions.
+func RotateLeft(collection interface{}, positions int) interface{} {
+	v := reflect.ValueOf(collection)
+	length := v.Len()
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		if positions < 0 {
+			positions = (positions%length + length) % length
+		} else {
+			positions = positions % length
+		}
+
+		result := reflect.MakeSlice(v.Type(), length, length)
+		for i := 0; i < length; i++ {
+			result.Index((i - positions + length) % length).Set(v.Index(i))
+		}
+		return result.Interface()
+	}
+
+	return collection
+}
+
+// RotateRight generic function to cyclically rotate elements in a collection (slice, array) to the right by a specified number of positions.
+func RotateRight(collection interface{}, positions int) interface{} {
+	v := reflect.ValueOf(collection)
+	length := v.Len()
+
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		if positions < 0 {
+			positions = (-positions%length + length) % length
+		} else {
+			positions = positions % length
+		}
+
+		result := reflect.MakeSlice(v.Type(), length, length)
+		for i := 0; i < length; i++ {
+			result.Index((i + positions) % length).Set(v.Index(i))
+		}
+		return result.Interface()
+	}
+
+	return collection
+}
