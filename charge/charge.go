@@ -293,3 +293,21 @@ func IsMobileRequest(req *http.Request) bool {
 func IsStreamingRequest(req *http.Request) bool {
 	return strings.Contains(req.Header.Get("Accept"), "text/event-stream")
 }
+
+// IsPostForms check if the request is post form-data
+func IsPostForms(req *http.Request) bool {
+	value := req.Header.Get("Content-Type")
+	return strings.HasPrefix(value, "application/x-www-form-urlencoded") ||
+		strings.HasPrefix(value, "multipart/form-data")
+}
+
+// GetPostForms get all post-form values as map
+func GetPostForms(req *http.Request) map[string]string {
+	formValues := make(map[string]string)
+	for key, values := range req.PostForm {
+		if len(values) > 0 {
+			formValues[key] = values[0]
+		}
+	}
+	return formValues
+}
