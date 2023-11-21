@@ -140,7 +140,7 @@ config:
       key_file: ./keys/ssl/key.pem
     serve_proxy:
       enabled: false
-      port: 8101
+      port: 9999
       timeout:
         serve: 10s
         read: 10s
@@ -158,17 +158,6 @@ config:
     secure: false
     http_only: true
     timeout: 10s
-  logger:
-    enabled: false
-    permit_snapshot: false
-    permit_local_time: false
-    compress: false
-    permit_caller: false
-    filename: ""
-    max_size: 0
-    max_age: 0
-    max_backup: 0
-    formatter: text
   telegram-seekers:
   - key: tenant_1
     usable_default: false
@@ -323,19 +312,3 @@ config:
       timeout: 10s
     option:
       max_retries: 2
-  logger-seekers:
-  - key: tenant_1
-    usable_default: false
-    config:
-      enabled: true
-      permit_snapshot: false
-      permit_local_time: false
-      compress: false
-      permit_caller: false
-      filename: ""
-      max_size: 0
-      max_age: 0
-      max_backup: 0
-      formatter: text
-    option:
-      max-retries: 2

@@ -50,6 +50,13 @@ type KeysConfig struct {
 	RedisSeekers    []redisx.MultiTenantRedisConfig       `json:"redis_seekers,omitempty" yaml:"redis-seekers"`
 	CookieSeekers   []cookies.MultiTenantCookieConfig     `json:"cookie_seekers,omitempty" yaml:"cookie-seekers"`
 	LoggerSeekers   []logger.MultiTenantLoggerConfig      `json:"logger_seekers,omitempty" yaml:"logger-seekers"`
+
+	// Params unknown
+	Param1 map[string]interface{} `json:"param1,omitempty" yaml:"param1"`
+	Param2 map[string]interface{} `json:"param2,omitempty" yaml:"param2"`
+	Param3 map[string]interface{} `json:"param3,omitempty" yaml:"param3"`
+	Param4 map[string]interface{} `json:"param4,omitempty" yaml:"param4"`
+	KV     interface{}            `json:"kv,omitempty" yaml:"kv"`
 }
 
 type MultiTenancyKeysConfig struct {

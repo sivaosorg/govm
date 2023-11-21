@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"fmt"
 	"log"
 	"reflect"
 	"sort"
@@ -247,6 +248,125 @@ func (m *MapBuilder) IsObject(key string) bool {
 
 func (m *MapBuilder) ToBJSON(path string) bjson.BJsonContext {
 	return bjson.Get(m.Json(), path)
+}
+
+// NewMatrixBuilder creates a new MatrixBuilder.
+func NewMatrixBuilder() *MatrixBuilder {
+	return &MatrixBuilder{}
+}
+
+// AddRow adds a new row to the matrix.
+func (b *MatrixBuilder) AddRow(row ...interface{}) *MatrixBuilder {
+	b.matrix = append(b.matrix, row)
+	return b
+}
+
+// Build returns the final [][]interface{} matrix.
+func (b *MatrixBuilder) Build() [][]interface{} {
+	return b.matrix
+}
+
+// Clear resets the matrix to an empty state.
+func (b *MatrixBuilder) Clear() *MatrixBuilder {
+	b.matrix = nil
+	return b
+}
+
+// Rows returns the number of rows in the matrix.
+func (b *MatrixBuilder) Rows() int {
+	return len(b.matrix)
+}
+
+// Cols returns the number of columns in the matrix.
+func (b *MatrixBuilder) Cols() int {
+	if len(b.matrix) == 0 {
+		return 0
+	}
+	return len(b.matrix[0])
+}
+
+// PrintMatrix prints the matrix in a formatted way.
+func (b *MatrixBuilder) PrintMatrix() {
+	for _, row := range b.matrix {
+		for _, val := range row {
+			fmt.Printf("%-10v", val)
+		}
+		fmt.Println()
+	}
+}
+
+// GetElement returns the value at the specified row and column.
+func (b *MatrixBuilder) GetElement(row, col int) (interface{}, error) {
+	if row < 0 || row >= len(b.matrix) || col < 0 || col >= len(b.matrix[0]) {
+		return nil, fmt.Errorf("index out of bounds")
+	}
+	return b.matrix[row][col], nil
+}
+
+// SetElement sets the value at the specified row and column.
+func (b *MatrixBuilder) SetElement(row, col int, value interface{}) error {
+	if row < 0 || row >= len(b.matrix) || col < 0 || col >= len(b.matrix[0]) {
+		return fmt.Errorf("index out of bounds")
+	}
+	b.matrix[row][col] = value
+	return nil
+}
+
+// AddMatrix adds the given matrix to the current matrix.
+func (b *MatrixBuilder) AddMatrix(other [][]interface{}) error {
+	if len(b.matrix) != len(other) || len(b.matrix[0]) != len(other[0]) {
+		return fmt.Errorf("matrix dimensions do not match")
+	}
+	for i := range b.matrix {
+		for j := range b.matrix[i] {
+			switch b.matrix[i][j].(type) {
+			case int, float64, string:
+				switch b.matrix[i][j].(type) {
+				case int:
+					b.matrix[i][j] = b.matrix[i][j].(int) + other[i][j].(int)
+				case int32:
+					b.matrix[i][j] = b.matrix[i][j].(int32) + other[i][j].(int32)
+				case int64:
+					b.matrix[i][j] = b.matrix[i][j].(int64) + other[i][j].(int64)
+				case float32:
+					b.matrix[i][j] = b.matrix[i][j].(float32) + other[i][j].(float32)
+				case float64:
+					b.matrix[i][j] = b.matrix[i][j].(float64) + other[i][j].(float64)
+				case string:
+					b.matrix[i][j] = fmt.Sprintf("%v%v", b.matrix[i][j], other[i][j])
+				}
+			default:
+				return fmt.Errorf("unsupported type for addition")
+			}
+		}
+	}
+	return nil
+}
+
+// Transpose transposes the matrix, switching its rows and columns.
+func (b *MatrixBuilder) Transpose() *MatrixBuilder {
+	transposed := NewMatrixBuilder()
+	// Initialize transposed matrix with the correct dimensions
+	for j := 0; j < b.Cols(); j++ {
+		transposed.matrix = append(transposed.matrix, make([]interface{}, b.Rows()))
+	}
+	// Populate transposed matrix
+	for i := 0; i < b.Rows(); i++ {
+		for j := 0; j < b.Cols(); j++ {
+			transposed.matrix[j][i] = b.matrix[i][j]
+		}
+	}
+	return transposed
+}
+
+// Clone creates a deep copy of the matrix.
+func (b *MatrixBuilder) Clone() *MatrixBuilder {
+	cloned := NewMatrixBuilder()
+	// Populate cloned matrix with the same values
+	for _, row := range b.matrix {
+		cloned.matrix = append(cloned.matrix, append([]interface{}{}, row...))
+	}
+	return cloned
 }
 
 // asMap recursively converts an interface{} to a MapBuilder if it's a map or struct.

@@ -141,7 +141,7 @@ clusters:
         key_file: ./keys/ssl/key.pem
       serve_proxy:
         enabled: false
-        port: 8101
+        port: 9999
         timeout:
           serve: 10s
           read: 10s
@@ -159,17 +159,6 @@ clusters:
       secure: false
       http_only: true
       timeout: 10s
-    logger:
-      enabled: false
-      permit_snapshot: false
-      permit_local_time: false
-      compress: false
-      permit_caller: false
-      filename: ""
-      max_size: 0
-      max_age: 0
-      max_backup: 0
-      formatter: text
     telegram-seekers:
     - key: tenant_1
       usable_default: false
@@ -324,22 +313,6 @@ clusters:
         timeout: 10s
       option:
         max_retries: 2
-    logger-seekers:
-    - key: tenant_1
-      usable_default: false
-      config:
-        enabled: true
-        permit_snapshot: false
-        permit_local_time: false
-        compress: false
-        permit_caller: false
-        filename: ""
-        max_size: 0
-        max_age: 0
-        max_backup: 0
-        formatter: text
-      option:
-        max-retries: 2
 - key: tenant_2
   usable_default: false
   config:
@@ -482,7 +455,7 @@ clusters:
         key_file: ./keys/ssl/key.pem
       serve_proxy:
         enabled: false
-        port: 8101
+        port: 9999
         timeout:
           serve: 10s
           read: 10s
@@ -500,17 +473,6 @@ clusters:
       secure: false
       http_only: true
       timeout: 10s
-    logger:
-      enabled: false
-      permit_snapshot: false
-      permit_local_time: false
-      compress: false
-      permit_caller: false
-      filename: ""
-      max_size: 0
-      max_age: 0
-      max_backup: 0
-      formatter: text
     telegram-seekers:
     - key: tenant_1
       usable_default: false
@@ -665,22 +627,6 @@ clusters:
         timeout: 10s
       option:
         max_retries: 2
-    logger-seekers:
-    - key: tenant_1
-      usable_default: false
-      config:
-        enabled: true
-        permit_snapshot: false
-        permit_local_time: false
-        compress: false
-        permit_caller: false
-        filename: ""
-        max_size: 0
-        max_age: 0
-        max_backup: 0
-        formatter: text
-      option:
-        max-retries: 2
 - key: tenant_3
   usable_default: false
   config:
@@ -823,7 +769,7 @@ clusters:
         key_file: ./keys/ssl/key.pem
       serve_proxy:
         enabled: false
-        port: 8101
+        port: 9999
         timeout:
           serve: 10s
           read: 10s
@@ -841,17 +787,6 @@ clusters:
       secure: false
       http_only: true
       timeout: 10s
-    logger:
-      enabled: false
-      permit_snapshot: false
-      permit_local_time: false
-      compress: false
-      permit_caller: false
-      filename: ""
-      max_size: 0
-      max_age: 0
-      max_backup: 0
-      formatter: text
     telegram-seekers:
     - key: tenant_1
       usable_default: false
@@ -1006,22 +941,6 @@ clusters:
         timeout: 10s
       option:
         max_retries: 2
-    logger-seekers:
-    - key: tenant_1
-      usable_default: false
-      config:
-        enabled: true
-        permit_snapshot: false
-        permit_local_time: false
-        compress: false
-        permit_caller: false
-        filename: ""
-        max_size: 0
-        max_age: 0
-        max_backup: 0
-        formatter: text
-      option:
-        max-retries: 2
 - key: tenant_4
   usable_default: false
   config:
@@ -1164,7 +1083,7 @@ clusters:
         key_file: ./keys/ssl/key.pem
       serve_proxy:
         enabled: false
-        port: 8101
+        port: 9999
         timeout:
           serve: 10s
           read: 10s
@@ -1182,17 +1101,6 @@ clusters:
       secure: false
       http_only: true
       timeout: 10s
-    logger:
-      enabled: false
-      permit_snapshot: false
-      permit_local_time: false
-      compress: false
-      permit_caller: false
-      filename: ""
-      max_size: 0
-      max_age: 0
-      max_backup: 0
-      formatter: text
     telegram-seekers:
     - key: tenant_1
       usable_default: false
@@ -1347,19 +1255,3 @@ clusters:
         timeout: 10s
       option:
         max_retries: 2
-    logger-seekers:
-    - key: tenant_1
-      usable_default: false
-      config:
-        enabled: true
-        permit_snapshot: false
-        permit_local_time: false
-        compress: false
-        permit_caller: false
-        filename: ""
-        max_size: 0
-        max_age: 0
-        max_backup: 0
-        formatter: text
-      option:
-        max-retries: 2
