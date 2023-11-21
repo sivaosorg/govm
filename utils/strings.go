@@ -98,3 +98,13 @@ func GenUUIDShorten() string {
 	}
 	return uuid
 }
+
+func RepeatPlaceholders(format string, value interface{}) (string, error) {
+	placeholders := strings.Count(format, "%")
+	values := make([]interface{}, placeholders)
+	for i := range values {
+		values[i] = value
+	}
+	result := fmt.Sprintf(format, values...)
+	return result, nil
+}
