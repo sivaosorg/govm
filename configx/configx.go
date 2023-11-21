@@ -179,6 +179,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetSlack(*slack.GetSlackConfigSample().SetEnabled(false))
 	k.SetCors(*corsx.GetCorsConfigSample().SetEnabled(false))
 	k.SetCookie(*cookies.GetCookieConfigSample().SetEnabled(false))
+	k.SetLogger(*logger.GetLoggerSample().SetEnabled(false))
 	k.AppendTelegramSeekers(*telegram.GetMultiTenantTelegramConfigSample())
 	k.AppendSlackSeekers(*slack.GetMultiTenantSlackConfigSample())
 	k.AppendAsteriskSeekers(*asterisk.GetMultiTenantAsteriskConfigSample())
@@ -188,6 +189,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.AppendRabbitMqSeekers(*rabbitmqx.GetMultiTenantRabbitMqConfigSample())
 	k.AppendRedisSeekers(*redisx.GetMultiTenantRedisConfigSample())
 	k.AppendCookieSeekers(*cookies.GetMultiTenantCookieConfigSample())
+	k.AppendLoggerSeekers(*logger.GetMultiTenantLoggerConfigSample())
 	return k
 }
 
@@ -220,6 +222,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"rabbitmq-seekers": fmt.Sprintf("################################\n%s\n%s\n################################", "RabbitMQ Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"redis-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"cookie-seekers":   fmt.Sprintf("################################\n%s\n%s\n################################", "Cookie Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"logger-seekers":   fmt.Sprintf("################################\n%s\n%s\n################################", "Logger Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -435,6 +438,16 @@ func (k *KeysConfig) SetCookieCursor(value *cookies.CookieConfig) *KeysConfig {
 	return k
 }
 
+func (k *KeysConfig) SetLogger(value logger.Logger) *KeysConfig {
+	k.Logger = value
+	return k
+}
+
+func (k *KeysConfig) SetLoggerCursor(value *logger.Logger) *KeysConfig {
+	k.Logger = *value
+	return k
+}
+
 func (k *KeysConfig) SetTelegramSeekers(values []telegram.MultiTenantTelegramConfig) *KeysConfig {
 	k.TelegramSeekers = values
 	return k
@@ -525,6 +538,16 @@ func (k *KeysConfig) AppendCookieSeekers(values ...cookies.MultiTenantCookieConf
 	return k
 }
 
+func (k *KeysConfig) SetLoggerSeekers(values []logger.MultiTenantLoggerConfig) *KeysConfig {
+	k.LoggerSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendLoggerSeekers(values ...logger.MultiTenantLoggerConfig) *KeysConfig {
+	k.LoggerSeekers = append(k.LoggerSeekers, values...)
+	return k
+}
+
 func (k *KeysConfig) AvailableTelegramSeekers() bool {
 	return len(k.TelegramSeekers) > 0
 }
@@ -561,6 +584,10 @@ func (k *KeysConfig) AvailableCookieSeekers() bool {
 	return len(k.CookieSeekers) > 0
 }
 
+func (k *KeysConfig) AvailableLoggerSeekers() bool {
+	return len(k.LoggerSeekers) > 0
+}
+
 func (k *KeysConfig) FindTelegramSeeker(key string) (telegram.MultiTenantTelegramConfig, error) {
 	return telegram.NewClusterMultiTenantTelegramConfig().SetClusters(k.TelegramSeekers).FindClusterBy(key)
 }
@@ -595,6 +622,10 @@ func (k *KeysConfig) FindRedisSeeker(key string) (redisx.MultiTenantRedisConfig,
 
 func (k *KeysConfig) FindCookieSeeker(key string) (cookies.MultiTenantCookieConfig, error) {
 	return cookies.NewClusterMultiTenantCookieConfig().SetClusters(k.CookieSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindLoggerSeeker(key string) (logger.MultiTenantLoggerConfig, error) {
+	return logger.NewClusterMultiTenantLoggerConfig().SetClusters(k.LoggerSeekers).FindClusterBy(key)
 }
 
 func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {

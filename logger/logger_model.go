@@ -78,3 +78,18 @@ type TextFormatterHook struct {
 	debug   *color.Color
 	err     *color.Color
 }
+
+type loggerOptionConfig struct {
+	MaxRetries int `json:"max_retries" yaml:"max-retries"`
+}
+
+type MultiTenantLoggerConfig struct {
+	Key             string             `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool               `json:"usable_default" yaml:"usable_default"`
+	Config          Logger             `json:"config" yaml:"config"`
+	Option          loggerOptionConfig `json:"option" binding:"required" yaml:"option"`
+}
+
+type ClusterMultiTenantLoggerConfig struct {
+	Clusters []MultiTenantLoggerConfig `json:"clusters,omitempty" yaml:"clusters"`
+}

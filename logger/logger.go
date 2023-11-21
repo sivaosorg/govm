@@ -566,3 +566,110 @@ func Successf(message string, params ...interface{}) {
 func Debugf(message string, params ...interface{}) {
 	NewLogger().Debug(message, params...)
 }
+
+func GetLoggerSample() *Logger {
+	l := &Logger{}
+	l.SetEnabled(true)
+	l.SetFormatter(LoggerTextFormatter)
+	l.SetInstance(l.NewInstance())
+	return l
+}
+
+func NewLoggerOptionConfig() *loggerOptionConfig {
+	return &loggerOptionConfig{
+		MaxRetries: 2,
+	}
+}
+
+func (l *loggerOptionConfig) SetMaxRetries(value int) *loggerOptionConfig {
+	if value <= 0 {
+		log.Panicf("Invalid max_retries: %v", value)
+	}
+	l.MaxRetries = value
+	return l
+}
+
+func (l *loggerOptionConfig) Json() string {
+	return utils.ToJson(l)
+}
+
+func NewMultiTenantLoggerConfig() *MultiTenantLoggerConfig {
+	return &MultiTenantLoggerConfig{}
+}
+
+func (m *MultiTenantLoggerConfig) SetKey(value string) *MultiTenantLoggerConfig {
+	m.Key = value
+	return m
+}
+
+func (m *MultiTenantLoggerConfig) SetUsableDefault(value bool) *MultiTenantLoggerConfig {
+	m.IsUsableDefault = value
+	return m
+}
+
+func (m *MultiTenantLoggerConfig) SetConfig(value Logger) *MultiTenantLoggerConfig {
+	m.Config = value
+	return m
+}
+
+func (m *MultiTenantLoggerConfig) SetConfigCursor(value *Logger) *MultiTenantLoggerConfig {
+	m.Config = *value
+	return m
+}
+
+func (m *MultiTenantLoggerConfig) SetOption(value loggerOptionConfig) *MultiTenantLoggerConfig {
+	m.Option = value
+	return m
+}
+
+func (m *MultiTenantLoggerConfig) Json() string {
+	return utils.ToJson(m)
+}
+
+func GetMultiTenantLoggerConfigSample() *MultiTenantLoggerConfig {
+	m := NewMultiTenantLoggerConfig().
+		SetKey("tenant_1").
+		SetConfig(*GetLoggerSample()).
+		SetOption(*NewLoggerOptionConfig()).
+		SetUsableDefault(false)
+	return m
+}
+
+func NewClusterMultiTenantLoggerConfig() *ClusterMultiTenantLoggerConfig {
+	return &ClusterMultiTenantLoggerConfig{}
+}
+
+func (c *ClusterMultiTenantLoggerConfig) SetClusters(values []MultiTenantLoggerConfig) *ClusterMultiTenantLoggerConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantLoggerConfig) AppendClusters(values ...MultiTenantLoggerConfig) *ClusterMultiTenantLoggerConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantLoggerConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func (c *ClusterMultiTenantLoggerConfig) FindClusterBy(key string) (MultiTenantLoggerConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantLoggerConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantLoggerConfig(), fmt.Errorf("No logger cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantLoggerConfig(), fmt.Errorf("The logger cluster not found")
+}
+
+func GetClusterMultiTenantLoggerConfigSample() *ClusterMultiTenantLoggerConfig {
+	c := NewClusterMultiTenantLoggerConfig().
+		AppendClusters(*GetMultiTenantLoggerConfigSample(), *GetMultiTenantLoggerConfigSample().SetKey("tenant_2"))
+	return c
+}
