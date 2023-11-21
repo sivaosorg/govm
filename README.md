@@ -23,7 +23,7 @@ go get -u github.com/sivaosorg/govm
 ### Contribution
 
 ```bash
-git clone https://github.com/sivaosorg/govm.git
+git clone --depth 1 https://github.com/sivaosorg/govm.git
 ```
 
 ```bash
