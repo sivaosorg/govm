@@ -57,7 +57,7 @@ func (l *Logger) NewInstance() *logrus.Logger {
 	if strings.EqualFold(LoggerTextFormatter, l.Formatter) {
 		logger.SetFormatter(l.TextFormatter())
 	}
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		logger.SetFormatter(l.JsonFormatter())
 	}
 	logger.AddHook(l.TextHook())
@@ -117,13 +117,13 @@ func (l *Logger) TextFormatter() *logrus.TextFormatter {
 func (l *Logger) Config() *lumberjack.Logger {
 	LoggerValidator(l)
 	j := &lumberjack.Logger{}
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		j.Filename = l.Filename
 		j.MaxSize = l.MaxSize
-		j.MaxBackups = l.MaxBackups
+		j.MaxBackups = l.MaxBackup
 		j.MaxAge = l.MaxAge
 		j.Compress = l.Compress
-		j.LocalTime = l.AllowLocalTime
+		j.LocalTime = l.PermitLocalTime
 	}
 	return j
 }
@@ -140,7 +140,7 @@ func (l *Logger) ApplyConfig() *Logger {
 	if strings.EqualFold(LoggerTextFormatter, l.Formatter) {
 		l.instance.SetFormatter(l.TextFormatter())
 	}
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		l.instance.SetFormatter(l.JsonFormatter())
 	}
 	l.ResetLogger()
@@ -162,12 +162,12 @@ func (l *Logger) SetEnabled(value bool) *Logger {
 }
 
 func (l *Logger) SetAllowSnapshot(value bool) *Logger {
-	l.AllowSnapshot = value
+	l.PermitSnapshot = value
 	return l
 }
 
 func (l *Logger) SetAllowLocalTime(value bool) *Logger {
-	l.AllowLocalTime = value
+	l.PermitLocalTime = value
 	return l
 }
 
@@ -177,7 +177,7 @@ func (l *Logger) SetCompress(value bool) *Logger {
 }
 
 func (l *Logger) SetFilename(value string) *Logger {
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		if utils.IsEmpty(value) {
 			log.Panic("Filename is required")
 		}
@@ -189,7 +189,7 @@ func (l *Logger) SetFilename(value string) *Logger {
 }
 
 func (l *Logger) SetMaxSize(value int) *Logger {
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		if value < 0 {
 			log.Panic("Invalid max-size")
 		}
@@ -199,7 +199,7 @@ func (l *Logger) SetMaxSize(value int) *Logger {
 }
 
 func (l *Logger) SetMaxAge(value int) *Logger {
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		if value <= 0 {
 			log.Panic("Invalid max-age")
 		}
@@ -209,12 +209,12 @@ func (l *Logger) SetMaxAge(value int) *Logger {
 }
 
 func (l *Logger) SetMaxBackups(value int) *Logger {
-	if l.AllowSnapshot {
+	if l.PermitSnapshot {
 		if value <= 0 {
 			log.Panic("Invalid max-backups")
 		}
 	}
-	l.MaxBackups = value
+	l.MaxBackup = value
 	return l
 }
 
@@ -226,7 +226,7 @@ func (l *Logger) SetFormatter(value string) *Logger {
 }
 
 func (l *Logger) SetAllowCaller(value bool) *Logger {
-	l.AllowCaller = value
+	l.PermitCaller = value
 	return l
 }
 
@@ -241,7 +241,7 @@ func LoggerValidator(l *Logger) {
 	l.
 		SetMaxSize(l.MaxSize).
 		SetMaxAge(l.MaxAge).
-		SetMaxBackups(l.MaxBackups).
+		SetMaxBackups(l.MaxBackup).
 		SetFilename(l.Filename)
 }
 
@@ -294,7 +294,7 @@ func (l *Logger) Info(message string, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -310,7 +310,7 @@ func (l *Logger) Info(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -347,7 +347,7 @@ func (l *Logger) Error(message string, err error, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+2)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		if err != nil {
@@ -366,7 +366,7 @@ func (l *Logger) Error(message string, err error, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 2)
 		fields[LoggerMessageField] = message
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		if err != nil {
@@ -406,7 +406,7 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -422,7 +422,7 @@ func (l *Logger) Warn(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -459,7 +459,7 @@ func (l *Logger) Debug(message string, params ...interface{}) {
 	if strings.Contains(message, "%") {
 		fields = make(logrus.Fields, (len(params)/2)+1)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -475,7 +475,7 @@ func (l *Logger) Debug(message string, params ...interface{}) {
 	} else {
 		fields = make(logrus.Fields, 1)
 		fields[LoggerMessageField] = message
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -513,7 +513,7 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		fields = make(logrus.Fields, (len(params)/2)+2)
 		fields[LoggerMessageField] = fmt.Sprintf(message, params...)
 		fields[LoggerSuccessField] = true
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
@@ -530,7 +530,7 @@ func (l *Logger) Success(message string, params ...interface{}) {
 		fields = make(logrus.Fields, 2)
 		fields[LoggerMessageField] = message
 		fields[LoggerSuccessField] = true
-		if l.AllowCaller {
+		if l.PermitCaller {
 			fields[LoggerCallerField] = fmt.Sprintf("%s:%d", filename, line)
 		}
 		for i := 0; i < len(params); i += 2 {
