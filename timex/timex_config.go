@@ -9,6 +9,7 @@ const (
 	DateTimeFormRFC3339NanoTimezone                   = "2006-01-02 15:04:05.999999999 -07:00"
 	DateTimeFormDotYearMonthDayHourMinuteSecond       = "2006.01.02.15.04.05"
 	DateTimeFormCommaDashYearMonthDayHourMinuteSecond = "2006:01:02_15:04:05"
+	DateTimeForm20060102150405999999                  = "2006-01-02 15:04:05.999999"
 )
 
 const (
