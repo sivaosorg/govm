@@ -10,6 +10,11 @@ func NewKafkaAuthConfig() *KafkaAuthConfig {
 	return &KafkaAuthConfig{}
 }
 
+func (k *KafkaAuthConfig) SetEnabled(value bool) *KafkaAuthConfig {
+	k.IsEnabled = value
+	return k
+}
+
 func (k *KafkaAuthConfig) SetBootstrapServers(values []string) *KafkaAuthConfig {
 	k.BootstrapServers = values
 	return k

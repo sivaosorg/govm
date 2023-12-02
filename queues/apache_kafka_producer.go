@@ -49,6 +49,6 @@ func GetKafkaProducerConfigSample() *KafkaProducerConfig {
 		SetAppliedAuth(*GetKafkaAuthConfigSample()).
 		AppendProperty("client.id", "producer-client-id").
 		AppendProperty("acks", "all").
-		AppendProperty("retries", 3)
+		AppendProperty("retries", 3).AppendProperty(Bootstrap_Servers, "kafka-broker-3:9092")
 	return k
 }

@@ -59,6 +59,10 @@ func (k *KafkaTopicConfig) Json() string {
 	return utils.ToJson(k)
 }
 
+func (k *KafkaTopicConfig) Available() bool {
+	return k.IsEnabled
+}
+
 func KafkaTopicConfigValidator(k KafkaTopicConfig) error {
 	if k.Partitions <= 0 {
 		return fmt.Errorf("Invalid partitions: %v", k.Partitions)
@@ -69,7 +73,71 @@ func KafkaTopicConfigValidator(k KafkaTopicConfig) error {
 	if utils.IsEmpty(k.Key) {
 		return fmt.Errorf("Topic key is required")
 	}
+	if utils.IsEmpty(k.Name) {
+		return fmt.Errorf("Topic name is required")
+	}
 	return nil
+}
+
+func GetAvailableTopics(topics []KafkaTopicConfig) ([]KafkaTopicConfig, bool) {
+	var response []KafkaTopicConfig
+	if len(topics) == 0 {
+		return response, false
+	}
+	for _, v := range topics {
+		if !v.IsEnabled {
+			continue
+		}
+		response = append(response, v)
+	}
+	if len(response) == 0 {
+		return response, false
+	}
+	return response, true
+}
+
+func GetAvailableTopicsString(topics []KafkaTopicConfig) ([]string, bool) {
+	response, ok := GetAvailableTopics(topics)
+	if !ok {
+		return []string{}, ok
+	}
+	var t []string
+	for _, v := range response {
+		t = append(t, v.Name)
+	}
+	return t, true
+}
+
+func GetTopicsAutoCreated(topics []KafkaTopicConfig) ([]KafkaTopicConfig, bool) {
+	var response []KafkaTopicConfig
+	if len(topics) == 0 {
+		return response, false
+	}
+	for _, v := range topics {
+		if !v.IsEnabled {
+			continue
+		}
+		if !v.CreateEnabled {
+			continue
+		}
+		response = append(response, v)
+	}
+	if len(response) == 0 {
+		return response, false
+	}
+	return response, true
+}
+
+func GetTopic(topics []KafkaTopicConfig, key string) (KafkaTopicConfig, bool) {
+	if len(topics) == 0 {
+		return *NewKafkaTopicConfig(), false
+	}
+	for _, v := range topics {
+		if v.Key == key {
+			return v, true
+		}
+	}
+	return *NewKafkaTopicConfig(), false
 }
 
 func GetKafkaTopicConfigSample() *KafkaTopicConfig {
