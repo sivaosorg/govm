@@ -39,6 +39,14 @@ func (k *KafkaConsumerConfig) AvailableProperties() bool {
 	return k.LenProperties() > 0
 }
 
+func (k *KafkaConsumerConfig) GroupId() (string, bool) {
+	if !k.AvailableProperties() {
+		return "", false
+	}
+	v, ok := k.Props[GroupId]
+	return v.(string), ok
+}
+
 func (k *KafkaConsumerConfig) Json() string {
 	return utils.ToJson(k)
 }
