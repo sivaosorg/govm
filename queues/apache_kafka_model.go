@@ -36,7 +36,7 @@ type KafkaProducerConfig struct {
 	Props       map[string]interface{} `json:"properties" yaml:"properties"`
 }
 
-type Kafka struct {
+type KafkaConfig struct {
 	IsEnabled   bool                `json:"enabled" yaml:"enabled"`
 	Topics      []KafkaTopicConfig  `json:"topics" yaml:"topics"`
 	AppliedAuth KafkaAuthConfig     `json:"applied_auth" yaml:"applied_auth"`
@@ -45,9 +45,9 @@ type Kafka struct {
 }
 
 type MultiTenantKafkaConfig struct {
-	Key             string `json:"key" binding:"required" yaml:"key"`
-	IsUsableDefault bool   `json:"usable_default" yaml:"usable_default"`
-	Config          Kafka  `json:"config" yaml:"config"`
+	Key             string      `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool        `json:"usable_default" yaml:"usable_default"`
+	Config          KafkaConfig `json:"config" yaml:"config"`
 }
 
 type ClusterMultiTenantKafkaConfig struct {

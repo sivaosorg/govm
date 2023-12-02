@@ -1,6 +1,6 @@
 # ################################
 # Asterisk Server Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 asterisk:
   enabled: false
@@ -20,7 +20,7 @@ asterisk:
     - 6
 # ################################
 # Mongodb Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 mongodb:
   enabled: false
@@ -36,7 +36,7 @@ mongodb:
   timeout: 10s
 # ################################
 # MySQL Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 mysql:
   enabled: false
@@ -51,7 +51,7 @@ mysql:
   max-life-time-minutes-conn: 10
 # ################################
 # Postgres Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 postgres:
   enabled: false
@@ -66,7 +66,7 @@ postgres:
   max-idle-conn: 3
 # ################################
 # RabbitMQ Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 rabbitmq:
   enabled: false
@@ -106,7 +106,7 @@ rabbitmq:
         durable: true
 # ################################
 # Redis Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 redis:
   enabled: false
@@ -116,7 +116,7 @@ redis:
   database: database_stable
 # ################################
 # Telegram Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 telegram:
   enabled: false
@@ -126,7 +126,7 @@ telegram:
   token: <token_here>
 # ################################
 # Slack Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 slack:
   enabled: false
@@ -136,7 +136,7 @@ slack:
   token: <token-here>
 # ################################
 # Cors Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 cors:
   enabled: false
@@ -158,7 +158,7 @@ cors:
   max-age: 3600
 # ################################
 # Server Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 server:
   host: 127.0.0.1
@@ -187,7 +187,7 @@ server:
       max_header_bytes: 1048576
 # ################################
 # Cookie Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 cookie:
   enabled: false
@@ -201,7 +201,7 @@ cookie:
   timeout: 10s
 # ################################
 # Logger Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 logger:
   enabled: false
@@ -215,8 +215,82 @@ logger:
   max_backup: 0
   formatter: text
 # ################################
+# Kafka Config
+# 2023-12-02 22:57:24
+# ################################
+kafka:
+  enabled: false
+  topics:
+  - enabled: false
+    key: topic-1
+    name: ""
+    desc: ""
+    create.enabled: true
+    delete.enabled: false
+    replication.factor: 3
+    partitions: 5
+    retention.ms: -1
+  - enabled: false
+    key: topic-2
+    name: ""
+    desc: ""
+    create.enabled: true
+    delete.enabled: false
+    replication.factor: 3
+    partitions: 5
+    retention.ms: -1
+  applied_auth:
+    enabled: false
+    bootstrap.servers:
+    - kafka-broker-1:9092
+    - kafka-broker-2:9092
+    security.protocol: sasl_ssl
+    sasl.mechanism: PLAIN
+    sasl.username: username
+    sasl.password: pwd
+    ssl.ca.location: /path/to/ca-certificate.pem
+    ssl.certificate.location: /path/to/client-certificate.pem
+    ssl.key.location: /path/to/client-key.pem
+  producer:
+    enabled: true
+    applied_auth:
+      enabled: false
+      bootstrap.servers:
+      - kafka-broker-1:9092
+      - kafka-broker-2:9092
+      security.protocol: sasl_ssl
+      sasl.mechanism: PLAIN
+      sasl.username: username
+      sasl.password: pwd
+      ssl.ca.location: /path/to/ca-certificate.pem
+      ssl.certificate.location: /path/to/client-certificate.pem
+      ssl.key.location: /path/to/client-key.pem
+    properties:
+      acks: all
+      bootstrap.servers: kafka-broker-3:9092
+      client.id: producer-client-id
+      retries: 3
+  consumer:
+    enabled: false
+    applied_auth:
+      enabled: false
+      bootstrap.servers:
+      - kafka-broker-1:9092
+      - kafka-broker-2:9092
+      security.protocol: sasl_ssl
+      sasl.mechanism: PLAIN
+      sasl.username: username
+      sasl.password: pwd
+      ssl.ca.location: /path/to/ca-certificate.pem
+      ssl.certificate.location: /path/to/client-certificate.pem
+      ssl.key.location: /path/to/client-key.pem
+    properties:
+      client.id: consumer-client-id
+      enable.auto.commit: true
+      group.id: consumer-group-id
+# ################################
 # Telegram Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 telegram-seekers:
 - key: tenant_1
@@ -232,7 +306,7 @@ telegram-seekers:
     max-retries: 2
 # ################################
 # Slack Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 slack-seekers:
 - key: tenant_1
@@ -247,7 +321,7 @@ slack-seekers:
     max-retries: 0
 # ################################
 # Asterisk Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 asterisk-seekers:
 - key: tenant_1
@@ -271,7 +345,7 @@ asterisk-seekers:
   option: {}
 # ################################
 # Mongodb Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 mongodb-seekers:
 - key: tenant_1
@@ -291,7 +365,7 @@ mongodb-seekers:
   option: {}
 # ################################
 # MySQL Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 mysql-seekers:
 - key: tenant_1
@@ -310,7 +384,7 @@ mysql-seekers:
   option: {}
 # ################################
 # Postgres Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 postgres-seekers:
 - key: tenant_1
@@ -329,7 +403,7 @@ postgres-seekers:
   option: {}
 # ################################
 # RabbitMQ Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 rabbitmq-seekers:
 - key: tenant_1
@@ -373,7 +447,7 @@ rabbitmq-seekers:
   option: {}
 # ################################
 # Redis Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 redis-seekers:
 - key: tenant_1
@@ -387,7 +461,7 @@ redis-seekers:
   option: {}
 # ################################
 # Cookie Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 cookie-seekers:
 - key: tenant_1
@@ -406,7 +480,7 @@ cookie-seekers:
     max_retries: 2
 # ################################
 # Logger Seekers Config
-# 2023-11-21 22:59:11
+# 2023-12-02 22:57:24
 # ################################
 logger-seekers:
 - key: tenant_1
@@ -424,3 +498,85 @@ logger-seekers:
     formatter: text
   option:
     max-retries: 2
+# ################################
+# Kafka Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+kafka-seekers:
+- key: tenant_1
+  usable_default: false
+  config:
+    enabled: false
+    topics:
+    - enabled: false
+      key: topic-1
+      name: ""
+      desc: ""
+      create.enabled: true
+      delete.enabled: false
+      replication.factor: 3
+      partitions: 5
+      retention.ms: -1
+    - enabled: false
+      key: topic-2
+      name: ""
+      desc: ""
+      create.enabled: true
+      delete.enabled: false
+      replication.factor: 3
+      partitions: 5
+      retention.ms: -1
+    applied_auth:
+      enabled: false
+      bootstrap.servers:
+      - kafka-broker-1:9092
+      - kafka-broker-2:9092
+      security.protocol: sasl_ssl
+      sasl.mechanism: PLAIN
+      sasl.username: username
+      sasl.password: pwd
+      ssl.ca.location: /path/to/ca-certificate.pem
+      ssl.certificate.location: /path/to/client-certificate.pem
+      ssl.key.location: /path/to/client-key.pem
+    producer:
+      enabled: true
+      applied_auth:
+        enabled: false
+        bootstrap.servers:
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
+        security.protocol: sasl_ssl
+        sasl.mechanism: PLAIN
+        sasl.username: username
+        sasl.password: pwd
+        ssl.ca.location: /path/to/ca-certificate.pem
+        ssl.certificate.location: /path/to/client-certificate.pem
+        ssl.key.location: /path/to/client-key.pem
+      properties:
+        acks: all
+        bootstrap.servers: kafka-broker-3:9092
+        client.id: producer-client-id
+        retries: 3
+    consumer:
+      enabled: false
+      applied_auth:
+        enabled: false
+        bootstrap.servers:
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
+        security.protocol: sasl_ssl
+        sasl.mechanism: PLAIN
+        sasl.username: username
+        sasl.password: pwd
+        ssl.ca.location: /path/to/ca-certificate.pem
+        ssl.certificate.location: /path/to/client-certificate.pem
+        ssl.key.location: /path/to/client-key.pem
+      properties:
+        client.id: consumer-client-id
+        enable.auto.commit: true
+        group.id: consumer-group-id
+param1: {}
+param2: {}
+param3: {}
+param4: {}
+kv: null

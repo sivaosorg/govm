@@ -169,6 +169,76 @@ config:
     max_age: 0
     max_backup: 0
     formatter: text
+  kafka:
+    enabled: false
+    topics:
+    - enabled: false
+      key: topic-1
+      name: ""
+      desc: ""
+      create.enabled: true
+      delete.enabled: false
+      replication.factor: 3
+      partitions: 5
+      retention.ms: -1
+    - enabled: false
+      key: topic-2
+      name: ""
+      desc: ""
+      create.enabled: true
+      delete.enabled: false
+      replication.factor: 3
+      partitions: 5
+      retention.ms: -1
+    applied_auth:
+      enabled: false
+      bootstrap.servers:
+      - kafka-broker-1:9092
+      - kafka-broker-2:9092
+      security.protocol: sasl_ssl
+      sasl.mechanism: PLAIN
+      sasl.username: username
+      sasl.password: pwd
+      ssl.ca.location: /path/to/ca-certificate.pem
+      ssl.certificate.location: /path/to/client-certificate.pem
+      ssl.key.location: /path/to/client-key.pem
+    producer:
+      enabled: true
+      applied_auth:
+        enabled: false
+        bootstrap.servers:
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
+        security.protocol: sasl_ssl
+        sasl.mechanism: PLAIN
+        sasl.username: username
+        sasl.password: pwd
+        ssl.ca.location: /path/to/ca-certificate.pem
+        ssl.certificate.location: /path/to/client-certificate.pem
+        ssl.key.location: /path/to/client-key.pem
+      properties:
+        acks: all
+        bootstrap.servers: kafka-broker-3:9092
+        client.id: producer-client-id
+        retries: 3
+    consumer:
+      enabled: false
+      applied_auth:
+        enabled: false
+        bootstrap.servers:
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
+        security.protocol: sasl_ssl
+        sasl.mechanism: PLAIN
+        sasl.username: username
+        sasl.password: pwd
+        ssl.ca.location: /path/to/ca-certificate.pem
+        ssl.certificate.location: /path/to/client-certificate.pem
+        ssl.key.location: /path/to/client-key.pem
+      properties:
+        client.id: consumer-client-id
+        enable.auto.commit: true
+        group.id: consumer-group-id
   telegram-seekers:
   - key: tenant_1
     usable_default: false
@@ -339,3 +409,81 @@ config:
       formatter: text
     option:
       max-retries: 2
+  kafka-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: false
+      topics:
+      - enabled: false
+        key: topic-1
+        name: ""
+        desc: ""
+        create.enabled: true
+        delete.enabled: false
+        replication.factor: 3
+        partitions: 5
+        retention.ms: -1
+      - enabled: false
+        key: topic-2
+        name: ""
+        desc: ""
+        create.enabled: true
+        delete.enabled: false
+        replication.factor: 3
+        partitions: 5
+        retention.ms: -1
+      applied_auth:
+        enabled: false
+        bootstrap.servers:
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
+        security.protocol: sasl_ssl
+        sasl.mechanism: PLAIN
+        sasl.username: username
+        sasl.password: pwd
+        ssl.ca.location: /path/to/ca-certificate.pem
+        ssl.certificate.location: /path/to/client-certificate.pem
+        ssl.key.location: /path/to/client-key.pem
+      producer:
+        enabled: true
+        applied_auth:
+          enabled: false
+          bootstrap.servers:
+          - kafka-broker-1:9092
+          - kafka-broker-2:9092
+          security.protocol: sasl_ssl
+          sasl.mechanism: PLAIN
+          sasl.username: username
+          sasl.password: pwd
+          ssl.ca.location: /path/to/ca-certificate.pem
+          ssl.certificate.location: /path/to/client-certificate.pem
+          ssl.key.location: /path/to/client-key.pem
+        properties:
+          acks: all
+          bootstrap.servers: kafka-broker-3:9092
+          client.id: producer-client-id
+          retries: 3
+      consumer:
+        enabled: false
+        applied_auth:
+          enabled: false
+          bootstrap.servers:
+          - kafka-broker-1:9092
+          - kafka-broker-2:9092
+          security.protocol: sasl_ssl
+          sasl.mechanism: PLAIN
+          sasl.username: username
+          sasl.password: pwd
+          ssl.ca.location: /path/to/ca-certificate.pem
+          ssl.certificate.location: /path/to/client-certificate.pem
+          ssl.key.location: /path/to/client-key.pem
+        properties:
+          client.id: consumer-client-id
+          enable.auto.commit: true
+          group.id: consumer-group-id
+  param1: {}
+  param2: {}
+  param3: {}
+  param4: {}
+  kv: null

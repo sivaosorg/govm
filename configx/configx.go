@@ -18,6 +18,7 @@ import (
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
 	"github.com/sivaosorg/govm/postgres"
+	"github.com/sivaosorg/govm/queues"
 	"github.com/sivaosorg/govm/rabbitmqx"
 	"github.com/sivaosorg/govm/redisx"
 	"github.com/sivaosorg/govm/server"
@@ -180,6 +181,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.SetCors(*corsx.GetCorsConfigSample().SetEnabled(false))
 	k.SetCookie(*cookies.GetCookieConfigSample().SetEnabled(false))
 	k.SetLogger(*logger.GetLoggerSample().SetEnabled(false))
+	k.SetKafka(*queues.GetKafkaSample().SetEnabled(false))
 	k.AppendTelegramSeekers(*telegram.GetMultiTenantTelegramConfigSample())
 	k.AppendSlackSeekers(*slack.GetMultiTenantSlackConfigSample())
 	k.AppendAsteriskSeekers(*asterisk.GetMultiTenantAsteriskConfigSample())
@@ -190,6 +192,7 @@ func GetKeysDefaultConfig() *KeysConfig {
 	k.AppendRedisSeekers(*redisx.GetMultiTenantRedisConfigSample())
 	k.AppendCookieSeekers(*cookies.GetMultiTenantCookieConfigSample())
 	k.AppendLoggerSeekers(*logger.GetMultiTenantLoggerConfigSample())
+	k.AppendKafkaSeekers(*queues.GetMultiTenantKafkaConfigSample())
 	return k
 }
 
@@ -205,6 +208,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"server":           fmt.Sprintf("################################\n%s\n%s\n################################", "Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"cookie":           fmt.Sprintf("################################\n%s\n%s\n################################", "Cookie Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"logger":           fmt.Sprintf("################################\n%s\n%s\n################################", "Logger Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"kafka":            fmt.Sprintf("################################\n%s\n%s\n################################", "Kafka Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"asterisk":         fmt.Sprintf("################################\n%s\n%s\n################################", "Asterisk Server Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"mongodb":          fmt.Sprintf("################################\n%s\n%s\n################################", "Mongodb Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"mysql":            fmt.Sprintf("################################\n%s\n%s\n################################", "MySQL Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
@@ -224,6 +228,7 @@ func (KeysConfig) WriteDefaultConfig() {
 		"redis-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "Redis Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"cookie-seekers":   fmt.Sprintf("################################\n%s\n%s\n################################", "Cookie Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 		"logger-seekers":   fmt.Sprintf("################################\n%s\n%s\n################################", "Logger Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
+		"kafka-seekers":    fmt.Sprintf("################################\n%s\n%s\n################################", "Kafka Seekers Config", timex.With(time.Now()).Format(timex.DateTimeFormYearMonthDayHourMinuteSecond)),
 	})
 	err = CreateConfigWithComments[KeysConfig](filepath.Join(".", FilenameDefaultConf), *m)
 	if err != nil {
@@ -449,6 +454,16 @@ func (k *KeysConfig) SetLoggerCursor(value *logger.Logger) *KeysConfig {
 	return k
 }
 
+func (k *KeysConfig) SetKafka(value queues.KafkaConfig) *KeysConfig {
+	k.Kafka = value
+	return k
+}
+
+func (k *KeysConfig) SetKafkaCursor(value *queues.KafkaConfig) *KeysConfig {
+	k.Kafka = *value
+	return k
+}
+
 func (k *KeysConfig) SetTelegramSeekers(values []telegram.MultiTenantTelegramConfig) *KeysConfig {
 	k.TelegramSeekers = values
 	return k
@@ -549,6 +564,16 @@ func (k *KeysConfig) AppendLoggerSeekers(values ...logger.MultiTenantLoggerConfi
 	return k
 }
 
+func (k *KeysConfig) SetKafkaSeekers(values []queues.MultiTenantKafkaConfig) *KeysConfig {
+	k.KafkaSeekers = values
+	return k
+}
+
+func (k *KeysConfig) AppendKafkaSeekers(values ...queues.MultiTenantKafkaConfig) *KeysConfig {
+	k.KafkaSeekers = append(k.KafkaSeekers, values...)
+	return k
+}
+
 func (k *KeysConfig) AvailableTelegramSeekers() bool {
 	return len(k.TelegramSeekers) > 0
 }
@@ -589,6 +614,10 @@ func (k *KeysConfig) AvailableLoggerSeekers() bool {
 	return len(k.LoggerSeekers) > 0
 }
 
+func (k *KeysConfig) AvailableKafkaSeekers() bool {
+	return len(k.KafkaSeekers) > 0
+}
+
 func (k *KeysConfig) FindTelegramSeeker(key string) (telegram.MultiTenantTelegramConfig, error) {
 	return telegram.NewClusterMultiTenantTelegramConfig().SetClusters(k.TelegramSeekers).FindClusterBy(key)
 }
@@ -627,6 +656,10 @@ func (k *KeysConfig) FindCookieSeeker(key string) (cookies.MultiTenantCookieConf
 
 func (k *KeysConfig) FindLoggerSeeker(key string) (logger.MultiTenantLoggerConfig, error) {
 	return logger.NewClusterMultiTenantLoggerConfig().SetClusters(k.LoggerSeekers).FindClusterBy(key)
+}
+
+func (k *KeysConfig) FindKafkaSeeker(key string) (queues.MultiTenantKafkaConfig, error) {
+	return queues.NewClusterMultiTenantKafkaConfig().SetClusters(k.KafkaSeekers).FindClusterBy(key)
 }
 
 func _marshal(data interface{}, comments FieldCommentConfig) ([]byte, error) {

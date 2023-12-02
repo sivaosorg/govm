@@ -10,6 +10,7 @@ import (
 	"github.com/sivaosorg/govm/mongodb"
 	"github.com/sivaosorg/govm/mysql"
 	"github.com/sivaosorg/govm/postgres"
+	"github.com/sivaosorg/govm/queues"
 	"github.com/sivaosorg/govm/rabbitmqx"
 	"github.com/sivaosorg/govm/redisx"
 	"github.com/sivaosorg/govm/server"
@@ -38,6 +39,7 @@ type KeysConfig struct {
 	Server   server.Server            `json:"server,omitempty" yaml:"server"`
 	Cookie   cookies.CookieConfig     `json:"cookie,omitempty" yaml:"cookie"`
 	Logger   logger.Logger            `json:"logger,omitempty" yaml:"logger"`
+	Kafka    queues.KafkaConfig       `json:"kafka,omitempty" yaml:"kafka"`
 
 	// Seekers
 	TelegramSeekers []telegram.MultiTenantTelegramConfig  `json:"telegram_seekers,omitempty" yaml:"telegram-seekers"`
@@ -50,6 +52,7 @@ type KeysConfig struct {
 	RedisSeekers    []redisx.MultiTenantRedisConfig       `json:"redis_seekers,omitempty" yaml:"redis-seekers"`
 	CookieSeekers   []cookies.MultiTenantCookieConfig     `json:"cookie_seekers,omitempty" yaml:"cookie-seekers"`
 	LoggerSeekers   []logger.MultiTenantLoggerConfig      `json:"logger_seekers,omitempty" yaml:"logger-seekers"`
+	KafkaSeekers    []queues.MultiTenantKafkaConfig       `json:"kafka_seekers,omitempty" yaml:"kafka-seekers"`
 
 	// Params unknown
 	Param1 map[string]interface{} `json:"param1,omitempty" yaml:"param1"`

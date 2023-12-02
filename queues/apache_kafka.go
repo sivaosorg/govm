@@ -7,82 +7,82 @@ import (
 	"github.com/sivaosorg/govm/utils"
 )
 
-func NewKafka() *Kafka {
-	return &Kafka{}
+func NewKafka() *KafkaConfig {
+	return &KafkaConfig{}
 }
 
-func (k *Kafka) SetEnabled(value bool) *Kafka {
+func (k *KafkaConfig) SetEnabled(value bool) *KafkaConfig {
 	k.IsEnabled = value
 	return k
 }
 
-func (k *Kafka) SetTopics(values []KafkaTopicConfig) *Kafka {
+func (k *KafkaConfig) SetTopics(values []KafkaTopicConfig) *KafkaConfig {
 	k.Topics = values
 	return k
 }
 
-func (k *Kafka) AppendTopics(values ...KafkaTopicConfig) *Kafka {
+func (k *KafkaConfig) AppendTopics(values ...KafkaTopicConfig) *KafkaConfig {
 	k.Topics = append(k.Topics, values...)
 	return k
 }
 
-func (k *Kafka) SetAppliedAuth(value KafkaAuthConfig) *Kafka {
+func (k *KafkaConfig) SetAppliedAuth(value KafkaAuthConfig) *KafkaConfig {
 	k.AppliedAuth = value
 	return k
 }
 
-func (k *Kafka) SetProducer(value KafkaProducerConfig) *Kafka {
+func (k *KafkaConfig) SetProducer(value KafkaProducerConfig) *KafkaConfig {
 	k.Producer = value
 	return k
 }
 
-func (k *Kafka) SetConsumer(value KafkaConsumerConfig) *Kafka {
+func (k *KafkaConfig) SetConsumer(value KafkaConsumerConfig) *KafkaConfig {
 	k.Consumer = value
 	return k
 }
 
-func (k *Kafka) Json() string {
+func (k *KafkaConfig) Json() string {
 	return utils.ToJson(k)
 }
 
-func (k *Kafka) AvailableTopics() bool {
+func (k *KafkaConfig) AvailableTopics() bool {
 	return len(k.Topics) > 0
 }
 
-func (k *Kafka) GetAvailableTopics() ([]KafkaTopicConfig, bool) {
+func (k *KafkaConfig) GetAvailableTopics() ([]KafkaTopicConfig, bool) {
 	return GetAvailableTopics(k.Topics)
 }
 
-func (k *Kafka) GetAvailableTopicsString() ([]string, bool) {
+func (k *KafkaConfig) GetAvailableTopicsString() ([]string, bool) {
 	return GetAvailableTopicsString(k.Topics)
 }
 
-func (k *Kafka) GetTopicsAutoCreated() ([]KafkaTopicConfig, bool) {
+func (k *KafkaConfig) GetTopicsAutoCreated() ([]KafkaTopicConfig, bool) {
 	return GetTopicsAutoCreated(k.Topics)
 }
 
-func (k *Kafka) GetTopic(key string) (KafkaTopicConfig, bool) {
+func (k *KafkaConfig) GetTopic(key string) (KafkaTopicConfig, bool) {
 	return GetTopic(k.Topics, key)
 }
 
-func (k *Kafka) RemoveProducerPropsAuthKeys() *Kafka {
+func (k *KafkaConfig) RemoveProducerPropsAuthKeys() *KafkaConfig {
 	k.Producer.SetProperties(k.removePropsAuthKeys(k.Producer.Props))
 	return k
 }
 
-func (k *Kafka) RemoveConsumerPropsAuthKeys() *Kafka {
+func (k *KafkaConfig) RemoveConsumerPropsAuthKeys() *KafkaConfig {
 	k.Consumer.SetProperties(k.removePropsAuthKeys(k.Consumer.Props))
 	return k
 }
 
-func (k *Kafka) GetAuthBasedProducer() KafkaAuthConfig {
+func (k *KafkaConfig) GetAuthBasedProducer() KafkaAuthConfig {
 	if k.Producer.AppliedAuth.IsEnabled {
 		return k.Producer.AppliedAuth
 	}
 	return k.AppliedAuth
 }
 
-func (k *Kafka) GetAuthMapBasedProducer() map[string]interface{} {
+func (k *KafkaConfig) GetAuthMapBasedProducer() map[string]interface{} {
 	auth := k.GetAuthBasedProducer()
 	builder := builder.NewMapBuilder()
 	builder.Add(Bootstrap_Servers, auth.BootstrapServersString())
@@ -102,14 +102,14 @@ func (k *Kafka) GetAuthMapBasedProducer() map[string]interface{} {
 	return builder.Build()
 }
 
-func (k *Kafka) GetAuthBasedConsumer() KafkaAuthConfig {
+func (k *KafkaConfig) GetAuthBasedConsumer() KafkaAuthConfig {
 	if k.Consumer.AppliedAuth.IsEnabled {
 		return k.Consumer.AppliedAuth
 	}
 	return k.AppliedAuth
 }
 
-func (k *Kafka) GetAuthMapBasedConsumer() map[string]interface{} {
+func (k *KafkaConfig) GetAuthMapBasedConsumer() map[string]interface{} {
 	auth := k.GetAuthBasedConsumer()
 	builder := builder.NewMapBuilder()
 	builder.Add(Bootstrap_Servers, auth.BootstrapServersString())
@@ -129,15 +129,15 @@ func (k *Kafka) GetAuthMapBasedConsumer() map[string]interface{} {
 	return builder.Build()
 }
 
-func (k *Kafka) AvailableAuthBasedProducer() bool {
+func (k *KafkaConfig) AvailableAuthBasedProducer() bool {
 	return k.GetAuthBasedProducer().IsEnabled
 }
 
-func (k *Kafka) AvailableAuthBasedConsumer() bool {
+func (k *KafkaConfig) AvailableAuthBasedConsumer() bool {
 	return k.GetAuthBasedConsumer().IsEnabled
 }
 
-func (k *Kafka) GetPropsBasedProducer() map[string]interface{} {
+func (k *KafkaConfig) GetPropsBasedProducer() map[string]interface{} {
 	k.RemoveProducerPropsAuthKeys()
 	if !k.AvailableAuthBasedProducer() {
 		return k.Producer.Props
@@ -149,11 +149,11 @@ func (k *Kafka) GetPropsBasedProducer() map[string]interface{} {
 	return _map
 }
 
-func (k *Kafka) GetPropsBasedProducerJson() string {
+func (k *KafkaConfig) GetPropsBasedProducerJson() string {
 	return utils.ToJson(k.GetPropsBasedProducer())
 }
 
-func (k *Kafka) GetPropsBasedConsumer() map[string]interface{} {
+func (k *KafkaConfig) GetPropsBasedConsumer() map[string]interface{} {
 	k.RemoveConsumerPropsAuthKeys()
 	if !k.AvailableAuthBasedConsumer() {
 		return k.Consumer.Props
@@ -165,11 +165,11 @@ func (k *Kafka) GetPropsBasedConsumer() map[string]interface{} {
 	return _map
 }
 
-func (k *Kafka) GetPropsBasedConsumerJson() string {
+func (k *KafkaConfig) GetPropsBasedConsumerJson() string {
 	return utils.ToJson(k.GetPropsBasedConsumer())
 }
 
-func (k *Kafka) removePropsAuthKeys(props map[string]interface{}) map[string]interface{} {
+func (k *KafkaConfig) removePropsAuthKeys(props map[string]interface{}) map[string]interface{} {
 	if len(props) == 0 {
 		return props
 	}
@@ -184,7 +184,7 @@ func (k *Kafka) removePropsAuthKeys(props map[string]interface{}) map[string]int
 	return props
 }
 
-func GetKafkaSample() *Kafka {
+func GetKafkaSample() *KafkaConfig {
 	k := NewKafka().SetEnabled(false).
 		SetAppliedAuth(*GetKafkaAuthConfigSample()).
 		SetProducer(*GetKafkaProducerConfigSample()).
@@ -207,12 +207,12 @@ func (k *MultiTenantKafkaConfig) SetUsableDefault(value bool) *MultiTenantKafkaC
 	return k
 }
 
-func (k *MultiTenantKafkaConfig) SetConfig(value Kafka) *MultiTenantKafkaConfig {
+func (k *MultiTenantKafkaConfig) SetConfig(value KafkaConfig) *MultiTenantKafkaConfig {
 	k.Config = value
 	return k
 }
 
-func (k *MultiTenantKafkaConfig) SetConfigCursor(value *Kafka) *MultiTenantKafkaConfig {
+func (k *MultiTenantKafkaConfig) SetConfigCursor(value *KafkaConfig) *MultiTenantKafkaConfig {
 	k.Config = *value
 	return k
 }
