@@ -10,6 +10,7 @@ import (
 	"github.com/sivaosorg/govm/blueprint"
 	"github.com/sivaosorg/govm/bot/telegram"
 	"github.com/sivaosorg/govm/coltx"
+	"github.com/sivaosorg/govm/logger"
 	"github.com/sivaosorg/govm/restify"
 	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
@@ -17,8 +18,10 @@ import (
 
 type ApiService interface {
 	Do(client *restify.Client, endpoint EndpointConfig) (*restify.Response, error)
-	DoAsync(client *restify.Client, endpoints ...EndpointConfig)
-	DoAsyncWith(client *restify.Client, endpoints map[string]EndpointConfig)
+	DoAsyncWait(client *restify.Client, endpoints ...EndpointConfig)
+	DoAsyncWaitWith(client *restify.Client, endpoints map[string]EndpointConfig)
+	DoAsyncNoneWait(client *restify.Client, endpoints ...EndpointConfig)
+	DoAsyncNoneWaitWith(client *restify.Client, endpoints map[string]EndpointConfig)
 }
 
 type apiServiceImpl struct {
@@ -37,12 +40,16 @@ func (s *apiServiceImpl) Do(client *restify.Client, endpoint EndpointConfig) (*r
 	return s.execute(client, endpoint)
 }
 
-func (s *apiServiceImpl) DoAsync(client *restify.Client, endpoints ...EndpointConfig) {
+func (s *apiServiceImpl) DoAsyncWait(client *restify.Client, endpoints ...EndpointConfig) {
 	if len(endpoints) == 0 {
 		return
 	}
 	var wg sync.WaitGroup
+	start := time.Now()
 	for _, v := range endpoints {
+		if !v.IsEnabled {
+			continue
+		}
 		wg.Add(1)
 		go func(endpoint EndpointConfig) {
 			defer wg.Done()
@@ -53,9 +60,10 @@ func (s *apiServiceImpl) DoAsync(client *restify.Client, endpoints ...EndpointCo
 		}(v)
 	}
 	wg.Wait()
+	logger.Debugf(fmt.Sprintf("Size of endpoint(s): %v executed in %v", len(endpoints), time.Since(start)))
 }
 
-func (s *apiServiceImpl) DoAsyncWith(client *restify.Client, endpoints map[string]EndpointConfig) {
+func (s *apiServiceImpl) DoAsyncWaitWith(client *restify.Client, endpoints map[string]EndpointConfig) {
 	if len(endpoints) == 0 {
 		return
 	}
@@ -66,7 +74,40 @@ func (s *apiServiceImpl) DoAsyncWith(client *restify.Client, endpoints map[strin
 		}
 		e = append(e, v)
 	}
-	s.DoAsync(client, e...)
+	s.DoAsyncWait(client, e...)
+}
+
+func (s *apiServiceImpl) DoAsyncNoneWait(client *restify.Client, endpoints ...EndpointConfig) {
+	if len(endpoints) == 0 {
+		return
+	}
+	start := time.Now()
+	for _, v := range endpoints {
+		if !v.IsEnabled {
+			continue
+		}
+		go func(endpoint EndpointConfig) {
+			_, err := s.Do(client, endpoint)
+			if err == nil {
+				// send notification
+			}
+		}(v)
+	}
+	logger.Debugf(fmt.Sprintf("Size of endpoint(s): %v executed in %v", len(endpoints), time.Since(start)))
+}
+
+func (s *apiServiceImpl) DoAsyncNoneWaitWith(client *restify.Client, endpoints map[string]EndpointConfig) {
+	if len(endpoints) == 0 {
+		return
+	}
+	var e []EndpointConfig
+	for _, v := range endpoints {
+		if !v.IsEnabled {
+			continue
+		}
+		e = append(e, v)
+	}
+	s.DoAsyncNoneWait(client, e...)
 }
 
 func (s *apiServiceImpl) execute(client *restify.Client, endpoint EndpointConfig) (*restify.Response, error) {

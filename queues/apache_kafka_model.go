@@ -53,3 +53,8 @@ type MultiTenantKafkaConfig struct {
 type ClusterMultiTenantKafkaConfig struct {
 	Clusters []MultiTenantKafkaConfig `json:"clusters,omitempty" yaml:"clusters"`
 }
+
+type KafkaPublisherRequest struct {
+	Topic string      `json:"topic" binding:"required" yaml:"topic"`
+	Data  interface{} `json:"data" yaml:"data"`
+}
