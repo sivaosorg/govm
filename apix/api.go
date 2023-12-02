@@ -466,9 +466,9 @@ func isDuration(t time.Duration) bool {
 	return t != 0 && t > 0
 }
 
-func Get(node []ApiRequestConfig, key string) ApiRequestConfig {
-	if len(node) == 0 {
-		return ApiRequestConfig{}
+func Get(node []ApiRequestConfig, key string) (ApiRequestConfig, bool) {
+	if len(node) == 0 || utils.IsEmpty(key) {
+		return ApiRequestConfig{}, false
 	}
 	var value ApiRequestConfig
 	for _, v := range node {
@@ -477,5 +477,8 @@ func Get(node []ApiRequestConfig, key string) ApiRequestConfig {
 			break
 		}
 	}
-	return value
+	if utils.IsEmpty(value.Key) {
+		return ApiRequestConfig{}, false
+	}
+	return value, true
 }
