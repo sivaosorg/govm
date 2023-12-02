@@ -43,3 +43,13 @@ type Kafka struct {
 	Producer    KafkaProducerConfig `json:"producer" yaml:"producer"`
 	Consumer    KafkaConsumerConfig `json:"consumer" yaml:"consumer"`
 }
+
+type MultiTenantKafkaConfig struct {
+	Key             string `json:"key" binding:"required" yaml:"key"`
+	IsUsableDefault bool   `json:"usable_default" yaml:"usable_default"`
+	Config          Kafka  `json:"config" yaml:"config"`
+}
+
+type ClusterMultiTenantKafkaConfig struct {
+	Clusters []MultiTenantKafkaConfig `json:"clusters,omitempty" yaml:"clusters"`
+}

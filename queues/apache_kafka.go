@@ -1,6 +1,8 @@
 package queues
 
 import (
+	"fmt"
+
 	"github.com/sivaosorg/govm/builder"
 	"github.com/sivaosorg/govm/utils"
 )
@@ -189,4 +191,81 @@ func GetKafkaSample() *Kafka {
 		SetConsumer(*GetKafkaConsumerConfigSample()).
 		AppendTopics(*GetKafkaTopicConfigSample(), *GetKafkaTopicConfigSample().SetKey("topic-2"))
 	return k
+}
+
+func NewMultiTenantKafkaConfig() *MultiTenantKafkaConfig {
+	return &MultiTenantKafkaConfig{}
+}
+
+func (k *MultiTenantKafkaConfig) SetKey(value string) *MultiTenantKafkaConfig {
+	k.Key = value
+	return k
+}
+
+func (k *MultiTenantKafkaConfig) SetUsableDefault(value bool) *MultiTenantKafkaConfig {
+	k.IsUsableDefault = value
+	return k
+}
+
+func (k *MultiTenantKafkaConfig) SetConfig(value Kafka) *MultiTenantKafkaConfig {
+	k.Config = value
+	return k
+}
+
+func (k *MultiTenantKafkaConfig) SetConfigCursor(value *Kafka) *MultiTenantKafkaConfig {
+	k.Config = *value
+	return k
+}
+
+func (k *MultiTenantKafkaConfig) Json() string {
+	return utils.ToJson(k)
+}
+
+func GetMultiTenantKafkaConfigSample() *MultiTenantKafkaConfig {
+	k := NewMultiTenantKafkaConfig().
+		SetKey("tenant_1").
+		SetConfig(*GetKafkaSample()).
+		SetUsableDefault(false)
+	return k
+}
+
+func NewClusterMultiTenantKafkaConfig() *ClusterMultiTenantKafkaConfig {
+	return &ClusterMultiTenantKafkaConfig{
+		Clusters: make([]MultiTenantKafkaConfig, 0),
+	}
+}
+
+func (c *ClusterMultiTenantKafkaConfig) SetClusters(values []MultiTenantKafkaConfig) *ClusterMultiTenantKafkaConfig {
+	c.Clusters = values
+	return c
+}
+
+func (c *ClusterMultiTenantKafkaConfig) AppendClusters(values ...MultiTenantKafkaConfig) *ClusterMultiTenantKafkaConfig {
+	c.Clusters = append(c.Clusters, values...)
+	return c
+}
+
+func (c *ClusterMultiTenantKafkaConfig) Json() string {
+	return utils.ToJson(c.Clusters)
+}
+
+func (c *ClusterMultiTenantKafkaConfig) FindClusterBy(key string) (MultiTenantKafkaConfig, error) {
+	if utils.IsEmpty(key) {
+		return *NewMultiTenantKafkaConfig(), fmt.Errorf("Key is required")
+	}
+	if len(c.Clusters) == 0 {
+		return *NewMultiTenantKafkaConfig(), fmt.Errorf("No kafka cluster")
+	}
+	for _, v := range c.Clusters {
+		if v.Key == key {
+			return v, nil
+		}
+	}
+	return *NewMultiTenantKafkaConfig(), fmt.Errorf("The kafka cluster not found")
+}
+
+func GetClusterMultiTenantKafkaConfigSample() *ClusterMultiTenantKafkaConfig {
+	c := NewClusterMultiTenantKafkaConfig().
+		AppendClusters(*GetMultiTenantKafkaConfigSample(), *GetMultiTenantKafkaConfigSample().SetKey("tenant_2"))
+	return c
 }
