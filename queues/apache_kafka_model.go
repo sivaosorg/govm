@@ -55,6 +55,7 @@ type ClusterMultiTenantKafkaConfig struct {
 }
 
 type KafkaPublisherRequest struct {
-	Topic string      `json:"topic" binding:"required" yaml:"topic"`
-	Data  interface{} `json:"data" yaml:"data"`
+	TopicKey  string                 `json:"topic_key" binding:"required" yaml:"topic_key"`
+	TenantKey string                 `json:"tenant_key" binding:"required" yaml:"tenant_key"`
+	Payload   map[string]interface{} `json:"payload" yaml:"payload"`
 }

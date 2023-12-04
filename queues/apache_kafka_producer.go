@@ -1,6 +1,10 @@
 package queues
 
-import "github.com/sivaosorg/govm/utils"
+import (
+	"fmt"
+
+	"github.com/sivaosorg/govm/utils"
+)
 
 func NewKafkaProducerConfig() *KafkaProducerConfig {
 	return &KafkaProducerConfig{
@@ -51,4 +55,37 @@ func GetKafkaProducerConfigSample() *KafkaProducerConfig {
 		AppendProperty("acks", "all").
 		AppendProperty("retries", 3).AppendProperty(Bootstrap_Servers, "kafka-broker-3:9092")
 	return k
+}
+
+func NewKafkaPublisherRequest() *KafkaPublisherRequest {
+	return &KafkaPublisherRequest{}
+}
+
+func (k *KafkaPublisherRequest) SetTopicKey(value string) *KafkaPublisherRequest {
+	k.TopicKey = value
+	return k
+}
+
+func (k *KafkaPublisherRequest) SetTenantKey(value string) *KafkaPublisherRequest {
+	k.TenantKey = value
+	return k
+}
+
+func (k *KafkaPublisherRequest) SetPayload(value map[string]interface{}) *KafkaPublisherRequest {
+	k.Payload = value
+	return k
+}
+
+func (k *KafkaPublisherRequest) Json() string {
+	return utils.ToJson(k)
+}
+
+func KafkaPublisherRequestValidator(k KafkaPublisherRequest) error {
+	if utils.IsEmpty(k.TopicKey) {
+		return fmt.Errorf("Topic key is required")
+	}
+	if utils.IsEmpty(k.TenantKey) {
+		return fmt.Errorf("Tenant key is required")
+	}
+	return nil
 }
