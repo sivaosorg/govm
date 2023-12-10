@@ -17,7 +17,7 @@ go get github.com/sivaosorg/govm@v1.2.0
 - Latest version
 
 ```bash
-go get -u github.com/sivaosorg/govm
+go get -u github.com/sivaosorg/govm@latest
 ```
 
 ### Contribution
