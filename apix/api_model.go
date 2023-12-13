@@ -42,6 +42,7 @@ type EndpointConfig struct {
 }
 
 type EndpointOptionsConfig struct {
+	IsEnabledPingResponse   bool `json:"enabled_ping_response" yaml:"enabled_ping_response"`
 	SkipMessageHeader       bool `json:"skip_message_header" yaml:"skip_message_header"`
 	SkipMessageRequestBody  bool `json:"skip_message_request_body" yaml:"skip_message_request_body"`
 	SkipMessageResponseBody bool `json:"skip_message_response_body" yaml:"skip_message_response_body"`

@@ -193,6 +193,9 @@ func (s *apiServiceImpl) execute(client *restify.Client, endpoint EndpointConfig
 		request.SetBody(endpoint.Body)
 	}
 	response, err = request.Execute(endpoint.Method, fullURL)
+	if endpoint.TelegramOptions.IsEnabledPingResponse {
+		go s.alert(endpoint, response, err)
+	}
 	return response, err
 }
 

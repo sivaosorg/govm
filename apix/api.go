@@ -280,7 +280,14 @@ func GetEndpointSample() *EndpointConfig {
 }
 
 func NewEndpointOptionsConfig() *EndpointOptionsConfig {
-	return &EndpointOptionsConfig{}
+	return &EndpointOptionsConfig{
+		IsEnabledPingResponse: true,
+	}
+}
+
+func (e *EndpointOptionsConfig) SetEnabledPingResponse(value bool) *EndpointOptionsConfig {
+	e.IsEnabledPingResponse = value
+	return e
 }
 
 func (e *EndpointOptionsConfig) SetSkipMessageHeader(value bool) *EndpointOptionsConfig {
