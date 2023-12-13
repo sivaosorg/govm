@@ -133,7 +133,7 @@ func (s *apiServiceImpl) execute(client *restify.Client, endpoint EndpointConfig
 	telegramSvc := telegram.NewTelegramService(telegramConf, *options)
 	s.telegramSvc = telegramSvc
 
-	client.SetHostURL(host)
+	client.SetBaseURL(host)
 	client.SetHeaders(headers)
 	client.SetDebug(endpoint.DebugMode)
 
@@ -214,16 +214,16 @@ func (s *apiServiceImpl) alert(endpoint EndpointConfig, response *restify.Respon
 	}
 	message.WriteString(fmt.Sprintf("(`%s`) URL: `%s`\n", response.Request.Method, response.Request.URL))
 	message.WriteString("\n---\n")
-	if endpoint.AvailableHeaders() {
+	if endpoint.AvailableHeaders() && !endpoint.TelegramOptions.SkipMessageHeader {
 		message.WriteString(fmt.Sprintf("Header(s): \n\t`%s`\n", coltx.MapString2Table(endpoint.Headers)))
 	}
-	if endpoint.AvailableQueryParams() {
+	if endpoint.AvailableQueryParams() && !endpoint.TelegramOptions.SkipMessageQueryParam {
 		message.WriteString(fmt.Sprintf("Query Param(s): `%s`\n", coltx.MapString2Table(endpoint.QueryParams)))
 	}
-	if endpoint.AvailablePathParams() {
+	if endpoint.AvailablePathParams() && !endpoint.TelegramOptions.SkipMessagePathParam {
 		message.WriteString(fmt.Sprintf("Path Param(s): `%s`\n", coltx.MapString2Table(endpoint.PathParams)))
 	}
-	if endpoint.AvailableBody() {
+	if endpoint.AvailableBody() && !endpoint.TelegramOptions.SkipMessageRequestBody {
 		message.WriteString(fmt.Sprintf("Request Body: `%s`\n", utils.ToJson(endpoint.Body)))
 	}
 	if endpoint.Retry.AvailableRetryOnStatus() {
@@ -231,7 +231,7 @@ func (s *apiServiceImpl) alert(endpoint EndpointConfig, response *restify.Respon
 	}
 	message.WriteString("\n---\n")
 	message.WriteString(fmt.Sprintf("Status Code: %v\n", response.StatusCode()))
-	if utils.IsNotEmpty(response.String()) {
+	if utils.IsNotEmpty(response.String()) && !endpoint.TelegramOptions.SkipMessageResponseBody {
 		message.WriteString(fmt.Sprintf("Response: `%v`\n", response.String()))
 	}
 	message.WriteString(fmt.Sprintf("No. attempt: %v\n", response.Request.Attempt))

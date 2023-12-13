@@ -24,20 +24,29 @@ type RetryConfig struct {
 }
 
 type EndpointConfig struct {
-	IsEnabled      bool                    `json:"enabled" yaml:"enabled"`
-	DebugMode      bool                    `json:"debug_mode" yaml:"debug_mode"`
-	BaseURL        string                  `json:"base_url" yaml:"base_url"`
-	Timeout        time.Duration           `json:"timeout" yaml:"timeout"`
-	Path           string                  `json:"path" yaml:"path"`
-	Method         string                  `json:"method" yaml:"method"`
-	Description    string                  `json:"description" yaml:"description"`
-	QueryParams    map[string]string       `json:"query_params" yaml:"query_params"`
-	PathParams     map[string]string       `json:"path_params" yaml:"path_params"`
-	Headers        map[string]string       `json:"headers" yaml:"headers"`
-	Body           map[string]interface{}  `json:"body" yaml:"body"`
-	Retry          RetryConfig             `json:"retry" yaml:"retry"`
-	Authentication AuthenticationConfig    `json:"authentication" yaml:"authentication"`
-	Telegram       telegram.TelegramConfig `json:"telegram" yaml:"telegram"`
+	IsEnabled       bool                    `json:"enabled" yaml:"enabled"`
+	DebugMode       bool                    `json:"debug_mode" yaml:"debug_mode"`
+	BaseURL         string                  `json:"base_url" yaml:"base_url"`
+	Timeout         time.Duration           `json:"timeout" yaml:"timeout"`
+	Path            string                  `json:"path" yaml:"path"`
+	Method          string                  `json:"method" yaml:"method"`
+	Description     string                  `json:"description" yaml:"description"`
+	QueryParams     map[string]string       `json:"query_params" yaml:"query_params"`
+	PathParams      map[string]string       `json:"path_params" yaml:"path_params"`
+	Headers         map[string]string       `json:"headers" yaml:"headers"`
+	Body            map[string]interface{}  `json:"body" yaml:"body"`
+	Retry           RetryConfig             `json:"retry" yaml:"retry"`
+	Authentication  AuthenticationConfig    `json:"authentication" yaml:"authentication"`
+	Telegram        telegram.TelegramConfig `json:"telegram" yaml:"telegram"`
+	TelegramOptions EndpointOptionsConfig   `json:"telegram_options" yaml:"telegram_options"`
+}
+
+type EndpointOptionsConfig struct {
+	SkipMessageHeader       bool `json:"skip_message_header" yaml:"skip_message_header"`
+	SkipMessageRequestBody  bool `json:"skip_message_request_body" yaml:"skip_message_request_body"`
+	SkipMessageResponseBody bool `json:"skip_message_response_body" yaml:"skip_message_response_body"`
+	SkipMessageQueryParam   bool `json:"skip_message_query_param" yaml:"skip_message_query_param"`
+	SkipMessagePathParam    bool `json:"skip_message_path_param" yaml:"skip_message_path_param"`
 }
 
 type ApiRequestConfig struct {

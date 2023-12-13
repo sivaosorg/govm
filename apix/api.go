@@ -246,6 +246,11 @@ func (e *EndpointConfig) SetTelegram(value telegram.TelegramConfig) *EndpointCon
 	return e
 }
 
+func (e *EndpointConfig) SetTelegramOptions(value EndpointOptionsConfig) *EndpointConfig {
+	e.TelegramOptions = value
+	return e
+}
+
 func (e *EndpointConfig) Json() string {
 	return utils.ToJson(e)
 }
@@ -269,8 +274,42 @@ func GetEndpointSample() *EndpointConfig {
 		AppendBody("email", "tester@gmail.com").
 		SetAuthentication(*GetAuthenticationSample()).
 		SetRetry(*GetRetrySample()).
-		SetTelegram(*telegram.GetTelegramConfigSample())
+		SetTelegram(*telegram.GetTelegramConfigSample()).
+		SetTelegramOptions(*NewEndpointOptionsConfig())
 	return e
+}
+
+func NewEndpointOptionsConfig() *EndpointOptionsConfig {
+	return &EndpointOptionsConfig{}
+}
+
+func (e *EndpointOptionsConfig) SetSkipMessageHeader(value bool) *EndpointOptionsConfig {
+	e.SkipMessageHeader = value
+	return e
+}
+
+func (e *EndpointOptionsConfig) SetSkipMessageRequestBody(value bool) *EndpointOptionsConfig {
+	e.SkipMessageRequestBody = value
+	return e
+}
+
+func (e *EndpointOptionsConfig) SetSkipMessageResponseBody(value bool) *EndpointOptionsConfig {
+	e.SkipMessageResponseBody = value
+	return e
+}
+
+func (e *EndpointOptionsConfig) SetSkipMessageQueryParam(value bool) *EndpointOptionsConfig {
+	e.SkipMessageQueryParam = value
+	return e
+}
+
+func (e *EndpointOptionsConfig) SetSkipMessagePathParam(value bool) *EndpointOptionsConfig {
+	e.SkipMessagePathParam = value
+	return e
+}
+
+func (e *EndpointOptionsConfig) Json() string {
+	return utils.ToJson(e)
 }
 
 func NewApiRequest() *ApiRequestConfig {
