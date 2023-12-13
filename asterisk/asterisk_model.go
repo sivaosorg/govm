@@ -3,9 +3,9 @@ package asterisk
 import "time"
 
 type TelephonyConfig struct {
-	Region      string        `json:"region" yaml:"region"`
-	PhonePrefix []string      `json:"phone_prefix" yaml:"phone-prefix"`
-	DigitsExten []interface{} `json:"digits_exten" yaml:"digits-exten"`
+	Region          string        `json:"region" yaml:"region"`
+	PhonePrefix     []string      `json:"phone_prefix" yaml:"phone_prefix"`
+	DigitExtensions []interface{} `json:"digit_extensions" yaml:"digit_extensions"`
 }
 
 type AsteriskConfig struct {
@@ -16,7 +16,7 @@ type AsteriskConfig struct {
 	Username  string          `json:"username" binding:"required" yaml:"username"`
 	Password  string          `json:"-" yaml:"password"`
 	Telephony TelephonyConfig `json:"telephony" yaml:"telephony"`
-	Timeout   time.Duration   `json:"-" yaml:"-"`
+	Timeout   time.Duration   `json:"timeout" yaml:"timeout"`
 }
 
 type asteriskOptionConfig struct {

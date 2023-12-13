@@ -11,10 +11,10 @@ clusters:
       password: pwd
       telephony:
         region: VN
-        phone-prefix:
+        phone_prefix:
         - "9"
         - "6064"
-        digits-exten:
+        digit_extensions:
         - 4
         - 5
         - 6
@@ -194,10 +194,10 @@ clusters:
         password: pwd
         telephony:
           region: VN
-          phone-prefix:
+          phone_prefix:
           - "9"
           - "6064"
-          digits-exten:
+          digit_extensions:
           - 4
           - 5
           - 6
@@ -325,10 +325,10 @@ clusters:
       password: pwd
       telephony:
         region: VN
-        phone-prefix:
+        phone_prefix:
         - "9"
         - "6064"
-        digits-exten:
+        digit_extensions:
         - 4
         - 5
         - 6
@@ -508,10 +508,10 @@ clusters:
         password: pwd
         telephony:
           region: VN
-          phone-prefix:
+          phone_prefix:
           - "9"
           - "6064"
-          digits-exten:
+          digit_extensions:
           - 4
           - 5
           - 6
@@ -639,10 +639,10 @@ clusters:
       password: pwd
       telephony:
         region: VN
-        phone-prefix:
+        phone_prefix:
         - "9"
         - "6064"
-        digits-exten:
+        digit_extensions:
         - 4
         - 5
         - 6
@@ -822,10 +822,10 @@ clusters:
         password: pwd
         telephony:
           region: VN
-          phone-prefix:
+          phone_prefix:
           - "9"
           - "6064"
-          digits-exten:
+          digit_extensions:
           - 4
           - 5
           - 6
@@ -953,10 +953,10 @@ clusters:
       password: pwd
       telephony:
         region: VN
-        phone-prefix:
+        phone_prefix:
         - "9"
         - "6064"
-        digits-exten:
+        digit_extensions:
         - 4
         - 5
         - 6
@@ -1136,10 +1136,10 @@ clusters:
         password: pwd
         telephony:
           region: VN
-          phone-prefix:
+          phone_prefix:
           - "9"
           - "6064"
-          digits-exten:
+          digit_extensions:
           - 4
           - 5
           - 6

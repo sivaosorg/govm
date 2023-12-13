@@ -62,13 +62,13 @@ func (t *TelephonyConfig) AppendPhonePrefix(values ...string) *TelephonyConfig {
 	return t
 }
 
-func (t *TelephonyConfig) SetDigitsExten(values []interface{}) *TelephonyConfig {
-	t.DigitsExten = values
+func (t *TelephonyConfig) SetDigitExtensions(values []interface{}) *TelephonyConfig {
+	t.DigitExtensions = values
 	return t
 }
 
-func (t *TelephonyConfig) AppendDigitExten(values ...interface{}) *TelephonyConfig {
-	t.DigitsExten = append(t.DigitsExten, values...)
+func (t *TelephonyConfig) AppendDigitExtensions(values ...interface{}) *TelephonyConfig {
+	t.DigitExtensions = append(t.DigitExtensions, values...)
 	return t
 }
 
@@ -103,7 +103,7 @@ func GetAsteriskConfigSample() *AsteriskConfig {
 	a := NewAsteriskConfig()
 	t := NewTelephonyConfig()
 	t.SetRegion("VN")
-	t.AppendDigitExten(4, 5, 6)
+	t.AppendDigitExtensions(4, 5, 6)
 	t.AppendPhonePrefix("9", "6064")
 	a.SetEnabled(true)
 	a.SetHost("http://127.0.0.1")
