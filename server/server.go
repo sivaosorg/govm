@@ -7,16 +7,23 @@ import (
 	"time"
 
 	"github.com/sivaosorg/govm/logger"
+	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewServer() *Server {
 	s := &Server{}
+	s.SetTimezone(timex.DefaultTimezoneVietnam)
 	s.SetAttr(*NewAttribute())
 	s.SetTimeout(*NewTimeout().SetRead(15 * time.Second).SetWrite(15 * time.Second))
 	s.SetSSL(*GetSSLSample())
 	s.SetMode("debug")
 	s.SetSP(*GetPprofSample())
+	return s
+}
+
+func (s *Server) SetTimezone(value string) *Server {
+	s.Timezone = value
 	return s
 }
 
@@ -68,6 +75,7 @@ func ServerValidator(s *Server) {
 
 func GetServerSample() *Server {
 	s := NewServer().
+		SetTimezone(timex.DefaultTimezoneVietnam).
 		SetHost("127.0.0.1").
 		SetPort(8083).
 		SetTimeout(*GetTimeoutSample())

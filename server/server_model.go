@@ -3,13 +3,14 @@ package server
 import "time"
 
 type Server struct {
-	Host    string  `json:"host" yaml:"host"`
-	Port    int     `json:"port" binding:"required" yaml:"port"`
-	Mode    string  `json:"mode" yaml:"mode"`
-	Timeout Timeout `json:"timeout" yaml:"timeout"`
-	Attr    Attr    `json:"attr" yaml:"attr"`
-	SSL     SSL     `json:"ssl" yaml:"ssl"`
-	SP      Pprof   `json:"serve_proxy" yaml:"serve_proxy"`
+	Timezone string  `json:"timezone" yaml:"timezone"`
+	Host     string  `json:"host" yaml:"host"`
+	Port     int     `json:"port" binding:"required" yaml:"port"`
+	Mode     string  `json:"mode" yaml:"mode"`
+	Timeout  Timeout `json:"timeout" yaml:"timeout"`
+	Attr     Attr    `json:"attr" yaml:"attr"`
+	SSL      SSL     `json:"ssl" yaml:"ssl"`
+	SP       Pprof   `json:"serve_proxy" yaml:"serve_proxy"`
 }
 
 type Timeout struct {

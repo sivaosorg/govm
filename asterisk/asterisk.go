@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
 )
 
@@ -52,23 +53,43 @@ func (t *TelephonyConfig) SetRegion(value string) *TelephonyConfig {
 	return t
 }
 
-func (t *TelephonyConfig) SetPhonePrefix(values []string) *TelephonyConfig {
-	t.PhonePrefix = values
+func (t *TelephonyConfig) SetPhonePrefixes(values []string) *TelephonyConfig {
+	t.PhonePrefixes = values
 	return t
 }
 
-func (t *TelephonyConfig) AppendPhonePrefix(values ...string) *TelephonyConfig {
-	t.PhonePrefix = append(t.PhonePrefix, values...)
+func (t *TelephonyConfig) AppendPhonePrefixes(values ...string) *TelephonyConfig {
+	t.PhonePrefixes = append(t.PhonePrefixes, values...)
 	return t
 }
 
-func (t *TelephonyConfig) SetDigitExtensions(values []interface{}) *TelephonyConfig {
-	t.DigitExtensions = values
+func (t *TelephonyConfig) SetApplyMaxExtension(values []interface{}) *TelephonyConfig {
+	t.ApplyMaxExtension = values
 	return t
 }
 
-func (t *TelephonyConfig) AppendDigitExtensions(values ...interface{}) *TelephonyConfig {
-	t.DigitExtensions = append(t.DigitExtensions, values...)
+func (t *TelephonyConfig) AppendApplyMaxExtension(values ...interface{}) *TelephonyConfig {
+	t.ApplyMaxExtension = append(t.ApplyMaxExtension, values...)
+	return t
+}
+
+func (t *TelephonyConfig) SetExceptionalExtension(values []string) *TelephonyConfig {
+	t.ExceptionalExtension = values
+	return t
+}
+
+func (t *TelephonyConfig) AppendExceptionalExtension(values ...string) *TelephonyConfig {
+	t.ExceptionalExtension = append(t.ExceptionalExtension, values...)
+	return t
+}
+
+func (t *TelephonyConfig) SetTimezone(value string) *TelephonyConfig {
+	t.Timezone = value
+	return t
+}
+
+func (t *TelephonyConfig) SetTimeFormat(value string) *TelephonyConfig {
+	t.TimeFormat = value
 	return t
 }
 
@@ -99,18 +120,25 @@ func AsteriskConfigValidator(a *AsteriskConfig) {
 	a.SetPort(a.Port)
 }
 
-func GetAsteriskConfigSample() *AsteriskConfig {
-	a := NewAsteriskConfig()
+func GetTelephonyConfigSample() *TelephonyConfig {
 	t := NewTelephonyConfig()
 	t.SetRegion("VN")
-	t.AppendDigitExtensions(4, 5, 6)
-	t.AppendPhonePrefix("9", "6064")
+	t.AppendApplyMaxExtension(4, 5)
+	t.AppendPhonePrefixes("9")
+	t.SetTimezone(timex.DefaultTimezoneVietnam)
+	t.SetTimeFormat(timex.TimeFormat20060102150405)
+	t.AppendExceptionalExtension("022123456XX..XX")
+	return t
+}
+
+func GetAsteriskConfigSample() *AsteriskConfig {
+	a := NewAsteriskConfig()
 	a.SetEnabled(true)
-	a.SetHost("http://127.0.0.1")
+	a.SetHost("127.0.0.1")
 	a.SetPort(5038)
 	a.SetUsername("u@root")
 	a.SetPassword("pwd")
-	a.SetTelephony(*t)
+	a.SetTelephony(*GetTelephonyConfigSample())
 	return a
 }
 
@@ -201,4 +229,14 @@ func (c *ClusterMultiTenantAsteriskConfig) FindClusterBy(key string) (MultiTenan
 		}
 	}
 	return *NewMultiTenantAsteriskConfig(), fmt.Errorf("The asterisk cluster not found")
+}
+
+func NewSettingConfig() *SettingConfig {
+	s := &SettingConfig{}
+	return s
+}
+
+func NewCacheConfig() *CacheConfig {
+	c := &CacheConfig{}
+	return c
 }

@@ -3,9 +3,18 @@ package asterisk
 import "time"
 
 type TelephonyConfig struct {
-	Region          string        `json:"region" yaml:"region"`
-	PhonePrefix     []string      `json:"phone_prefix" yaml:"phone_prefix"`
-	DigitExtensions []interface{} `json:"digit_extensions" yaml:"digit_extensions"`
+	Region               string        `json:"region" yaml:"region"`
+	Timezone             string        `json:"timezone" yaml:"timezone"`
+	TimeFormat           string        `json:"time_format" yaml:"time_format"`
+	PhonePrefixes        []string      `json:"phone_prefixes" yaml:"phone_prefixes"` // phone prefixes which removed from phone. number
+	ApplyMaxExtension    []interface{} `json:"apply_max_extension" yaml:"apply_max_extension"`
+	ExceptionalExtension []string      `json:"exceptional_extension" yaml:"exceptional_extension"`
+}
+
+type SettingConfig struct {
+}
+
+type CacheConfig struct {
 }
 
 type AsteriskConfig struct {
@@ -16,6 +25,8 @@ type AsteriskConfig struct {
 	Username  string          `json:"username" binding:"required" yaml:"username"`
 	Password  string          `json:"-" yaml:"password"`
 	Telephony TelephonyConfig `json:"telephony" yaml:"telephony"`
+	Setting   SettingConfig   `json:"setting" yaml:"setting"`
+	Caches    CacheConfig     `json:"cache" yaml:"cache"`
 	Timeout   time.Duration   `json:"timeout" yaml:"timeout"`
 }
 

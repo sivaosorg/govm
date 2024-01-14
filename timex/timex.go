@@ -452,7 +452,7 @@ func (now *Timex) Parse(s ...string) (t time.Time, err error) {
 	)
 
 	for _, str := range s {
-		hasTimeInStr := HasTimeRegexp.MatchString(str) // match 15:04:05, 15
+		hasTimeInStr := ApplyTimeRegexp.MatchString(str) // match 15:04:05, 15
 		onlyTimeInStr = hasTimeInStr && onlyTimeInStr && OnlyTimeRegexp.MatchString(str)
 		if t, err = now.parseWithFormat(str, currentLocation); err == nil {
 			location := t.Location()
