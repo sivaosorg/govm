@@ -210,37 +210,37 @@ func (s *apiServiceImpl) alert(endpoint EndpointConfig, response *restify.Respon
 		message.WriteString(fmt.Sprintf("%v ", icon))
 	}
 	message.WriteString("API REST HTTP\n")
-	message.WriteString(fmt.Sprintf("Tz: `%s` (Received At: `%v`)\n\n",
-		time.Now().Format(timex.DateTimeFormYearMonthDayHourMinuteSecond), response.ReceivedAt()))
+	message.WriteString(fmt.Sprintf("tz: `%s` (received at: `%v`)\n\n",
+		time.Now().Format(timex.TimeFormat20060102150405), response.ReceivedAt()))
 	if utils.IsNotEmpty(endpoint.Description) {
-		message.WriteString(fmt.Sprintf("Decs: `%s`\n", endpoint.Description))
+		message.WriteString(fmt.Sprintf("decs: `%s`\n", endpoint.Description))
 	}
-	message.WriteString(fmt.Sprintf("(`%s`) URL: `%s`\n", response.Request.Method, response.Request.URL))
+	message.WriteString(fmt.Sprintf("(`%s`) url: `%s`\n", response.Request.Method, response.Request.URL))
 	message.WriteString("\n---\n")
 	if endpoint.AvailableHeaders() && !endpoint.TelegramOptions.SkipMessageHeader {
-		message.WriteString(fmt.Sprintf("Header(s): \n\t`%s`\n", coltx.MapString2Table(endpoint.Headers)))
+		message.WriteString(fmt.Sprintf("header(s): \n\t`%s`\n", coltx.MapString2Table(endpoint.Headers)))
 	}
 	if endpoint.AvailableQueryParams() && !endpoint.TelegramOptions.SkipMessageQueryParam {
-		message.WriteString(fmt.Sprintf("Query Param(s): `%s`\n", coltx.MapString2Table(endpoint.QueryParams)))
+		message.WriteString(fmt.Sprintf("query param(s): `%s`\n", coltx.MapString2Table(endpoint.QueryParams)))
 	}
 	if endpoint.AvailablePathParams() && !endpoint.TelegramOptions.SkipMessagePathParam {
-		message.WriteString(fmt.Sprintf("Path Param(s): `%s`\n", coltx.MapString2Table(endpoint.PathParams)))
+		message.WriteString(fmt.Sprintf("path param(s): `%s`\n", coltx.MapString2Table(endpoint.PathParams)))
 	}
 	if endpoint.AvailableBody() && !endpoint.TelegramOptions.SkipMessageRequestBody {
-		message.WriteString(fmt.Sprintf("Request Body: `%s`\n", utils.ToJson(endpoint.Body)))
+		message.WriteString(fmt.Sprintf("request body: `%s`\n", utils.ToJson(endpoint.Body)))
 	}
 	if endpoint.Retry.AvailableRetryOnStatus() {
-		message.WriteString(fmt.Sprintf("Retry On Status: `%s`\n", utils.ToJson(endpoint.Retry.RetryOnStatus)))
+		message.WriteString(fmt.Sprintf("retry on status: `%s`\n", utils.ToJson(endpoint.Retry.RetryOnStatus)))
 	}
 	message.WriteString("\n---\n")
-	message.WriteString(fmt.Sprintf("Status Code: %v\n", response.StatusCode()))
+	message.WriteString(fmt.Sprintf("status code: %v\n", response.StatusCode()))
 	if utils.IsNotEmpty(response.String()) && !endpoint.TelegramOptions.SkipMessageResponseBody {
-		message.WriteString(fmt.Sprintf("Response: `%v`\n", response.String()))
+		message.WriteString(fmt.Sprintf("response: `%v`\n", response.String()))
 	}
-	message.WriteString(fmt.Sprintf("No. attempt: %v\n", response.Request.Attempt))
-	message.WriteString(fmt.Sprintf("Duration: `%v`\n", response.Time()))
+	message.WriteString(fmt.Sprintf("no. attempt: %v\n", response.Request.Attempt))
+	message.WriteString(fmt.Sprintf("duration: `%v`\n", response.Time()))
 	if err != nil {
-		message.WriteString(fmt.Sprintf("Error(R): `%v`\n", err.Error()))
+		message.WriteString(fmt.Sprintf("error(r): `%v`\n", err.Error()))
 	}
 	s.telegramSvc.SendMessage(message.String())
 }
