@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/sivaosorg/govm/bot/telegram"
+	"github.com/sivaosorg/govm/timex"
 )
 
 // bot: t.me/javis_notify_forum_bot
@@ -11,7 +12,9 @@ import (
 // chat_id: -1002042977093
 // token: 6806983892:AAGcPZiuNktLFnyVWrRyOyYssECcVmNJSRo
 func createTelegramService() telegram.TelegramService {
-	options := telegram.NewTelegramOptionConfig().SetType(telegram.ModeHTML)
+	options := telegram.NewTelegramOptionConfig().
+		SetType(telegram.ModeHTML).
+		SetTimezone(timex.DefaultTimezoneVietnam)
 	svc := telegram.NewTelegramService(*telegram.GetTelegramConfigSample().
 		SetChatId([]int64{-1002042977093}).
 		SetToken("6806983892:AAGcPZiuNktLFnyVWrRyOyYssECcVmNJSRo").

@@ -18,6 +18,20 @@ func NewCard() *card {
 	return c
 }
 
+func WithCard(timezone string) *card {
+	if utils.IsEmpty(timezone) {
+		timezone = timex.DefaultTimezoneVietnam
+	}
+	c := NewCard()
+	c.SetTimestamp(timex.AdjustTimezone(time.Now(), timezone))
+	return c
+}
+
+func (c *card) SetTimezone(value string) *card {
+	c.timezone = value
+	return c
+}
+
 func (c *card) SetTimestamp(value time.Time) *card {
 	c.Timestamp = value.Format(timex.TimeFormat20060102150405)
 	return c

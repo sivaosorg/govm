@@ -13,6 +13,7 @@ type TelegramConfig struct {
 }
 
 type telegramOptionConfig struct {
+	Timezone   string             `json:"timezone" yaml:"timezone"`
 	Type       TelegramFormatType `json:"type" binding:"required" yaml:"type"`
 	MaxRetries int                `json:"max_retries" yaml:"max-retries"`
 }

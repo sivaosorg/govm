@@ -169,6 +169,11 @@ func (t *telegramOptionConfig) SetMaxRetries(value int) *telegramOptionConfig {
 	return t
 }
 
+func (t *telegramOptionConfig) SetTimezone(value string) *telegramOptionConfig {
+	t.Timezone = value
+	return t
+}
+
 func (t *telegramOptionConfig) Json() string {
 	return utils.ToJson(t)
 }

@@ -45,8 +45,8 @@ type TelegramService interface {
 }
 
 type telegramServiceImpl struct {
-	config TelegramConfig       `json:"-"`
-	option telegramOptionConfig `json:"-"`
+	config TelegramConfig
+	option telegramOptionConfig
 }
 
 func NewTelegramService(config TelegramConfig, option telegramOptionConfig) TelegramService {
@@ -280,42 +280,42 @@ func (s *telegramServiceImpl) SendMessageHandshake(request builder.MapBuilder) (
 }
 
 func (s *telegramServiceImpl) SendNotification(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeNotification).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeNotification).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendInfo(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeInfo).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeInfo).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendWarning(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeWarning).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeWarning).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendError(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeError).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeError).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendDebug(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeDebug).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeDebug).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendSuccess(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeSuccess).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeSuccess).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendBug(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeBug).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeBug).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
 func (s *telegramServiceImpl) SendTrace(topic, message string) (builder.MapBuilder, error) {
-	b := blueprint.NewCard().SetIconText(blueprint.TypeTrace).SetDescription(message).SetTitle(topic)
+	b := blueprint.WithCard(s.option.Timezone).SetIconText(blueprint.TypeTrace).SetDescription(message).SetTitle(topic)
 	return s.SendMessage(b.GenCardDefault())
 }
 
