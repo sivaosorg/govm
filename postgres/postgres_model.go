@@ -13,7 +13,7 @@ type PostgresConfig struct {
 	SSLMode     string        `json:"ssl_mode" binding:"required" yaml:"ssl-mode"`
 	MaxOpenConn int           `json:"max_open_conn" binding:"required" yaml:"max-open-conn"`
 	MaxIdleConn int           `json:"max_idle_conn" binding:"required" yaml:"max-idle-conn"`
-	Timeout     time.Duration `json:"-" yaml:"-"`
+	Timeout     time.Duration `json:"timeout" yaml:"timeout"`
 }
 
 type postgresOptionConfig struct {

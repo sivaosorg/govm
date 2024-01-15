@@ -14,7 +14,7 @@ type RabbitMqConfig struct {
 	Port      int                   `json:"port" binding:"required" yaml:"port"`
 	Message   RabbitMqMessageConfig `json:"message,omitempty" yaml:"message"`
 	Clusters  clusters              `json:"clusters,omitempty" yaml:"clusters"`
-	Timeout   time.Duration         `json:"-" yaml:"-"`
+	Timeout   time.Duration         `json:"timeout" yaml:"timeout"`
 }
 
 type RabbitMqExchangeConfig struct {

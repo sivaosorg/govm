@@ -13,7 +13,7 @@ type MysqlConfig struct {
 	MaxOpenConn            int           `json:"max_open_conn" binding:"required" yaml:"max-open-conn"`
 	MaxIdleConn            int           `json:"max_idle_conn" binding:"required" yaml:"max-idle-conn"`
 	MaxLifeTimeMinutesConn int           `json:"max_life_time_minutes_conn" binding:"required" yaml:"max-life-time-minutes-conn"`
-	Timeout                time.Duration `json:"-" yaml:"-"`
+	Timeout                time.Duration `json:"timeout" yaml:"timeout"`
 }
 
 type mysqlOptionConfig struct {

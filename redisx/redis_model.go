@@ -8,7 +8,7 @@ type RedisConfig struct {
 	UrlConn   string        `json:"url_conn" binding:"required" yaml:"url_conn"`
 	Password  string        `json:"-" binding:"required" yaml:"password"`
 	Database  string        `json:"database" binding:"required" yaml:"database"`
-	Timeout   time.Duration `json:"-" yaml:"-"`
+	Timeout   time.Duration `json:"timeout" yaml:"timeout"`
 }
 
 type redisOptionConfig struct {

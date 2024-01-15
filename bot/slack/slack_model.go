@@ -7,7 +7,7 @@ type SlackConfig struct {
 	DebugMode bool          `json:"debug_mode" yaml:"debug_mode"`
 	ChannelId []string      `json:"channel_id" binding:"required" yaml:"channel_id"`
 	Token     string        `json:"-" binding:"required" yaml:"token"`
-	Timeout   time.Duration `json:"-" yaml:"-"`
+	Timeout   time.Duration `json:"timeout" yaml:"timeout"`
 }
 
 type slackOptionConfig struct {
