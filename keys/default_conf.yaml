@@ -11,13 +11,17 @@ asterisk:
   password: pwd
   telephony:
     region: VN
-    phone_prefix:
-    - "9"
-    - "6064"
-    digit_extensions:
-    - 4
-    - 5
-    - 6
+    timezone: Asia/Ho_Chi_Minh
+    time_format: 2006-01-02 15:04:05
+    phone_prefixes:
+      - "9"
+      - "6064"
+    apply_max_extension:
+      - 4
+      - 5
+    exceptional_extension:
+      - "9999"
+  timeout: 10s
 # ################################
 # Mongodb Config
 # 2023-12-02 22:57:24
@@ -122,7 +126,7 @@ telegram:
   enabled: false
   debug_mode: true
   chat_id:
-  - 123456789
+    - 123456789
   token: <token_here>
 # ################################
 # Slack Config
@@ -132,7 +136,7 @@ slack:
   enabled: false
   debug_mode: true
   channel_id:
-  - "123456789"
+    - "123456789"
   token: <token-here>
 # ################################
 # Cors Config
@@ -141,18 +145,18 @@ slack:
 cors:
   enabled: false
   allowed-origins:
-  - '*'
+    - "*"
   allowed-methods:
-  - GET
-  - POST
-  - PUT
-  - DELETE
-  - OPTIONS
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
   allowed-headers:
-  - Origin
-  - Accept
-  - Content-Type
-  - Authorization
+    - Origin
+    - Accept
+    - Content-Type
+    - Authorization
   exposed-headers: []
   allow-credentials: true
   max-age: 3600
@@ -221,293 +225,6 @@ logger:
 kafka:
   enabled: false
   topics:
-  - enabled: false
-    key: topic-1
-    name: ""
-    desc: ""
-    create.enabled: true
-    delete.enabled: false
-    replication.factor: 3
-    partitions: 5
-    retention.ms: -1
-  - enabled: false
-    key: topic-2
-    name: ""
-    desc: ""
-    create.enabled: true
-    delete.enabled: false
-    replication.factor: 3
-    partitions: 5
-    retention.ms: -1
-  applied_auth:
-    enabled: false
-    bootstrap.servers:
-    - kafka-broker-1:9092
-    - kafka-broker-2:9092
-    security.protocol: sasl_ssl
-    sasl.mechanism: PLAIN
-    sasl.username: username
-    sasl.password: pwd
-    ssl.ca.location: /path/to/ca-certificate.pem
-    ssl.certificate.location: /path/to/client-certificate.pem
-    ssl.key.location: /path/to/client-key.pem
-  producer:
-    enabled: true
-    applied_auth:
-      enabled: false
-      bootstrap.servers:
-      - kafka-broker-1:9092
-      - kafka-broker-2:9092
-      security.protocol: sasl_ssl
-      sasl.mechanism: PLAIN
-      sasl.username: username
-      sasl.password: pwd
-      ssl.ca.location: /path/to/ca-certificate.pem
-      ssl.certificate.location: /path/to/client-certificate.pem
-      ssl.key.location: /path/to/client-key.pem
-    properties:
-      acks: all
-      bootstrap.servers: kafka-broker-3:9092
-      client.id: producer-client-id
-      retries: 3
-  consumer:
-    enabled: false
-    applied_auth:
-      enabled: false
-      bootstrap.servers:
-      - kafka-broker-1:9092
-      - kafka-broker-2:9092
-      security.protocol: sasl_ssl
-      sasl.mechanism: PLAIN
-      sasl.username: username
-      sasl.password: pwd
-      ssl.ca.location: /path/to/ca-certificate.pem
-      ssl.certificate.location: /path/to/client-certificate.pem
-      ssl.key.location: /path/to/client-key.pem
-    properties:
-      client.id: consumer-client-id
-      enable.auto.commit: true
-      group.id: consumer-group-id
-# ################################
-# Telegram Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-telegram-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: true
-    chat_id:
-    - 123456789
-    token: <token_here>
-  option:
-    type: Markdown
-    max-retries: 2
-# ################################
-# Slack Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-slack-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: true
-    channel_id:
-    - "123456789"
-    token: <token-here>
-  option:
-    max-retries: 0
-# ################################
-# Asterisk Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-asterisk-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: false
-    port: 5038
-    host: http://127.0.0.1
-    username: u@root
-    password: pwd
-    telephony:
-      region: VN
-      phone_prefix:
-      - "9"
-      - "6064"
-      digit_extensions:
-      - 4
-      - 5
-      - 6
-  option: {}
-# ################################
-# Mongodb Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-mongodb-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: false
-    url_conn: mongodb://127.0.0.1:27017/u_db
-    host: 127.0.0.1
-    port: 27017
-    database: u_db
-    username: u@root
-    password: pwd
-    timeout_second_conn: 30
-    allow_conn_sync: true
-    timeout: 10s
-  option: {}
-# ################################
-# MySQL Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-mysql-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: false
-    database: u_db
-    host: 127.0.0.1
-    port: 3306
-    username: u@root
-    password: pwd
-    max-open-conn: 10
-    max-idle-conn: 2
-    max-life-time-minutes-conn: 10
-  option: {}
-# ################################
-# Postgres Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-postgres-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: false
-    database: u_db
-    host: 127.0.0.1
-    port: 5432
-    username: u@root
-    password: pwd
-    ssl-mode: disable
-    max-open-conn: 5
-    max-idle-conn: 3
-  option: {}
-# ################################
-# RabbitMQ Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-rabbitmq-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: false
-    url_conn: amqp://guest:guest@localhost:5672/
-    username: guest
-    password: guest
-    host: 127.0.0.1
-    port: 5672
-    message:
-      enabled: true
-      exchange:
-        name: guest_exchange
-        kind: fanout
-        durable: true
-      queue:
-        name: guest_queue
-        durable: true
-    clusters:
-      rabbit_mq_1:
-        enabled: true
-        exchange:
-          name: guest_exchange
-          kind: fanout
-          durable: true
-        queue:
-          name: guest_queue
-          durable: true
-      rabbit_mq_2:
-        enabled: true
-        exchange:
-          name: guest_exchange
-          kind: fanout
-          durable: true
-        queue:
-          name: guest_queue
-          durable: true
-  option: {}
-# ################################
-# Redis Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-redis-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    debug_mode: false
-    url_conn: localhost:6379
-    password: redis.pwd
-    database: database_stable
-  option: {}
-# ################################
-# Cookie Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-cookie-seekers:
-- key: tenant_1
-  usable_default: true
-  config:
-    enabled: true
-    name: user
-    value: ""
-    path: /
-    domain: ""
-    max_age: 86400
-    secure: false
-    http_only: true
-    timeout: 10s
-  option:
-    max_retries: 2
-# ################################
-# Logger Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-logger-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: true
-    permit_snapshot: false
-    permit_local_time: false
-    compress: false
-    permit_caller: false
-    filename: ""
-    max_size: 0
-    max_age: 0
-    max_backup: 0
-    formatter: text
-  option:
-    max-retries: 2
-# ################################
-# Kafka Seekers Config
-# 2023-12-02 22:57:24
-# ################################
-kafka-seekers:
-- key: tenant_1
-  usable_default: false
-  config:
-    enabled: false
-    topics:
     - enabled: false
       key: topic-1
       name: ""
@@ -526,11 +243,25 @@ kafka-seekers:
       replication.factor: 3
       partitions: 5
       retention.ms: -1
+  applied_auth:
+    enabled: false
+    bootstrap.servers:
+      - kafka-broker-1:9092
+      - kafka-broker-2:9092
+    security.protocol: sasl_ssl
+    sasl.mechanism: PLAIN
+    sasl.username: username
+    sasl.password: pwd
+    ssl.ca.location: /path/to/ca-certificate.pem
+    ssl.certificate.location: /path/to/client-certificate.pem
+    ssl.key.location: /path/to/client-key.pem
+  producer:
+    enabled: true
     applied_auth:
       enabled: false
       bootstrap.servers:
-      - kafka-broker-1:9092
-      - kafka-broker-2:9092
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
       security.protocol: sasl_ssl
       sasl.mechanism: PLAIN
       sasl.username: username
@@ -538,32 +269,272 @@ kafka-seekers:
       ssl.ca.location: /path/to/ca-certificate.pem
       ssl.certificate.location: /path/to/client-certificate.pem
       ssl.key.location: /path/to/client-key.pem
-    producer:
-      enabled: true
-      applied_auth:
-        enabled: false
-        bootstrap.servers:
-        - kafka-broker-1:9092
-        - kafka-broker-2:9092
-        security.protocol: sasl_ssl
-        sasl.mechanism: PLAIN
-        sasl.username: username
-        sasl.password: pwd
-        ssl.ca.location: /path/to/ca-certificate.pem
-        ssl.certificate.location: /path/to/client-certificate.pem
-        ssl.key.location: /path/to/client-key.pem
-      properties:
-        acks: all
-        bootstrap.servers: kafka-broker-3:9092
-        client.id: producer-client-id
-        retries: 3
-    consumer:
+    properties:
+      acks: all
+      bootstrap.servers: kafka-broker-3:9092
+      client.id: producer-client-id
+      retries: 3
+  consumer:
+    enabled: false
+    applied_auth:
       enabled: false
+      bootstrap.servers:
+        - kafka-broker-1:9092
+        - kafka-broker-2:9092
+      security.protocol: sasl_ssl
+      sasl.mechanism: PLAIN
+      sasl.username: username
+      sasl.password: pwd
+      ssl.ca.location: /path/to/ca-certificate.pem
+      ssl.certificate.location: /path/to/client-certificate.pem
+      ssl.key.location: /path/to/client-key.pem
+    properties:
+      client.id: consumer-client-id
+      enable.auto.commit: true
+      group.id: consumer-group-id
+# ################################
+# Telegram Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+telegram-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: true
+      chat_id:
+        - 123456789
+      token: <token_here>
+    option:
+      type: Markdown
+      max-retries: 2
+# ################################
+# Slack Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+slack-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: true
+      channel_id:
+        - "123456789"
+      token: <token-here>
+    option:
+      max-retries: 0
+# ################################
+# Asterisk Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+asterisk-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: false
+      port: 5038
+      host: http://127.0.0.1
+      username: u@root
+      password: pwd
+      telephony:
+        region: VN
+        phone_prefix:
+          - "9"
+          - "6064"
+        digit_extensions:
+          - 4
+          - 5
+          - 6
+    option: {}
+# ################################
+# Mongodb Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+mongodb-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: false
+      url_conn: mongodb://127.0.0.1:27017/u_db
+      host: 127.0.0.1
+      port: 27017
+      database: u_db
+      username: u@root
+      password: pwd
+      timeout_second_conn: 30
+      allow_conn_sync: true
+      timeout: 10s
+    option: {}
+# ################################
+# MySQL Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+mysql-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: false
+      database: u_db
+      host: 127.0.0.1
+      port: 3306
+      username: u@root
+      password: pwd
+      max-open-conn: 10
+      max-idle-conn: 2
+      max-life-time-minutes-conn: 10
+    option: {}
+# ################################
+# Postgres Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+postgres-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: false
+      database: u_db
+      host: 127.0.0.1
+      port: 5432
+      username: u@root
+      password: pwd
+      ssl-mode: disable
+      max-open-conn: 5
+      max-idle-conn: 3
+    option: {}
+# ################################
+# RabbitMQ Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+rabbitmq-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: false
+      url_conn: amqp://guest:guest@localhost:5672/
+      username: guest
+      password: guest
+      host: 127.0.0.1
+      port: 5672
+      message:
+        enabled: true
+        exchange:
+          name: guest_exchange
+          kind: fanout
+          durable: true
+        queue:
+          name: guest_queue
+          durable: true
+      clusters:
+        rabbit_mq_1:
+          enabled: true
+          exchange:
+            name: guest_exchange
+            kind: fanout
+            durable: true
+          queue:
+            name: guest_queue
+            durable: true
+        rabbit_mq_2:
+          enabled: true
+          exchange:
+            name: guest_exchange
+            kind: fanout
+            durable: true
+          queue:
+            name: guest_queue
+            durable: true
+    option: {}
+# ################################
+# Redis Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+redis-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      debug_mode: false
+      url_conn: localhost:6379
+      password: redis.pwd
+      database: database_stable
+    option: {}
+# ################################
+# Cookie Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+cookie-seekers:
+  - key: tenant_1
+    usable_default: true
+    config:
+      enabled: true
+      name: user
+      value: ""
+      path: /
+      domain: ""
+      max_age: 86400
+      secure: false
+      http_only: true
+      timeout: 10s
+    option:
+      max_retries: 2
+# ################################
+# Logger Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+logger-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: true
+      permit_snapshot: false
+      permit_local_time: false
+      compress: false
+      permit_caller: false
+      filename: ""
+      max_size: 0
+      max_age: 0
+      max_backup: 0
+      formatter: text
+    option:
+      max-retries: 2
+# ################################
+# Kafka Seekers Config
+# 2023-12-02 22:57:24
+# ################################
+kafka-seekers:
+  - key: tenant_1
+    usable_default: false
+    config:
+      enabled: false
+      topics:
+        - enabled: false
+          key: topic-1
+          name: ""
+          desc: ""
+          create.enabled: true
+          delete.enabled: false
+          replication.factor: 3
+          partitions: 5
+          retention.ms: -1
+        - enabled: false
+          key: topic-2
+          name: ""
+          desc: ""
+          create.enabled: true
+          delete.enabled: false
+          replication.factor: 3
+          partitions: 5
+          retention.ms: -1
       applied_auth:
         enabled: false
         bootstrap.servers:
-        - kafka-broker-1:9092
-        - kafka-broker-2:9092
+          - kafka-broker-1:9092
+          - kafka-broker-2:9092
         security.protocol: sasl_ssl
         sasl.mechanism: PLAIN
         sasl.username: username
@@ -571,10 +542,43 @@ kafka-seekers:
         ssl.ca.location: /path/to/ca-certificate.pem
         ssl.certificate.location: /path/to/client-certificate.pem
         ssl.key.location: /path/to/client-key.pem
-      properties:
-        client.id: consumer-client-id
-        enable.auto.commit: true
-        group.id: consumer-group-id
+      producer:
+        enabled: true
+        applied_auth:
+          enabled: false
+          bootstrap.servers:
+            - kafka-broker-1:9092
+            - kafka-broker-2:9092
+          security.protocol: sasl_ssl
+          sasl.mechanism: PLAIN
+          sasl.username: username
+          sasl.password: pwd
+          ssl.ca.location: /path/to/ca-certificate.pem
+          ssl.certificate.location: /path/to/client-certificate.pem
+          ssl.key.location: /path/to/client-key.pem
+        properties:
+          acks: all
+          bootstrap.servers: kafka-broker-3:9092
+          client.id: producer-client-id
+          retries: 3
+      consumer:
+        enabled: false
+        applied_auth:
+          enabled: false
+          bootstrap.servers:
+            - kafka-broker-1:9092
+            - kafka-broker-2:9092
+          security.protocol: sasl_ssl
+          sasl.mechanism: PLAIN
+          sasl.username: username
+          sasl.password: pwd
+          ssl.ca.location: /path/to/ca-certificate.pem
+          ssl.certificate.location: /path/to/client-certificate.pem
+          ssl.key.location: /path/to/client-key.pem
+        properties:
+          client.id: consumer-client-id
+          enable.auto.commit: true
+          group.id: consumer-group-id
 param1: {}
 param2: {}
 param3: {}
