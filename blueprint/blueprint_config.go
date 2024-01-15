@@ -25,6 +25,7 @@ var TypeIcons = map[IconText]string{
 // CardDefault is the HTML template for the card
 var CardDefault = `
 <b> {{.Icon}} {{.Title}} </b>
+<b> 📌 {{.Timestamp}}  </b>
 <i>{{.Description}}</i>
 {{if .ImageUrl}}
 <img src="{{.ImageUrl}}">
@@ -37,6 +38,7 @@ var CardDefault = `
 // CardMarkdownDefault is the Markdown template for the card
 var CardMarkdownDefault = `
 **{{.Icon}} {{.Title}}**
+**📌 {{.Timestamp}}**
 *{{.Description}}*
 {{if .ImageUrl}}
 ![Image]({{.ImageUrl}})

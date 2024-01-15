@@ -5,13 +5,21 @@ import (
 	"html/template"
 	"log"
 	"net/url"
+	"time"
 
 	"github.com/sivaosorg/govm/builder"
+	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
 )
 
 func NewCard() *card {
 	c := &card{}
+	c.SetTimestamp(time.Now())
+	return c
+}
+
+func (c *card) SetTimestamp(value time.Time) *card {
+	c.Timestamp = value.Format(timex.TimeFormat20060102150405)
 	return c
 }
 

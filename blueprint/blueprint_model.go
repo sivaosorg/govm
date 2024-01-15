@@ -3,6 +3,7 @@ package blueprint
 type IconText string
 
 type card struct {
+	Timestamp   string   `json:"timestamp"`
 	Icon        string   `json:"icon"`
 	IconText    IconText `json:"icon_text,omitempty"`
 	Title       string   `json:"title,omitempty"`
