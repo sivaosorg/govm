@@ -172,6 +172,12 @@ func (i *decision) SetValue(value interface{}) *decision {
 	return i
 }
 
+func (i *decision) SetValueFunc(value interface{}, fnc func() bool) *decision {
+	i.SetEnabled(fnc())
+	i.SetValue(value)
+	return i
+}
+
 func (i *decision) SetOn(value time.Time) *decision {
 	i.on = value
 	return i
@@ -233,6 +239,10 @@ func (m Modify) Transform() map[string]interface{} {
 		values.Add(k, e.Value)
 	}
 	return values.Build()
+}
+
+func (m Modify) Json() string {
+	return utils.ToJson(m)
 }
 
 func GetTotalPages(totalCount int, size int) int {
