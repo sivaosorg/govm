@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sivaosorg/govm/builder"
+	"github.com/sivaosorg/govm/timex"
 	"github.com/sivaosorg/govm/utils"
 )
 
@@ -149,6 +151,90 @@ func (i *IPageQuery) Json() string {
 	return utils.ToJson(i)
 }
 
+func NewDecision() *decision {
+	i := &decision{}
+	i.SetOn(time.Now())
+	return i
+}
+
+func WithDecision(value bool) *decision {
+	i := NewDecision().SetEnabled(value).SetOn(time.Now())
+	return i
+}
+
+func (i *decision) SetEnabled(value bool) *decision {
+	i.IsEnabled = value
+	return i
+}
+
+func (i *decision) SetValue(value interface{}) *decision {
+	i.Value = value
+	return i
+}
+
+func (i *decision) SetOn(value time.Time) *decision {
+	i.on = value
+	return i
+}
+
+func (i *decision) On() time.Time {
+	return i.on
+}
+
+func (i *decision) OnString() string {
+	return i.on.Format(timex.TimeFormat20060102150405)
+}
+
+func (i *decision) Json() string {
+	return utils.ToJson(i)
+}
+
+func NewModify() Modify {
+	m := make(Modify)
+	return m
+}
+
+func (m Modify) Add(key string, value decision) Modify {
+	m[key] = value
+	return m
+}
+
+func (m Modify) Addon(key string, value *decision) Modify {
+	m[key] = *value
+	return m
+}
+
+func (m Modify) Remove(key string) Modify {
+	delete(m, key)
+	return m
+}
+
+func (m Modify) RemoveAny(keys ...string) Modify {
+	for _, v := range keys {
+		delete(m, v)
+	}
+	return m
+}
+
+func (m Modify) Size() int {
+	return len(m)
+}
+
+func (m Modify) Available() bool {
+	return m.Size() > 0
+}
+
+func (m Modify) Transform() map[string]interface{} {
+	values := builder.NewMapBuilder()
+	for k, e := range m {
+		if !e.IsEnabled {
+			continue
+		}
+		values.Add(k, e.Value)
+	}
+	return values.Build()
+}
+
 func GetTotalPages(totalCount int, size int) int {
 	d := float64(totalCount) / float64(size)
 	return int(math.Ceil(d))
@@ -156,4 +242,17 @@ func GetTotalPages(totalCount int, size int) int {
 
 func GetHasMore(currentPage, totalCount, size int) bool {
 	return currentPage < totalCount/size
+}
+
+func Transforms(ms ...Modify) map[string]interface{} {
+	values := builder.NewMapBuilder()
+	for _, m := range ms {
+		for k, e := range m {
+			if !e.IsEnabled {
+				continue
+			}
+			values.Add(k, e.Value)
+		}
+	}
+	return values.Build()
 }

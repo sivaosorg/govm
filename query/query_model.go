@@ -22,3 +22,11 @@ type IPageQuery struct {
 	EventAt    timestampQuery `json:"event_at,omitempty"`
 	IndexAt    timestampQuery `json:"index_at,omitempty"`
 }
+
+type decision struct {
+	IsEnabled bool        `json:"enabled"`
+	Value     interface{} `json:"value,omitempty"`
+	on        time.Time
+}
+
+type Modify map[string]decision
