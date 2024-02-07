@@ -230,6 +230,10 @@ func (m Modify) Available() bool {
 	return m.Size() > 0
 }
 
+func (m Modify) Fire() bool {
+	return len(m.Transform()) > 0
+}
+
 func (m Modify) Transform() map[string]interface{} {
 	values := builder.NewMapBuilder()
 	for k, e := range m {
